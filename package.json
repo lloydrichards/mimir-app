@@ -8,7 +8,7 @@
     "build": "cd web-app && npm run build",
     "server": "tsc && node server/dist/app.js",
     "deploy-app": "npm run build && firebase deploy --only hosting --project mimir-app-dev",
-    "deploy-function": "firebase --only functions --project mimir-app-dev",
+    "deploy-functions": "firebase deploy --only functions --project mimir-app-dev",
     "deploy-dev": "npm run build && firebase deploy --project mimir-app-dev"
   },
   "author": "",
