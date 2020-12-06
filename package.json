@@ -4,6 +4,7 @@
   "description": "",
   "main": "server/dist.app.js",
   "scripts": {
+    "tsc": "tsc",
     "start": "cd web-app && npm run start",
     "build": "cd web-app && npm run build",
     "server": "tsc && node server/dist/app.js",

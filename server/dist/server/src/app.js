@@ -51,7 +51,7 @@ const space_CREATE = (user_id, data) => {
 space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
     name: 'Test Space #1',
     description: 'A Space for testing things',
-    room_type: 'BEDROOM',
+    room_type: 'OTHER',
     sun_exposure: 'HALF_SHADE',
     location: {
         region: 'Europe',

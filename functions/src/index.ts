@@ -5,6 +5,7 @@ import { DataPackage } from './Model/sensor';
 import { ConfigPlants } from './Model/space';
 import { initDeviceAgg, initDeviceDoc } from './initDocs/device';
 import { initSpaceAgg, initSpaceConfig } from './initDocs/space';
+import { initPlantAggs } from './initDocs/plants';
 
 admin.initializeApp();
 const timestamp = admin.firestore.FieldValue.serverTimestamp();
@@ -14,11 +15,6 @@ const db = admin.firestore();
 // Start writing Firebase Functions
 // https://firebase.google.com/docs/functions/typescript
 
-export const helloWorld = functions.https.onRequest((request, response) => {
-  functions.logger.info('Hello logs!', { structuredData: true });
-  response.send('Hello from Firebase!');
-});
-
 //Users
 export const userCreated = functions.auth.user().onCreate((user) => {
   //New Auth User created
@@ -27,7 +23,7 @@ export const userCreated = functions.auth.user().onCreate((user) => {
   const newUser = db.collection('mimirUsers').doc(user.uid);
   const newAgg = newUser.collection('Aggs').doc('--init--');
   const newLog = newUser.collection('Logs').doc();
-  const stats = db.collection('mimirUsers').doc('--stats--');
+  const stats = db.collection('Admin').doc('--users-stats--');
 
   const initUserLog = {
     timestamp,
@@ -56,37 +52,54 @@ export const userCreated = functions.auth.user().onCreate((user) => {
 export const userUpdated = functions.firestore
   .document('mimirUsers/{user_id}')
   .onUpdate((user) => {
+    if (user.before.id === '--stats--') return;
     const batch = db.batch();
-    const userBefore = user.before;
-    const userAfter = user.after;
+    const userBefore = user.before.data();
+    const userAfter = user.after.data();
 
-    const stats = db.collection('mimirUsers').doc('--stats--');
-    batch.set(
-      stats,
-      {
-        gardener: {
-          [userBefore.data().gardener || 'undefined']: increment(-1),
-          [userAfter.data().gardener || 'undefined']: increment(1),
-        },
-        subscription: {
-          [userBefore.data().subscription || 'undefined']: increment(-1),
-          [userAfter.data().subscription || 'undefined']: increment(1),
-        },
-        region: {
-          [userBefore.data().location.region || 'undefined']: increment(-1),
-          [userAfter.data().location.region || 'undefined']: increment(1),
-        },
-        country: {
-          [userBefore.data().location.country || 'undefined']: increment(-1),
-          [userAfter.data().location.country || 'undefined']: increment(1),
-        },
-        city: {
-          [userBefore.data().location.city || 'undefined']: increment(-1),
-          [userAfter.data().location.city || 'undefined']: increment(1),
-        },
+    const stats = db.collection('Admin').doc('--users-stats--');
+    batch.update(stats, {
+      gardener: {
+        [userBefore.gardener || 'undefined']: increment(
+          userBefore.gardener === userAfter.gardener ? 0 : -1
+        ),
+        [userAfter.gardener || 'undefined']: increment(
+          userBefore.gardener === userAfter.gardener ? 0 : 1
+        ),
       },
-      { merge: true }
-    );
+      subscription: {
+        [userBefore.subscription || 'undefined']: increment(
+          userBefore.subscription === userAfter.subscription ? 0 : -1
+        ),
+        [userAfter.subscription || 'undefined']: increment(
+          userBefore.subscription === userAfter.subscription ? 0 : 1
+        ),
+      },
+      region: {
+        [userBefore.location.region || 'undefined']: increment(
+          userBefore.location.region === userAfter.location.region ? 0 : -1
+        ),
+        [userAfter.location.region || 'undefined']: increment(
+          userBefore.location.region === userAfter.location.region ? 0 : 1
+        ),
+      },
+      country: {
+        [userBefore.location.country || 'undefined']: increment(
+          userBefore.location.country === userAfter.location.country ? 0 : -1
+        ),
+        [userAfter.location.country || 'undefined']: increment(
+          userBefore.location.country === userAfter.location.country ? 0 : 1
+        ),
+      },
+      city: {
+        [userBefore.location.city || 'undefined']: increment(
+          userBefore.location.city === userAfter.location.city ? 0 : -1
+        ),
+        [userAfter.location.city || 'undefined']: increment(
+          userBefore.location.city === userAfter.location.city ? 0 : 1
+        ),
+      },
+    });
     return batch.commit();
   });
 //Devices
@@ -99,7 +112,7 @@ export const deviceCreated = functions.firestore
     const newDevice = db.collection('mimirDevices').doc(device.id);
     const newAgg = newDevice.collection('Aggs').doc('--init--');
     const newLog = newDevice.collection('Logs').doc();
-    const stats = db.collection('mimirDevices').doc('--stats--');
+    const stats = db.collection('Admin').doc('--devices-stats--');
 
     const initDeviceLog = {
       timestamp,
@@ -130,20 +143,28 @@ export const deviceUpdated = functions.firestore
   .document('mimirDevices/{device_id}')
   .onUpdate((device) => {
     const batch = db.batch();
-    const deviceBefore = device.before;
-    const deviceAfter = device.after;
+    const deviceBefore = device.before.data();
+    const deviceAfter = device.after.data();
 
-    const stats = db.collection('mimirDevices').doc('--stats--');
+    const stats = db.collection('Admin').doc('--devices-stats--');
     batch.set(
       stats,
       {
         hardware: {
-          [deviceBefore.data().hardware || 'undefined']: increment(-1),
-          [deviceAfter.data().hardware || 'undefined']: increment(1),
+          [deviceBefore.hardware || 'undefined']: increment(
+            deviceBefore.hardware === deviceAfter.hardware ? 0 : -1
+          ),
+          [deviceAfter.hardware || 'undefined']: increment(
+            deviceBefore.hardware === deviceAfter.hardware ? 0 : 1
+          ),
         },
         software: {
-          [deviceBefore.data().software || 'undefined']: increment(-1),
-          [deviceAfter.data().software || 'undefined']: increment(1),
+          [deviceBefore.software || 'undefined']: increment(
+            deviceBefore.software === deviceAfter.software ? 0 : -1
+          ),
+          [deviceAfter.software || 'undefined']: increment(
+            deviceBefore.software === deviceAfter.software ? 0 : -1
+          ),
         },
       },
       { merge: true }
@@ -160,22 +181,12 @@ export const spaceCreated = functions.firestore
 
     const newSpace = db.collection('mimirSpaces').doc(space.id);
     const newAgg = newSpace.collection('Aggs').doc('--init--');
-    const newConfig = newSpace.collection('Configs').doc('--init');
-    const newLog = newSpace.collection('Logs').doc();
-    const stats = db.collection('mimirSpaces').doc('--stats--');
-
-    const initSpaceLog = {
-      timestamp,
-      type: ['SPACE_CREATED'],
-      content: {
-        device_id: space.id,
-        created_by: space.data().created_by,
-      },
-    };
+    const newConfig = newSpace.collection('Configs').doc('--init--');
+    const stats = db.collection('Admin').doc('--spaces-stats--');
 
     batch.set(newAgg, initSpaceAgg(timestamp));
     batch.set(newConfig, initSpaceConfig(timestamp));
-    batch.set(newLog, initSpaceLog);
+
     batch.set(
       stats,
       {
@@ -197,32 +208,130 @@ export const spaceUpdated = functions.firestore
   .document('mimirSpaces/{space_id}')
   .onUpdate((space) => {
     const batch = db.batch();
-    const spaceBefore = space.before;
-    const spaceAfter = space.after;
+    const spaceBefore = space.before.data();
+    const spaceAfter = space.after.data();
 
-    const stats = db.collection('mimirSpaces').doc('--stats--');
+    const stats = db.collection('Admin').doc('--spaces-stats--');
     batch.set(
       stats,
       {
+        last_added: timestamp,
         room_type: {
-          [spaceBefore.data().room_type || 'undefined']: increment(-1),
-          [spaceAfter.data().room_type || 'undefined']: increment(1),
+          [spaceBefore.room_type || 'undefined']: increment(
+            spaceBefore.room_type === spaceAfter.room_type ? 0 : -1
+          ),
+          [spaceAfter.room_type || 'undefined']: increment(
+            spaceBefore.room_type === spaceAfter.room_type ? 0 : 1
+          ),
         },
         sun_exposure: {
-          [spaceBefore.data().sun_exposure || 'undefined']: increment(-1),
-          [spaceAfter.data().sun_exposure || 'undefined']: increment(1),
+          [spaceBefore.sun_exposure || 'undefined']: increment(
+            spaceBefore.sun_exposure === spaceAfter.sun_exposure ? 0 : -1
+          ),
+          [spaceAfter.sun_exposure || 'undefined']: increment(
+            spaceBefore.sun_exposure === spaceAfter.sun_exposure ? 0 : 1
+          ),
         },
         region: {
-          [spaceBefore.data().location.region || 'undefined']: increment(-1),
-          [spaceAfter.data().location.region || 'undefined']: increment(1),
+          [spaceBefore.location.region || 'undefined']: increment(
+            spaceBefore.location.region === spaceAfter.location.region ? 0 : -1
+          ),
+          [spaceAfter.location.region || 'undefined']: increment(
+            spaceBefore.location.region === spaceAfter.location.region ? 0 : 1
+          ),
         },
         country: {
-          [spaceBefore.data().location.country || 'undefined']: increment(-1),
-          [spaceAfter.data().location.country || 'undefined']: increment(1),
+          [spaceBefore.location.country || 'undefined']: increment(
+            spaceBefore.location.country === spaceAfter.location.country
+              ? 0
+              : -1
+          ),
+          [spaceAfter.location.country || 'undefined']: increment(
+            spaceBefore.location.country === spaceAfter.location.country ? 0 : 1
+          ),
         },
         city: {
-          [spaceBefore.data().location.city || 'undefined']: increment(-1),
-          [spaceAfter.data().location.city || 'undefined']: increment(1),
+          [spaceBefore.location.city || 'undefined']: increment(
+            spaceBefore.location.city === spaceAfter.location.city ? 0 : -1
+          ),
+          [spaceAfter.location.city || 'undefined']: increment(
+            spaceBefore.location.city === spaceAfter.location.city ? 0 : 1
+          ),
+        },
+      },
+      { merge: true }
+    );
+    return batch.commit();
+  });
+
+//Plants
+export const plantCreated = functions.firestore
+  .document('mimirPlants/{plant_id}')
+  .onCreate((plant) => {
+    const batch = db.batch();
+
+    const newPlant = db.collection('mimirPlants').doc(plant.id);
+    const newAgg = newPlant.collection('Aggs').doc('--init--');
+    const stats = db.collection('Admin').doc('--plants-stats--');
+
+    batch.set(newAgg, initPlantAggs(timestamp));
+    batch.set(
+      stats,
+      {
+        last_added: timestamp,
+        plants_total: increment(1),
+        alive_total: increment(1),
+        form: {
+          [plant.data().form]: increment(1),
+        },
+        family: {
+          [plant.data().species.family]: increment(1),
+        },
+        genus: {
+          [plant.data().species.genus]: increment(1),
+        },
+        species: {
+          [plant.data().species.id]: increment(1),
+        },
+        size: {
+          [plant.data().pot.size]: increment(1),
+        },
+      },
+      { merge: true }
+    );
+
+    return batch.commit();
+  });
+
+export const plantUpdated = functions.firestore
+  .document('mimirPlants/{plant_id}')
+  .onUpdate((plant) => {
+    const batch = db.batch();
+    const plantBefore = plant.before.data();
+    const plantAfter = plant.after.data();
+
+    const stats = db.collection('Admin').doc('--plants-stats--');
+    batch.set(
+      stats,
+      {
+        last_added: timestamp,
+        dead_total: increment(plantBefore.alive && !plantAfter.alive ? 1 : 0),
+        alive_total: increment(plantBefore.alive && !plantAfter.alive ? -1 : 0),
+        form: {
+          [plantBefore.form || 'undefined']: increment(
+            plantBefore.form === plantAfter.form ? 0 : -1
+          ),
+          [plantAfter.form || 'undefined']: increment(
+            plantBefore.form === plantAfter.form ? 0 : 1
+          ),
+        },
+        size: {
+          [plantBefore.size || 'undefined']: increment(
+            plantBefore.size === plantAfter.family ? 0 : -1
+          ),
+          [plantAfter.size || 'undefined']: increment(
+            plantBefore.size === plantAfter.size ? 0 : 1
+          ),
         },
       },
       { merge: true }
