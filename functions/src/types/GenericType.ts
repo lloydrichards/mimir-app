@@ -7,6 +7,7 @@ export type Log = {
     | 'DEVICE_CREATED'
     | 'PLANT_DIED'
     | 'DEVICE_REGISTERED'
+    | 'POINTS'
   >;
   content: { [key: string]: any };
 };

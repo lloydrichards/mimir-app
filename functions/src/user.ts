@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initUserAgg, initUserDoc } from './docs/users';
-import { aggSwitch } from './helper/helper';
 import { Log } from './types/GenericType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp();
@@ -96,11 +95,11 @@ export const userUpdated = functions.firestore
   });
 
 export const userAggregation = functions.firestore
-  .document('Users/{user_id}/Logs/{log_id}')
+  .document('mimirUsers/{user_id}/Logs/{log_id}')
   .onCreate((log, context) => {
     const user_id = context.params.user_id;
-    const logDoc: Log = log.data().type;
-    const user = db.collection('Users').doc(user_id);
+    const logDoc = log.data() as Log;
+    const user = db.collection('mimirUsers').doc(user_id);
     const newAgg = user.collection('Aggs').doc();
     const oldAgg = user
       .collection('Aggs')
@@ -113,10 +112,10 @@ export const userAggregation = functions.firestore
         t.set(newAgg, {
           ...doc,
           timestamp,
-          space_total: aggSwitch(doc.space_total, logDoc, user_id, 'SPACE'),
-          plant_total: aggSwitch(doc.plant_total, logDoc, user_id, 'PLANT'),
-          dead_total: aggSwitch(doc.dead_total, logDoc, user_id, 'DEAD'),
-          points: increment(logDoc.content.points || 0),
+          space_total: increment(logDoc.type.includes('SPACE_CREATED') ? 1 : 0),
+          plant_total: increment(logDoc.type.includes('PLANT_CREATED') ? 1 : 0),
+          dead_total: increment(logDoc.type.includes('PLANT_DIED') ? 1 : 0),
+          points: increment(logDoc.type.includes('POINTS') ? logDoc.content.points : 0),
         });
       })
       .catch((error) => console.error(error));

@@ -31,25 +31,32 @@ console.log('Starting mimir-app Server...');
 const space_CREATE = (user_id, data) => {
     const batch = db.batch();
     const newSpace = db.collection('mimirSpaces').doc();
-    const newLog = newSpace.collection('Logs').doc();
+    const spaceLog = newSpace.collection('Logs').doc();
+    const userLog = db
+        .collection('mimirUsers')
+        .doc(user_id)
+        .collection('Logs')
+        .doc();
     const initSpaceLog = {
         timestamp,
         type: ['SPACE_CREATED'],
         content: {
             device_id: newSpace.id,
             created_by: user_id,
+            points: 10,
         },
     };
     const initSpaceDoc = Object.assign(Object.assign({}, data), { date_created: timestamp, date_modified: null, roles: { [user_id]: 'ADMIN' } });
     batch.set(newSpace, initSpaceDoc);
-    batch.set(newLog, initSpaceLog);
+    batch.set(spaceLog, initSpaceLog);
+    batch.set(userLog, initSpaceLog);
     return batch
         .commit()
         .then(() => console.log('Successfully added Space!'))
         .catch((error) => console.error(error));
 };
 space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
-    name: 'Test Space #2',
+    name: 'Test Space #3',
     description: 'A Space for testing things',
     room_type: 'BEDROOM',
     sun_exposure: 'HALF_SHADE',
@@ -59,11 +66,7 @@ space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
         city: 'Zurich',
         address: '',
     },
-    profile_picture: {
-        url: '',
-        ref: '',
-        thumb: '',
-    },
+    profile_picture: null,
     owner: {
         name: 'Tester',
         email: 'tester@word.com',
