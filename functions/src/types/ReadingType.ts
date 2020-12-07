@@ -1,0 +1,20 @@
+export type ReadingProps = {
+  user_id: string;
+  device_id: string;
+  space_id: Array<null | string>;
+  species_id: Array<null | string>;
+  timestamp: FirebaseFirestore.FieldValue;
+  bootCount: number;
+  temperature: number;
+  humidity: number;
+  pressure: number;
+  altitude: number;
+  luminance: number;
+  iaq: number;
+  iaqAccuracy: number;
+  eVOC: number;
+  eCO2: number;
+  bearing: number;
+  batteryVoltage: number;
+  batteryPercent: number;
+};

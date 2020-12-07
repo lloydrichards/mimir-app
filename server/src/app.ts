@@ -1,5 +1,9 @@
 import * as admin from 'firebase-admin';
-import { SpaceCreateInput, SpaceProps } from './types/space/space';
+import {
+  SpaceCreateInput,
+  SpaceProps,
+} from '../../functions/src/types/SpaceType';
+import { Log } from './GenericType';
 var serviceAccount = require('../serviceAccountKey.json');
 
 admin.initializeApp({
@@ -17,12 +21,13 @@ const space_CREATE = (user_id: string, data: SpaceCreateInput) => {
   const newSpace = db.collection('mimirSpaces').doc();
   const newLog = newSpace.collection('Logs').doc();
 
-  const initSpaceLog = {
+  const initSpaceLog: Log = {
     timestamp,
     type: ['SPACE_CREATED'],
     content: {
       device_id: newSpace.id,
       created_by: user_id,
+      points: 10,
     },
   };
 
@@ -43,7 +48,7 @@ const space_CREATE = (user_id: string, data: SpaceCreateInput) => {
 };
 
 space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
-  name: 'Test Space #1',
+  name: 'Test Space #2',
   description: 'A Space for testing things',
   room_type: 'BEDROOM',
   sun_exposure: 'HALF_SHADE',

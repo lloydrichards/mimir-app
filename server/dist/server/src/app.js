@@ -49,9 +49,9 @@ const space_CREATE = (user_id, data) => {
         .catch((error) => console.error(error));
 };
 space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
-    name: 'Test Space #1',
+    name: 'Test Space #2',
     description: 'A Space for testing things',
-    room_type: 'OTHER',
+    room_type: 'BEDROOM',
     sun_exposure: 'HALF_SHADE',
     location: {
         region: 'Europe',

@@ -7,8 +7,9 @@
       "sourceMap": true,
       "outDir": "server/dist",
       "strict": true,
-      "rootDir": "server/src"
+      "rootDir": "./",
+      "rootDirs": ["server/src","functions/src/types"]
     },
     "lib": ["es2015"],
-    "include": ["server/src/**/*"]
+    "include": ["server/src/**/*", "functions/src/types/**/*"]
   }
