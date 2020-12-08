@@ -6,6 +6,7 @@ export type Log = {
     | 'SPACE_CREATED'
     | 'DEVICE_CREATED'
     | 'PLANT_DIED'
+    | 'PLANT_MOVED'
     | 'DEVICE_REGISTERED'
     | 'POINTS'
   >;
