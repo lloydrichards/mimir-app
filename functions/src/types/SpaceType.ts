@@ -42,12 +42,15 @@ export type SpaceCreateInput = Omit<
 export type SpaceConfigProps = {
   timestamp: FirebaseFirestore.FieldValue;
   current: boolean;
-  device: Array<string>;
-  plants: Array<PlantsConfig>;
+  devices: Array<string>;
+  plant_ids: Array<null | string>;
+  plants: Array<null | PlantsConfig>;
+  diseases: Array<null | string>;
 };
 
 export interface PlantsConfig {
   nickname: string;
+  id: string;
   botanical_name: string;
   type: string;
   size: string;

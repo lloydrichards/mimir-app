@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initSpaceAgg, initSpaceConfig } from './docs/space';
+import { Log } from './types/GenericType';
 
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp();
@@ -97,4 +98,31 @@ export const spaceUpdated = functions.firestore
       { merge: true }
     );
     return batch.commit();
+  });
+
+  export const spaceAggregation = functions.firestore
+  .document('mimirSpaces/{space_id}/Logs/{log_id}')
+  .onCreate((log, context) => {
+    const space_id = context.params.space_id;
+    const logDoc = log.data() as Log;
+    const space = db.collection('mimirSpaces').doc(space_id);
+    const newAgg = space.collection('Aggs').doc();
+    const oldAgg = space
+      .collection('Aggs')
+      .orderBy('timestamp', 'desc')
+      .limit(1);
+
+    return db
+      .runTransaction(async (t) => {
+        const doc = (await t.get(oldAgg)).docs[0].data();
+        t.set(newAgg, {
+          ...doc,
+          timestamp,
+          space_total: increment(logDoc.type.includes('SPACE_CREATED') ? 1 : 0),
+          plant_total: increment(logDoc.type.includes('PLANT_CREATED') ? 1 : 0),
+          dead_total: increment(logDoc.type.includes('PLANT_DIED') ? 1 : 0),
+          points: increment(logDoc.type.includes('POINTS') ? logDoc.content.points : 0),
+        });
+      })
+      .catch((error) => console.error(error));
   });
