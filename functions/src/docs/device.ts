@@ -1,31 +1,26 @@
-export const initDeviceDoc = (timestamp: FirebaseFirestore.FieldValue) => {
+import { DeviceAggProps, DeviceProps } from '../types/DeviceType';
+
+export const initDeviceDoc = (timestamp: FirebaseFirestore.FieldValue): DeviceProps => {
   return {
     nickname: '',
     date_created: timestamp,
     date_modified: null,
     description: '',
+    profile_picture: null,
     version: {
       hardware: '',
       software: '',
     },
-    owner: {
-      name: '',
-      email: '',
-      id: '',
-    },
-    role: {},
+    owner: null,
+    roles: null,
   };
 };
 
-export const initDeviceAgg = (timestamp: FirebaseFirestore.FieldValue) => {
+export const initDeviceAgg = (timestamp: FirebaseFirestore.FieldValue): DeviceAggProps => {
   return {
     timestamp,
-    space: {
-      name: '',
-      room_type: '',
-      id: '',
-    },
-    read_total: 0,
+    space: null,
+    reading_total: 0,
     battery_percent: 0,
     charge: false,
   };

@@ -1,8 +1,8 @@
-import { Owner, Picture, Roles } from './GenericType';
+import { FirebaseTimestamp, Owner, Picture, Roles, Space } from './GenericType';
 
 export type DeviceProps = {
   nickname: string;
-  date_created: FirebaseFirestore.FieldValue;
+  date_created: FirebaseTimestamp;
   date_modified: string | null;
   description: string;
   profile_picture: null | Picture;
@@ -10,22 +10,15 @@ export type DeviceProps = {
     hardware: string;
     software: string;
   };
-  owner: Owner;
-  roles: Roles;
+  owner: null| Owner;
+  roles: null | Roles;
 };
 
-export type DeviceRegisterInput = Omit<
-  DeviceProps,
-  'date_created' | 'date_modified' | 'roles'
->;
+export type DeviceRegisterInput = Omit<DeviceProps, 'date_created' | 'date_modified' | 'roles'>;
 
 export type DeviceAggProps = {
-  timestamp: FirebaseFirestore.FieldValue;
-  space: {
-    name: string;
-    room_type: string;
-    id: string;
-  };
+  timestamp: FirebaseTimestamp;
+  space: null | Space
   reading_total: number;
   battery_percent: number;
   charge: boolean;

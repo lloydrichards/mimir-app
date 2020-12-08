@@ -1,17 +1,19 @@
 import {
   Air,
+  FirebaseTimestamp,
   Humidity,
   Light,
   Owner,
   Picture,
   Roles,
+  Space,
   Temperature,
 } from './GenericType';
 
 export type PlantProps = {
   nickname: string;
-  date_created: FirebaseFirestore.FieldValue;
-  date_modified: null | FirebaseFirestore.FieldValue;
+  date_created: FirebaseTimestamp;
+  date_modified: null | FirebaseTimestamp;
   description: string;
   profile_picture: null | Picture;
   species: {
@@ -35,14 +37,7 @@ export type PlantProps = {
     | 'COLUMNAR';
   pot: {
     size: number;
-    type:
-      | 'TERRACOTTA'
-      | 'WOODEN'
-      | 'METAL'
-      | 'PLASTIC'
-      | 'FIBERGLASS'
-      | 'CONCRETE'
-      | 'FABRIC';
+    type: 'TERRACOTTA' | 'WOODEN' | 'METAL' | 'PLASTIC' | 'FIBERGLASS' | 'CONCRETE' | 'FABRIC';
     tray: boolean;
     hanging: boolean;
   };
@@ -63,8 +58,8 @@ export type PlantCreateInput = Omit<
 >;
 
 export type PlantAggProps = {
-  timestamp: FirebaseFirestore.FieldValue;
-  space: { name: string; type: string; id: string };
+  timestamp: FirebaseTimestamp;
+  space: null | Space;
   children_total: number;
   happiness_total: number;
   happiness_current: number;
@@ -72,10 +67,10 @@ export type PlantAggProps = {
   health_current: number;
   reading_total: number;
   inspection_total: number;
-  inspection_last: null | FirebaseFirestore.FieldValue;
+  inspection_last: null | FirebaseTimestamp;
   watering_total: number;
-  watering_last: null | FirebaseFirestore.FieldValue;
-  fertilizer_last: null | FirebaseFirestore.FieldValue;
+  watering_last: null | FirebaseTimestamp;
+  fertilizer_last: null | FirebaseTimestamp;
   temperature: Temperature;
   humidity: Humidity;
   light: Light;

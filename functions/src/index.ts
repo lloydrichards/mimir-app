@@ -7,3 +7,4 @@ export { plantCreated, plantUpdated } from './plant';
 export { sensorReadings } from './reading';
 export { spaceCreated, spaceUpdated } from './space';
 export { userCreated, userUpdated, userAggregation } from './user';
+

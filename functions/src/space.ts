@@ -2,7 +2,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initSpaceAgg, initSpaceConfig } from './docs/space';
 import { Log } from './types/GenericType';
-
+import { SpaceAggProps } from './types/SpaceType';
+import { reCalc } from './helpers';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp();
 const increment = admin.firestore.FieldValue.increment;
@@ -78,9 +79,7 @@ export const spaceUpdated = functions.firestore
         },
         country: {
           [spaceBefore.location.country || 'undefined']: increment(
-            spaceBefore.location.country === spaceAfter.location.country
-              ? 0
-              : -1
+            spaceBefore.location.country === spaceAfter.location.country ? 0 : -1
           ),
           [spaceAfter.location.country || 'undefined']: increment(
             spaceBefore.location.country === spaceAfter.location.country ? 0 : 1
@@ -100,29 +99,140 @@ export const spaceUpdated = functions.firestore
     return batch.commit();
   });
 
-  export const spaceAggregation = functions.firestore
+export const spaceAggregation = functions.firestore
   .document('mimirSpaces/{space_id}/Logs/{log_id}')
   .onCreate((log, context) => {
     const space_id = context.params.space_id;
-    const logDoc = log.data() as Log;
+    const type = (log.data() as Log).type;
+    const content = (log.data() as Log).content;
     const space = db.collection('mimirSpaces').doc(space_id);
     const newAgg = space.collection('Aggs').doc();
-    const oldAgg = space
-      .collection('Aggs')
-      .orderBy('timestamp', 'desc')
-      .limit(1);
+    const oldAgg = space.collection('Aggs').orderBy('timestamp', 'desc').limit(1);
 
     return db
       .runTransaction(async (t) => {
-        const doc = (await t.get(oldAgg)).docs[0].data();
+        const doc = (await t.get(oldAgg)).docs[0].data() as SpaceAggProps;
         t.set(newAgg, {
           ...doc,
           timestamp,
-          space_total: increment(logDoc.type.includes('SPACE_CREATED') ? 1 : 0),
-          plant_total: increment(logDoc.type.includes('PLANT_CREATED') ? 1 : 0),
-          dead_total: increment(logDoc.type.includes('PLANT_DIED') ? 1 : 0),
-          points: increment(logDoc.type.includes('POINTS') ? logDoc.content.points : 0),
-        });
+          reading_total: type.includes('DEVICE_UPDATE')
+            ? doc.reading_total + (content.readings || 0)
+            : doc.reading_total,
+          plant_total:
+            type.includes('PLANT_CREATED') ||
+            type.includes('PLANT_CUTTING') ||
+            (type.includes('PLANT_MOVED') && content.toSpace_id === space_id)
+              ? doc.plant_total + 1
+              : type.includes('PLANT_DIED') ||
+                type.includes('PLANT_DELETED') ||
+                (type.includes('PLANT_MOVED') && content.fromSpace_id === space_id)
+              ? doc.plant_total - 1
+              : doc.plant_total,
+          dead_total: type.includes('PLANT_DIED') ? 1 : 0,
+          inspection_total: type.includes('INSPECTION')
+            ? doc.inspection_total + 1
+            : doc.inspection_total,
+          inspection_last: type.includes('INSPECTION') ? timestamp : doc.inspection_last,
+          watering_total: type.includes('WATERING') ? doc.watering_total + 1 : doc.watering_total,
+          watering_last: type.includes('WATERING') ? timestamp : doc.watering_last,
+          fertilizer_last:
+            type.includes('WATERING') && content.fertilizer ? timestamp : doc.watering_last,
+          temperature: {
+            min:
+              type.includes('DEVICE_UPDATE') && content.temperature && content.readings
+                ? reCalc(
+                    doc.temperature.min,
+                    content.temperature.min,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.temperature.min,
+            avg:
+              type.includes('DEVICE_UPDATE') && content.temperature && content.readings
+                ? reCalc(
+                    doc.temperature.avg,
+                    content.temperature.avg,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.temperature.avg,
+            max:
+              type.includes('DEVICE_UPDATE') && content.temperature && content.readings
+                ? reCalc(
+                    doc.temperature.max,
+                    content.temperature.max,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.temperature.max,
+          },
+          humidity: {
+            min:
+              type.includes('DEVICE_UPDATE') && content.humidity && content.readings
+                ? reCalc(
+                    doc.humidity.min,
+                    content.humidity.min,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.temperature.min,
+            avg:
+              type.includes('DEVICE_UPDATE') && content.humidity && content.readings
+                ? reCalc(
+                    doc.humidity.avg,
+                    content.humidity.avg,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.humidity.avg,
+            max:
+              type.includes('DEVICE_UPDATE') && content.humidity && content.readings
+                ? reCalc(
+                    doc.humidity.max,
+                    content.humidity.max,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.temperature.max,
+          },
+          light: {
+            shade:
+              type.includes('DEVICE_UPDATE') && content.light && content.readings
+                ? reCalc(doc.light.shade, content.light.shade, doc.reading_total, content.readings)
+                : doc.light.shade,
+            half_shade:
+              type.includes('DEVICE_UPDATE') && content.light && content.readings
+                ? reCalc(
+                    doc.light.half_shade,
+                    content.light.half_shade,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.light.half_shade,
+            full_sun:
+              type.includes('DEVICE_UPDATE') && content.light && content.readings
+                ? reCalc(
+                    doc.light.full_sun,
+                    content.light.full_sun,
+                    doc.reading_total,
+                    content.readings
+                  )
+                : doc.light.full_sun,
+            avg:
+              type.includes('DEVICE_UPDATE') && content.light && content.readings
+                ? reCalc(doc.light.avg, content.light.avg, doc.reading_total, content.readings)
+                : doc.light.avg,
+            max:
+              type.includes('DEVICE_UPDATE') &&
+              content.light &&
+              content.readings &&
+              content.light.max > doc.light.max
+                ? content.light.max
+                : doc.light.avg,
+          },
+        } as SpaceAggProps);
       })
       .catch((error) => console.error(error));
   });
+
+

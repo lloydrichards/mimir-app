@@ -1,9 +1,9 @@
-import { SpaceConfigProps } from '../types/SpaceType';
+import { SpaceAggProps, SpaceConfigProps } from '../types/SpaceType';
 
-export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue) => {
+export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue): SpaceAggProps => {
   return {
     timestamp,
-    read_total: 0,
+    reading_total: 0,
     plant_total: 0,
     dead_total: 0,
     inspection_total: 0,
@@ -24,7 +24,7 @@ export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue) => {
     light: {
       shade: 0,
       half_shade: 0,
-      full: 0,
+      full_sun: 0,
       avg: 0,
       max: 0,
     },
@@ -35,9 +35,7 @@ export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue) => {
   };
 };
 
-export const initSpaceConfig = (
-  timestamp: FirebaseFirestore.FieldValue
-): SpaceConfigProps => {
+export const initSpaceConfig = (timestamp: FirebaseFirestore.FieldValue): SpaceConfigProps => {
   return {
     timestamp,
     current: true,

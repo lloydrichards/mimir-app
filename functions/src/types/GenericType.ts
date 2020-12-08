@@ -1,16 +1,44 @@
 export type Log = {
-  timestamp: FirebaseFirestore.FieldValue;
+  timestamp: FirebaseTimestamp;
   type: Array<
-    | 'USER_CREATED'
-    | 'PLANT_CREATED'
-    | 'SPACE_CREATED'
+    | 'USER_CREATED' //when a User is created
+    | 'SPACE_CREATED' //when a Space is created
+    | 'SPACE_UPDATED' //when a Space config is updated
+    | 'SPACE_DELETED' //when a Space is deleted
+    | 'PLANT_CREATED' //when a Plant is created
+    | 'PLANT_CUTTING' //when a Plant is duplicated
+    | 'PLANT_DIED' //when a Plant dies
+    | 'PLANT_MOVED' //when a Plant is moved to new Space
+    | 'PLANT_DELETED' //when a Plant is deleted
     | 'DEVICE_CREATED'
-    | 'PLANT_DIED'
-    | 'PLANT_MOVED'
     | 'DEVICE_REGISTERED'
+    | 'DEVICE_MOVED'
+    | 'DEVICE_UPDATE'
+    | 'DEVICE_DELETED'
+    | 'WATERING'
+    | 'INSPECTION'
     | 'POINTS'
   >;
-  content: { [key: string]: any };
+  content: {
+    user_id?: string;
+    space_id?: string;
+    space_type?: string;
+    space_name?: string;
+    plant_id?: string;
+    device_id?: string;
+    readings?: number;
+    toSpace_id?: string;
+    fromSpace_id?: string;
+    points?: number;
+    health?: number;
+    happiness?: number;
+    fertilizer?: boolean;
+    temperature?: Temperature;
+    humidity?: Humidity;
+    light?: Light;
+    ait?: Air;
+    battery_percent?: number;
+  };
 };
 export type Picture = {
   url: string;
@@ -32,7 +60,12 @@ export type Location = {
   region: string;
   country: string;
   city: string;
-  address: string;
+};
+
+export type Space = {
+  name: string;
+  type: string;
+  id: string;
 };
 
 export type Temperature = {
@@ -58,3 +91,5 @@ export type Air = {
   avg: number;
   max: number;
 };
+
+export type FirebaseTimestamp = FirebaseFirestore.FieldValue;

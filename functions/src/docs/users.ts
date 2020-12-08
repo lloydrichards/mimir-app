@@ -1,7 +1,6 @@
-export const initUserDoc = (
-  email: string,
-  timestamp: FirebaseFirestore.FieldValue
-) => {
+import { UserAggProps, UserProps } from '../types/UserType';
+
+export const initUserDoc = (email: string, timestamp: FirebaseFirestore.FieldValue): UserProps => {
   return {
     username: email.split('@')[0],
     date_created: timestamp,
@@ -26,7 +25,7 @@ export const initUserDoc = (
   };
 };
 
-export const initUserAgg = (timestamp: FirebaseFirestore.FieldValue) => {
+export const initUserAgg = (timestamp: FirebaseFirestore.FieldValue): UserAggProps => {
   return {
     timestamp,
     space_total: 0,

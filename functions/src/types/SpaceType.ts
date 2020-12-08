@@ -7,11 +7,12 @@ import {
   Humidity,
   Light,
   Air,
+  FirebaseTimestamp,
 } from './GenericType';
 
 export type SpaceProps = {
   name: string;
-  date_created: FirebaseFirestore.FieldValue;
+  date_created: FirebaseTimestamp;
   date_modified: string | null;
   description: string;
   profile_picture: null | Picture;
@@ -34,13 +35,10 @@ export type SpaceProps = {
   roles: Roles;
 };
 
-export type SpaceCreateInput = Omit<
-  SpaceProps,
-  'date_created' | 'date_modified' | 'roles'
->;
+export type SpaceCreateInput = Omit<SpaceProps, 'date_created' | 'date_modified' | 'roles'>;
 
 export type SpaceConfigProps = {
-  timestamp: FirebaseFirestore.FieldValue;
+  timestamp: FirebaseTimestamp;
   current: boolean;
   devices: Array<string>;
   plant_ids: Array<null | string>;
@@ -56,15 +54,15 @@ export interface PlantsConfig {
   size: string;
 }
 export type SpaceAggProps = {
-  timestamp: FirebaseFirestore.FieldValue;
+  timestamp: FirebaseTimestamp;
   reading_total: number;
   plant_total: number;
   dead_total: number;
   inspection_total: number;
-  inspection_last: null | FirebaseFirestore.FieldValue;
+  inspection_last: null | FirebaseTimestamp;
   watering_total: number;
-  watering_last: FirebaseFirestore.FieldValue;
-  fertilizer_last: FirebaseFirestore.FieldValue;
+  watering_last: null | FirebaseTimestamp;
+  fertilizer_last: null | FirebaseTimestamp;
   temperature: Temperature;
   humidity: Humidity;
   light: Light;

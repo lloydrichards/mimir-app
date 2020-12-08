@@ -13,24 +13,24 @@ export const timestamp = admin.firestore.FieldValue.serverTimestamp();
 
 console.log('Starting mimir-app Server...');
 
-// space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
-//   name: 'Test Space #2',
-//   description: 'A Space for testing things',
-//   room_type: 'BEDROOM',
-//   sun_exposure: 'HALF_SHADE',
-//   location: {
-//     region: 'Europe',
-//     country: 'Switzerland',
-//     city: 'Zurich',
-//     address: '',
-//   },
-//   profile_picture: null,
-//   owner: {
-//     name: 'Tester',
-//     email: 'tester@word.com',
-//     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-//   },
-// });
+space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
+  name: 'Test Space #2',
+  description: 'A Space for testing things',
+  room_type: 'BEDROOM',
+  sun_exposure: 'HALF_SHADE',
+  location: {
+    region: 'Europe',
+    country: 'Switzerland',
+    city: 'Zurich',
+    address: '',
+  },
+  profile_picture: null,
+  owner: {
+    name: 'Tester',
+    email: 'tester@word.com',
+    id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
+  },
+});
 
 // plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'Ax7QWEsm2g33AV0UjFya', {
 //   nickname: 'Plant #2',
@@ -59,9 +59,9 @@ console.log('Starting mimir-app Server...');
 //   },
 // });
 
-plant_MOVED(
-  'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-  'agHYKTtkN6CpS313rw8X',
-  'Ax7QWEsm2g33AV0UjFya',
-  'jdzguo67OlB5lu3KXTpo'
-);
+// plant_MOVED(
+//   'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
+//   'agHYKTtkN6CpS313rw8X',
+//   'Ax7QWEsm2g33AV0UjFya',
+//   'jdzguo67OlB5lu3KXTpo'
+// );

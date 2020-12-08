@@ -1,13 +1,15 @@
-export const initPlantAggs = (timestamp: FirebaseFirestore.FieldValue) => {
+import { PlantAggProps } from '../types/PlantType';
+
+export const initPlantAggs = (timestamp: FirebaseFirestore.FieldValue): PlantAggProps => {
   return {
     timestamp,
-    space: {},
+    space: null,
     children_total: 0,
     happiness_total: 0,
     happiness_current: 0,
     health_total: 0,
     health_current: 0,
-    read_total: 0,
+    reading_total: 0,
     inspection_total: 0,
     inspection_last: null,
     watering_total: 0,
@@ -26,7 +28,7 @@ export const initPlantAggs = (timestamp: FirebaseFirestore.FieldValue) => {
     light: {
       shade: 0,
       half_shade: 0,
-      full: 0,
+      full_sun: 0,
       avg: 0,
       max: 0,
     },
