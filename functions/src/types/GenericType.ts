@@ -93,4 +93,4 @@ export type Air = {
   max: number;
 };
 
-export type FirebaseTimestamp = FirebaseFirestore.FieldValue;
+export type FirebaseTimestamp = FirebaseFirestore.Timestamp;

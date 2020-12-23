@@ -1,9 +1,12 @@
+import { FirebaseTimestamp } from './GenericType';
+
 export type ReadingProps = {
   user_id: string;
   device_id: string;
-  space_id: Array<null | string>;
-  species_id: Array<null | string>;
-  timestamp: FirebaseFirestore.FieldValue;
+  space_ids: Array<string>;
+  plants_ids: Array<string>;
+  species_ids: Array<string>;
+  timestamp: FirebaseTimestamp;
   bootCount: number;
   temperature: number;
   humidity: number;

@@ -1,6 +1,6 @@
 import { PlantAggProps } from '../types/PlantType';
 
-export const initPlantAggs = (timestamp: FirebaseFirestore.FieldValue): PlantAggProps => {
+export const initPlantAggs = (timestamp: FirebaseFirestore.Timestamp): PlantAggProps => {
   return {
     timestamp,
     space: null,

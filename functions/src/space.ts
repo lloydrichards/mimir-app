@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initSpaceAgg, initSpaceConfig } from './docs/space';
-import { Log } from './types/GenericType';
+import { FirebaseTimestamp, Log } from './types/GenericType';
 import { SpaceAggProps } from './types/SpaceType';
 import { reCalc } from './helpers';
 import { once, setEventSuccess } from './util/once';
 
-const timestamp = admin.firestore.FieldValue.serverTimestamp();
+const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
 const db = admin.firestore();
 const stats = db.collection('Admin').doc('--spaces-stats--');

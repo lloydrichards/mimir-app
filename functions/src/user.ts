@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initUserAgg, initUserDoc } from './docs/users';
-import { Log, Owner } from './types/GenericType';
+import { FirebaseTimestamp, Log, Owner } from './types/GenericType';
 import { UserAggProps } from './types/UserType';
 import { once, setEventSuccess } from './util/once';
 
-const timestamp = admin.firestore.FieldValue.serverTimestamp();
+const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
 const db = admin.firestore();
 const stats = db.collection('Admin').doc('--users-stats--');

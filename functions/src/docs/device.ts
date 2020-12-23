@@ -1,6 +1,6 @@
 import { DeviceAggProps, DeviceProps } from '../types/DeviceType';
 
-export const initDeviceDoc = (timestamp: FirebaseFirestore.FieldValue): DeviceProps => {
+export const initDeviceDoc = (timestamp: FirebaseFirestore.Timestamp): DeviceProps => {
   return {
     nickname: '',
     date_created: timestamp,
@@ -16,7 +16,7 @@ export const initDeviceDoc = (timestamp: FirebaseFirestore.FieldValue): DevicePr
   };
 };
 
-export const initDeviceAgg = (timestamp: FirebaseFirestore.FieldValue): DeviceAggProps => {
+export const initDeviceAgg = (timestamp: FirebaseFirestore.Timestamp): DeviceAggProps => {
   return {
     timestamp,
     space: null,

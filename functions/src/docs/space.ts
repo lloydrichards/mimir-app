@@ -1,6 +1,6 @@
 import { SpaceAggProps, SpaceConfigProps } from '../types/SpaceType';
 
-export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue): SpaceAggProps => {
+export const initSpaceAgg = (timestamp: FirebaseFirestore.Timestamp): SpaceAggProps => {
   return {
     timestamp,
     reading_total: 0,
@@ -35,7 +35,7 @@ export const initSpaceAgg = (timestamp: FirebaseFirestore.FieldValue): SpaceAggP
   };
 };
 
-export const initSpaceConfig = (timestamp: FirebaseFirestore.FieldValue): SpaceConfigProps => {
+export const initSpaceConfig = (timestamp: FirebaseFirestore.Timestamp): SpaceConfigProps => {
   return {
     timestamp,
     current: true,

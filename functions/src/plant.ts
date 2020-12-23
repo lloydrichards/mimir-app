@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initPlantAggs } from './docs/plants';
-import { Log } from './types/GenericType';
+import { FirebaseTimestamp, Log } from './types/GenericType';
 import { PlantAggProps } from './types/PlantType';
 import { reCalc } from './helpers';
 
-const timestamp = admin.firestore.FieldValue.serverTimestamp();
+const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
 const db = admin.firestore();
 
