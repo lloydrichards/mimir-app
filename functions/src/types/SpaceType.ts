@@ -29,13 +29,16 @@ export type SpaceProps = {
     | 'LIBRARY'
     | 'KITCHEN'
     | 'OTHER';
-  sun_exposure: 'SHADE' | 'HALF_SHADE' | 'FULL_SUN';
+  light_direction: 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
   location: Location;
   owner: Owner;
   roles: Roles;
 };
 
-export type SpaceCreateInput = Omit<SpaceProps, 'date_created' | 'date_modified' | 'roles'>;
+export type SpaceCreateInput = Omit<
+  SpaceProps,
+  'date_created' | 'date_modified' | 'roles'
+>;
 
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;

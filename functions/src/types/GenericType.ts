@@ -21,6 +21,7 @@ export type Log = {
   >;
   content: {
     user_id?: string;
+    user_email?: string;
     space_id?: string;
     space_type?: string;
     space_name?: string;

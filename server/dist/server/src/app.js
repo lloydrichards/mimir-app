@@ -48,31 +48,36 @@ console.log('Starting mimir-app Server...');
 //     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
 //   },
 // });
-// plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'Ax7QWEsm2g33AV0UjFya', {
-//   nickname: 'Plant #2',
-//   description: ' Tester Plant',
-//   profile_picture: null,
-//   form: 'OVAL',
-//   pot: {
-//     type: 'TERRACOTTA',
-//     size: 17,
-//     tray: true,
-//     hanging: false,
-//   },
-//   owner: {
-//     name: 'Tester',
-//     email: '',
-//     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-//   },
-//   parent: null,
-//   species: {
-//     family: 'Fam',
-//     genus: 'Gen',
-//     species: 'spp',
-//     subspecies: '',
-//     cultivar: '',
-//     id: 'Tester Species #2',
-//   },
-// });
-plant_1.plant_MOVED('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'agHYKTtkN6CpS313rw8X', 'Ax7QWEsm2g33AV0UjFya', 'jdzguo67OlB5lu3KXTpo');
+plant_1.plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'jdzguo67OlB5lu3KXTpo', {
+    nickname: 'Pothos',
+    description: ' Tester Plant',
+    profile_picture: null,
+    form: 'OVAL',
+    pot: {
+        type: 'TERRACOTTA',
+        size: 17,
+        tray: true,
+        hanging: false,
+    },
+    owner: {
+        name: 'Tester',
+        email: '',
+        id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
+    },
+    parent: null,
+    species: {
+        family: 'Araceae',
+        genus: 'Scindapsus',
+        species: 'pictus',
+        subspecies: '',
+        cultivar: '',
+        id: 'Scindapsus pictus',
+    },
+});
+// plant_MOVED(
+//   'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
+//   'agHYKTtkN6CpS313rw8X',
+//   'Ax7QWEsm2g33AV0UjFya',
+//   'jdzguo67OlB5lu3KXTpo'
+// );
 //# sourceMappingURL=app.js.map

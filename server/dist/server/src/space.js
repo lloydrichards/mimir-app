@@ -16,7 +16,7 @@ const space_CREATE = (user_id, data) => {
         type: ['SPACE_CREATED', 'POINTS'],
         content: {
             device_id: newSpace.id,
-            created_by: user_id,
+            user_id: user_id,
             points: 10,
         },
     };

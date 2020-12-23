@@ -93,8 +93,8 @@ const plant_MOVED = (user_id, plant_id, fromSpace_id, toSpace_id) => {
         type: ['PLANT_MOVED', 'POINTS'],
         content: {
             user_id,
-            fromSpace: fromSpace_id,
-            toSpace: toSpace_id,
+            fromSpace_id: fromSpace_id,
+            toSpace_id: toSpace_id,
             plant_id,
             points: 5,
         },
