@@ -99,7 +99,10 @@ const minReading = (
   readings: Array<ReadingProps>,
   key: 'temperature' | 'humidity' | 'luminance' | 'iaq' | 'eVOC' | 'eCO2'
 ): number => {
-  return readings.reduce((acc, cur) => (cur[key] < acc ? cur[key] : acc), 0);
+  return readings.reduce(
+    (acc, cur) => (cur[key] < acc ? cur[key] : acc === 0 ? cur[key] : acc),
+    0
+  );
 };
 const maxReading = (
   readings: Array<ReadingProps>,
@@ -119,11 +122,9 @@ const totalHrReadings = (
   min: number,
   max: number
 ): number => {
-  const total = 0;
-  readings.forEach((r) =>
-    r[key] > min && r[key] <= max ? total + 0.25 : null
-  );
-  return total;
+  return readings.reduce((total, cur) => {
+    return cur[key] >= min && cur[key] < max ? total + 0.25 : total;
+  }, 0);
 };
 
 export const dailyReading = functions.pubsub
@@ -165,6 +166,7 @@ export const dailyReading = functions.pubsub
         ];
 
         space_ids.forEach((space_id) => {
+          console.log('For Each Space');
           const dReading = db
             .collection('mimirSpaces')
             .doc(space_id)
@@ -172,7 +174,7 @@ export const dailyReading = functions.pubsub
             .doc(admin.firestore.Timestamp.now().toDate().toDateString());
 
           const filteredReading = readings.filter((i) =>
-            i.plants_ids.includes(space_id)
+            i.space_ids.includes(space_id)
           );
 
           const temperature = {
@@ -199,47 +201,45 @@ export const dailyReading = functions.pubsub
           };
           const air = {
             max: maxReading(
-              filteredReading.filter((a) => a.iaqAccuracy > 3),
+              filteredReading.filter((a) => a.iaqAccuracy === 3),
               'iaq'
             ),
             avg: avgReading(
-              filteredReading.filter((a) => a.iaqAccuracy > 3),
+              filteredReading.filter((a) => a.iaqAccuracy === 3),
               'iaq'
             ),
           };
           const data = filteredReading.reduce((acc, cur) => {
             const newAcc = acc;
-            const hour = timestamp.toDate().getHours();
+            const hour = cur.timestamp.toDate().getHours();
             const hourData = acc[hour];
             newAcc[hour] = {
-              total: (hourData.total || 0) + 1,
+              total: (hourData?.total || 0) + 1,
+              timestamp: cur.timestamp,
               temperature:
-                (hourData.temperature || 0 * (hourData.total || 0)) +
-                cur.temperature / (hourData.total || 0) +
-                1,
+                ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                  cur.temperature) /
+                ((hourData?.total || 0) + 1),
               humidity:
-                (hourData.humidity || 0 * (hourData.total || 0)) +
-                cur.humidity / (hourData.total || 0) +
-                1,
+                ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                  cur.humidity) /
+                ((hourData?.total || 0) + 1),
               iaq:
-                (hourData.iaq || 0 * (hourData.total || 0)) +
-                cur.iaq / (hourData.total || 0) +
-                1,
+                ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+                ((hourData?.total || 0) + 1),
               eCO2:
-                (hourData.eCO2 || 0 * (hourData.total || 0)) +
-                cur.eCO2 / (hourData.total || 0) +
-                1,
+                ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+                ((hourData?.total || 0) + 1),
               eVOC:
-                (hourData.eVOC || 0 * (hourData.total || 0)) +
-                cur.eVOC / (hourData.total || 0) +
-                1,
+                ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+                ((hourData?.total || 0) + 1),
               luminance:
-                (hourData.luminance || 0 * (hourData.total || 0)) +
-                cur.luminance / (hourData.total || 0) +
-                1,
+                ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                  cur.luminance) /
+                ((hourData?.total || 0) + 1),
             };
             return newAcc;
-          }, {} as { [hour: number]: { total?: number; temperature?: number; humidity?: number; iaq?: number; eCO2?: number; eVOC?: number; luminance?: number } });
+          }, {} as DailyReadingData);
 
           t.set(dReading, {
             timestamp,
@@ -284,47 +284,45 @@ export const dailyReading = functions.pubsub
           };
           const air = {
             max: maxReading(
-              filteredReading.filter((a) => a.iaqAccuracy > 3),
+              filteredReading.filter((a) => a.iaqAccuracy === 3),
               'iaq'
             ),
             avg: avgReading(
-              filteredReading.filter((a) => a.iaqAccuracy > 3),
+              filteredReading.filter((a) => a.iaqAccuracy === 3),
               'iaq'
             ),
           };
           const data = filteredReading.reduce((acc, cur) => {
             const newAcc = acc;
-            const hour = timestamp.toDate().getHours();
+            const hour = cur.timestamp.toDate().getHours();
             const hourData = acc[hour];
             newAcc[hour] = {
-              total: (hourData.total || 0) + 1,
+              total: (hourData?.total || 0) + 1,
+              timestamp: cur.timestamp,
               temperature:
-                (hourData.temperature || 0 * (hourData.total || 0)) +
-                cur.temperature / (hourData.total || 0) +
-                1,
+                ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                  cur.temperature) /
+                ((hourData?.total || 0) + 1),
               humidity:
-                (hourData.humidity || 0 * (hourData.total || 0)) +
-                cur.humidity / (hourData.total || 0) +
-                1,
+                ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                  cur.humidity) /
+                ((hourData?.total || 0) + 1),
               iaq:
-                (hourData.iaq || 0 * (hourData.total || 0)) +
-                cur.iaq / (hourData.total || 0) +
-                1,
+                ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+                ((hourData?.total || 0) + 1),
               eCO2:
-                (hourData.eCO2 || 0 * (hourData.total || 0)) +
-                cur.eCO2 / (hourData.total || 0) +
-                1,
+                ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+                ((hourData?.total || 0) + 1),
               eVOC:
-                (hourData.eVOC || 0 * (hourData.total || 0)) +
-                cur.eVOC / (hourData.total || 0) +
-                1,
+                ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+                ((hourData?.total || 0) + 1),
               luminance:
-                (hourData.luminance || 0 * (hourData.total || 0)) +
-                cur.luminance / (hourData.total || 0) +
-                1,
+                ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                  cur.luminance) /
+                ((hourData?.total || 0) + 1),
             };
             return newAcc;
-          }, {} as { [hour: number]: { total?: number; temperature?: number; humidity?: number; iaq?: number; eCO2?: number; eVOC?: number; luminance?: number } });
+          }, {} as DailyReadingData);
 
           t.set(dReading, {
             timestamp,
@@ -338,3 +336,248 @@ export const dailyReading = functions.pubsub
       })
       .catch((err) => console.error(err));
   });
+
+export const readingTest = functions.https.onCall(async (context) => {
+  console.log('Running daily reading calculator');
+  return db
+    .runTransaction(async (t) => {
+      const last24hr = new Date(
+        admin.firestore.Timestamp.now().toMillis() - 24 * 60 * 60 * 1000
+      );
+      const readings = (
+        await t.get(
+          db.collection('mimirReadings').where('timestamp', '>', last24hr)
+        )
+      ).docs.map((i) => i.data()) as Array<ReadingProps>;
+
+      const plant_ids = [
+        ...new Set(
+          readings
+            .map((i) => {
+              const plantArr: Array<string> = [];
+              i.plants_ids.forEach((id) => plantArr.push(id));
+              return plantArr;
+            })
+            .reduce((acc, val) => acc.concat(val), [])
+        ),
+      ];
+      const space_ids = [
+        ...new Set(
+          readings
+            .map((i) => {
+              const spaceArr: Array<string> = [];
+              i.space_ids.forEach((id) => spaceArr.push(id));
+              return spaceArr;
+            })
+            .reduce((acc, val) => acc.concat(val), [])
+        ),
+      ];
+
+      space_ids.forEach((space_id) => {
+        console.log('For Each Space');
+        const dReading = db
+          .collection('mimirSpaces')
+          .doc(space_id)
+          .collection('Daily')
+          .doc(admin.firestore.Timestamp.now().toDate().toDateString());
+
+        const filteredReading = readings.filter((i) =>
+          i.space_ids.includes(space_id)
+        );
+
+        const temperature = {
+          min: minReading(filteredReading, 'temperature'),
+          max: maxReading(filteredReading, 'temperature'),
+          avg: avgReading(filteredReading, 'temperature'),
+        };
+        const humidity = {
+          min: minReading(filteredReading, 'humidity'),
+          max: maxReading(filteredReading, 'humidity'),
+          avg: avgReading(filteredReading, 'humidity'),
+        };
+        const light = {
+          shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
+          half_shade: totalHrReadings(
+            filteredReading,
+            'luminance',
+            2500,
+            10000
+          ),
+          full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
+          avg: avgReading(filteredReading, 'luminance'),
+          max: maxReading(filteredReading, 'luminance'),
+        };
+        const air = {
+          max: maxReading(
+            filteredReading.filter((a) => a.iaqAccuracy === 3),
+            'iaq'
+          ),
+          avg: avgReading(
+            filteredReading.filter((a) => a.iaqAccuracy === 3),
+            'iaq'
+          ),
+        };
+        const data = filteredReading.reduce((acc, cur) => {
+          const newAcc = acc;
+          const hour = cur.timestamp.toDate().getHours();
+          const hourData = acc[hour];
+          newAcc[hour] = {
+            total: (hourData?.total || 0) + 1,
+            timestamp: cur.timestamp,
+            temperature:
+              ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                cur.temperature) /
+              ((hourData?.total || 0) + 1),
+            humidity:
+              ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                cur.humidity) /
+              ((hourData?.total || 0) + 1),
+            iaq:
+              ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+              ((hourData?.total || 0) + 1),
+            eCO2:
+              ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+              ((hourData?.total || 0) + 1),
+            eVOC:
+              ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+              ((hourData?.total || 0) + 1),
+            luminance:
+              ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                cur.luminance) /
+              ((hourData?.total || 0) + 1),
+          };
+          return newAcc;
+        }, {} as DailyReadingData);
+
+        t.set(dReading, {
+          timestamp,
+          temperature,
+          humidity,
+          air,
+          light,
+          data,
+        });
+      });
+      plant_ids.forEach((plant_id) => {
+        const dReading = db
+          .collection('mimirPlants')
+          .doc(plant_id)
+          .collection('Daily')
+          .doc(admin.firestore.Timestamp.now().toDate().toDateString());
+        const filteredReading = readings.filter((i) =>
+          i.plants_ids.includes(plant_id)
+        );
+
+        const temperature = {
+          min: minReading(filteredReading, 'temperature'),
+          max: maxReading(filteredReading, 'temperature'),
+          avg: avgReading(filteredReading, 'temperature'),
+        };
+        const humidity = {
+          min: minReading(filteredReading, 'humidity'),
+          max: maxReading(filteredReading, 'humidity'),
+          avg: avgReading(filteredReading, 'humidity'),
+        };
+        const light = {
+          shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
+          half_shade: totalHrReadings(
+            filteredReading,
+            'luminance',
+            2500,
+            10000
+          ),
+          full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
+          avg: avgReading(filteredReading, 'luminance'),
+          max: maxReading(filteredReading, 'luminance'),
+        };
+        const air = {
+          max: maxReading(
+            filteredReading.filter((a) => a.iaqAccuracy === 3),
+            'iaq'
+          ),
+          avg: avgReading(
+            filteredReading.filter((a) => a.iaqAccuracy === 3),
+            'iaq'
+          ),
+        };
+        const data = filteredReading.reduce((acc, cur) => {
+          const newAcc = acc;
+          const hour = cur.timestamp.toDate().getHours();
+          const hourData = acc[hour];
+          newAcc[hour] = {
+            total: (hourData?.total || 0) + 1,
+            timestamp: cur.timestamp,
+            temperature:
+              ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                cur.temperature) /
+              ((hourData?.total || 0) + 1),
+            humidity:
+              ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                cur.humidity) /
+              ((hourData?.total || 0) + 1),
+            iaq:
+              ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+              ((hourData?.total || 0) + 1),
+            eCO2:
+              ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+              ((hourData?.total || 0) + 1),
+            eVOC:
+              ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+              ((hourData?.total || 0) + 1),
+            luminance:
+              ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                cur.luminance) /
+              ((hourData?.total || 0) + 1),
+          };
+          return newAcc;
+        }, {} as DailyReadingData);
+
+        t.set(dReading, {
+          timestamp,
+          temperature,
+          humidity,
+          air,
+          light,
+          data,
+        });
+      });
+    })
+    .catch((err) => console.error(err));
+});
+
+type DailyReadingData = {
+  [hour: number]: {
+    total?: number;
+    timestamp: FirebaseTimestamp;
+    temperature?: number;
+    humidity?: number;
+    iaq?: number;
+    eCO2?: number;
+    eVOC?: number;
+    luminance?: number;
+  };
+};
+// const ScoreCalculator = functions.firestore
+//   .document('mimirPlants/{plant_id}/Daily/{daily_id}')
+//   .onCreate((daily, context) => {
+//     const plant_id = context.params.plant_id;
+//     return db
+//       .runTransaction(async (t) => {
+//         const plantDoc = (
+//           await t.get(db.collection('mimiPlants').doc(plant_id))
+//         ).data() as PlantProps;
+
+//         const species_id = plantDoc.species.id;
+//         const data = daily.data().data;
+
+//         //Run function to generate score using [species_id] and [data]
+//         //Return either score or error
+//         const score = 0;
+
+//         if (!score) throw `Error: ${score}`;
+
+//         //if successful, update the daily document with the score
+//         t.update(daily.ref, { score });
+//       })
+//       .catch((err) => console.error(err));
+//   });

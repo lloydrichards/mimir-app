@@ -18,18 +18,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.timestamp = exports.db = void 0;
 const admin = __importStar(require("firebase-admin"));
-const plant_1 = require("./plant");
+const app_1 = __importDefault(require("firebase/app"));
+require('firebase/functions');
 var serviceAccount = require('../serviceAccountKey.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
+const app = app_1.default.initializeApp({
+    apiKey: 'AIzaSyATtD1MmPJo9bdSRQuPghzPwI3ROcdSfE0',
+    authDomain: 'mimir-app-dev.firebaseapp.com',
+    projectId: 'mimir-app-dev',
+    storageBucket: 'mimir-app-dev.appspot.com',
+    messagingSenderId: '999550951543',
+    appId: '1:999550951543:web:2822c33ea1a8ec68d36672',
+    measurementId: 'G-CFQVCR1SEH',
+});
+const test = app.functions().httpsCallable('readingTest');
 exports.db = admin.firestore();
-exports.timestamp = admin.firestore.FieldValue.serverTimestamp();
+exports.timestamp = admin.firestore.Timestamp.now();
 //const increment = admin.firestore.FieldValue.increment;
 console.log('Starting mimir-app Server...');
+test();
 // space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
 //   name: 'Test Space #2',
 //   description: 'A Space for testing things',
@@ -48,32 +63,32 @@ console.log('Starting mimir-app Server...');
 //     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
 //   },
 // });
-plant_1.plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'jdzguo67OlB5lu3KXTpo', {
-    nickname: 'Pothos',
-    description: ' Tester Plant',
-    profile_picture: null,
-    form: 'OVAL',
-    pot: {
-        type: 'TERRACOTTA',
-        size: 17,
-        tray: true,
-        hanging: false,
-    },
-    owner: {
-        name: 'Tester',
-        email: '',
-        id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-    },
-    parent: null,
-    species: {
-        family: 'Araceae',
-        genus: 'Scindapsus',
-        species: 'pictus',
-        subspecies: '',
-        cultivar: '',
-        id: 'Scindapsus pictus',
-    },
-});
+// plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'jdzguo67OlB5lu3KXTpo', {
+//   nickname: 'Pothos',
+//   description: ' Tester Plant',
+//   profile_picture: null,
+//   form: 'OVAL',
+//   pot: {
+//     type: 'TERRACOTTA',
+//     size: 17,
+//     tray: true,
+//     hanging: false,
+//   },
+//   owner: {
+//     name: 'Tester',
+//     email: '',
+//     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
+//   },
+//   parent: null,
+//   species: {
+//     family: 'Araceae',
+//     genus: 'Scindapsus',
+//     species: 'pictus',
+//     subspecies: '',
+//     cultivar: '',
+//     id: 'Scindapsus pictus',
+//   },
+// });
 // plant_MOVED(
 //   'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
 //   'agHYKTtkN6CpS313rw8X',
