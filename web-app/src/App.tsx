@@ -1,19 +1,22 @@
-import React, { useContext } from 'react';
-import './styles/App.css';
+import React from 'react';
+import { AuthProvider } from './components/auth/Auth';
 import Login from './components/auth/Login';
-import { AuthContext, AuthProvider } from './components/auth/Auth';
-import SignOut from './components/auth/Sign Out';
+import SignOut from './components/auth/SignOut';
+import SignUp from './components/SignUp/SignUp';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import Dashboard from './components/Dashboard/Dashboard';
 
 const App = () => {
-  const user = useContext(AuthContext);
   return (
-    <AuthProvider>
-      <div className='App'>
-        <Login />
-
-        {user ? <SignOut /> : null}
-      </div>
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <Switch>
+          <Route exact path='/' component={Dashboard} />
+          <Route path='/signup' component={SignUp} />
+        </Switch>
+        <SignOut />
+      </AuthProvider>
+    </Router>
   );
 };
 

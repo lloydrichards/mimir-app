@@ -188,16 +188,18 @@ export const dailyReading = functions.pubsub
             avg: avgReading(filteredReading, 'humidity'),
           };
           const light = {
-            shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
-            half_shade: totalHrReadings(
-              filteredReading,
-              'luminance',
-              2500,
-              10000
+            low: totalHrReadings(filteredReading, 'luminance', 250, 2500),
+            medium: totalHrReadings(filteredReading, 'luminance', 2500, 10000),
+            bright: totalHrReadings(filteredReading, 'luminance', 10000, 20000),
+            full: totalHrReadings(filteredReading, 'luminance', 20000, 100000),
+            avg: avgReading(
+              filteredReading.filter((i) => i.luminance > 0),
+              'luminance'
             ),
-            full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
-            avg: avgReading(filteredReading, 'luminance'),
-            max: maxReading(filteredReading, 'luminance'),
+            max: maxReading(
+              filteredReading.filter((i) => i.luminance > 0),
+              'luminance'
+            ),
           };
           const air = {
             max: maxReading(
@@ -217,24 +219,24 @@ export const dailyReading = functions.pubsub
               total: (hourData?.total || 0) + 1,
               timestamp: cur.timestamp,
               temperature:
-                ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                ((hourData?.temperature || 0 * (hourData?.total || 1)) +
                   cur.temperature) /
                 ((hourData?.total || 0) + 1),
               humidity:
-                ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                ((hourData?.humidity || 0 * (hourData?.total || 1)) +
                   cur.humidity) /
                 ((hourData?.total || 0) + 1),
               iaq:
-                ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+                ((hourData?.iaq || 0 * (hourData?.total || 1)) + cur.iaq) /
                 ((hourData?.total || 0) + 1),
               eCO2:
-                ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+                ((hourData?.eCO2 || 0 * (hourData?.total || 1)) + cur.eCO2) /
                 ((hourData?.total || 0) + 1),
               eVOC:
-                ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+                ((hourData?.eVOC || 0 * (hourData?.total || 1)) + cur.eVOC) /
                 ((hourData?.total || 0) + 1),
               luminance:
-                ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                ((hourData?.luminance || 0 * (hourData?.total || 1)) +
                   cur.luminance) /
                 ((hourData?.total || 0) + 1),
             };
@@ -271,16 +273,18 @@ export const dailyReading = functions.pubsub
             avg: avgReading(filteredReading, 'humidity'),
           };
           const light = {
-            shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
-            half_shade: totalHrReadings(
-              filteredReading,
-              'luminance',
-              2500,
-              10000
+            low: totalHrReadings(filteredReading, 'luminance', 250, 2500),
+            medium: totalHrReadings(filteredReading, 'luminance', 2500, 10000),
+            bright: totalHrReadings(filteredReading, 'luminance', 10000, 20000),
+            full: totalHrReadings(filteredReading, 'luminance', 20000, 100000),
+            avg: avgReading(
+              filteredReading.filter((i) => i.luminance > 0),
+              'luminance'
             ),
-            full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
-            avg: avgReading(filteredReading, 'luminance'),
-            max: maxReading(filteredReading, 'luminance'),
+            max: maxReading(
+              filteredReading.filter((i) => i.luminance > 0),
+              'luminance'
+            ),
           };
           const air = {
             max: maxReading(
@@ -300,24 +304,24 @@ export const dailyReading = functions.pubsub
               total: (hourData?.total || 0) + 1,
               timestamp: cur.timestamp,
               temperature:
-                ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+                ((hourData?.temperature || 0 * (hourData?.total || 1)) +
                   cur.temperature) /
                 ((hourData?.total || 0) + 1),
               humidity:
-                ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+                ((hourData?.humidity || 0 * (hourData?.total || 1)) +
                   cur.humidity) /
                 ((hourData?.total || 0) + 1),
               iaq:
-                ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+                ((hourData?.iaq || 0 * (hourData?.total || 1)) + cur.iaq) /
                 ((hourData?.total || 0) + 1),
               eCO2:
-                ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+                ((hourData?.eCO2 || 0 * (hourData?.total || 1)) + cur.eCO2) /
                 ((hourData?.total || 0) + 1),
               eVOC:
-                ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+                ((hourData?.eVOC || 0 * (hourData?.total || 1)) + cur.eVOC) /
                 ((hourData?.total || 0) + 1),
               luminance:
-                ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+                ((hourData?.luminance || 0 * (hourData?.total || 1)) +
                   cur.luminance) /
                 ((hourData?.total || 0) + 1),
             };
@@ -396,16 +400,18 @@ export const readingTest = functions.https.onCall(async (context) => {
           avg: avgReading(filteredReading, 'humidity'),
         };
         const light = {
-          shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
-          half_shade: totalHrReadings(
-            filteredReading,
-            'luminance',
-            2500,
-            10000
+          low: totalHrReadings(filteredReading, 'luminance', 250, 2500),
+          medium: totalHrReadings(filteredReading, 'luminance', 2500, 10000),
+          bright: totalHrReadings(filteredReading, 'luminance', 10000, 20000),
+          full: totalHrReadings(filteredReading, 'luminance', 20000, 100000),
+          avg: avgReading(
+            filteredReading.filter((i) => i.luminance > 0),
+            'luminance'
           ),
-          full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
-          avg: avgReading(filteredReading, 'luminance'),
-          max: maxReading(filteredReading, 'luminance'),
+          max: maxReading(
+            filteredReading.filter((i) => i.luminance > 0),
+            'luminance'
+          ),
         };
         const air = {
           max: maxReading(
@@ -425,24 +431,24 @@ export const readingTest = functions.https.onCall(async (context) => {
             total: (hourData?.total || 0) + 1,
             timestamp: cur.timestamp,
             temperature:
-              ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+              ((hourData?.temperature || 0 * (hourData?.total || 1)) +
                 cur.temperature) /
               ((hourData?.total || 0) + 1),
             humidity:
-              ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+              ((hourData?.humidity || 0 * (hourData?.total || 1)) +
                 cur.humidity) /
               ((hourData?.total || 0) + 1),
             iaq:
-              ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+              ((hourData?.iaq || 0 * (hourData?.total || 1)) + cur.iaq) /
               ((hourData?.total || 0) + 1),
             eCO2:
-              ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+              ((hourData?.eCO2 || 0 * (hourData?.total || 1)) + cur.eCO2) /
               ((hourData?.total || 0) + 1),
             eVOC:
-              ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+              ((hourData?.eVOC || 0 * (hourData?.total || 1)) + cur.eVOC) /
               ((hourData?.total || 0) + 1),
             luminance:
-              ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+              ((hourData?.luminance || 0 * (hourData?.total || 1)) +
                 cur.luminance) /
               ((hourData?.total || 0) + 1),
           };
@@ -479,16 +485,18 @@ export const readingTest = functions.https.onCall(async (context) => {
           avg: avgReading(filteredReading, 'humidity'),
         };
         const light = {
-          shade: totalHrReadings(filteredReading, 'luminance', 0, 2500),
-          half_shade: totalHrReadings(
-            filteredReading,
-            'luminance',
-            2500,
-            10000
+          low: totalHrReadings(filteredReading, 'luminance', 250, 2500),
+          medium: totalHrReadings(filteredReading, 'luminance', 2500, 10000),
+          bright: totalHrReadings(filteredReading, 'luminance', 10000, 20000),
+          full: totalHrReadings(filteredReading, 'luminance', 20000, 100000),
+          avg: avgReading(
+            filteredReading.filter((i) => i.luminance > 0),
+            'luminance'
           ),
-          full: totalHrReadings(filteredReading, 'luminance', 10000, 1000000),
-          avg: avgReading(filteredReading, 'luminance'),
-          max: maxReading(filteredReading, 'luminance'),
+          max: maxReading(
+            filteredReading.filter((i) => i.luminance > 0),
+            'luminance'
+          ),
         };
         const air = {
           max: maxReading(
@@ -508,24 +516,24 @@ export const readingTest = functions.https.onCall(async (context) => {
             total: (hourData?.total || 0) + 1,
             timestamp: cur.timestamp,
             temperature:
-              ((hourData?.temperature || 0 * (hourData?.total || 0)) +
+              ((hourData?.temperature || 0 * (hourData?.total || 1)) +
                 cur.temperature) /
               ((hourData?.total || 0) + 1),
             humidity:
-              ((hourData?.humidity || 0 * (hourData?.total || 0)) +
+              ((hourData?.humidity || 0 * (hourData?.total || 1)) +
                 cur.humidity) /
               ((hourData?.total || 0) + 1),
             iaq:
-              ((hourData?.iaq || 0 * (hourData?.total || 0)) + cur.iaq) /
+              ((hourData?.iaq || 0 * (hourData?.total || 1)) + cur.iaq) /
               ((hourData?.total || 0) + 1),
             eCO2:
-              ((hourData?.eCO2 || 0 * (hourData?.total || 0)) + cur.eCO2) /
+              ((hourData?.eCO2 || 0 * (hourData?.total || 1)) + cur.eCO2) /
               ((hourData?.total || 0) + 1),
             eVOC:
-              ((hourData?.eVOC || 0 * (hourData?.total || 0)) + cur.eVOC) /
+              ((hourData?.eVOC || 0 * (hourData?.total || 1)) + cur.eVOC) /
               ((hourData?.total || 0) + 1),
             luminance:
-              ((hourData?.luminance || 0 * (hourData?.total || 0)) +
+              ((hourData?.luminance || 0 * (hourData?.total || 1)) +
                 cur.luminance) /
               ((hourData?.total || 0) + 1),
           };

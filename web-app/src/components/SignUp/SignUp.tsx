@@ -1,15 +1,15 @@
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
-import { useAuth } from './Auth';
+import {  useAuth } from '../auth/Auth';
 
 const validationSchema = yup.object({
   email: yup.string().required().email(),
   password: yup.string().required(),
 });
 
-const Login = () => {
-  const { login } = useAuth();
+const SignUp = () => {
+  const { login, signUp } = useAuth();
   if (!login) return <div />;
   return (
     <div>
@@ -17,7 +17,7 @@ const Login = () => {
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
           setSubmitting(true);
           try {
-            await login(data.email, data.password).then((res) => {
+            await signUp(data.email, data.password).then((res) => {
               console.log(res);
             });
             resetForm();
@@ -36,13 +36,16 @@ const Login = () => {
         }}>
         {({ isSubmitting, values, status }) => (
           <Form>
-            <Field type='email' name='email' placeholder='Email' />
+            <Field type='text' name='name' placeholder="Name" />
+            <ErrorMessage name='name' component='div' />
+            <br />
+            <Field type='email' name='email' placeholder="Email" />
             <ErrorMessage name='email' component='div' />
             <br />
-            <Field type='password' name='password' placeholder='Password' />
+            <Field type='password' name='password' placeholder="Password" />
             <ErrorMessage name='password' component='div' />
             <button type='submit' disabled={isSubmitting}>
-              Submit
+              Sign Up
             </button>
             {status ? <div>{status.message}</div> : null}
             <h2>DEBUGGER</h2>
@@ -55,4 +58,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
