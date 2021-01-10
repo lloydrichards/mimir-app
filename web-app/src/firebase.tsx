@@ -15,4 +15,5 @@ const app = firebase.initializeApp({
 if (typeof window !== 'undefined') firebase.analytics();
 
 export const auth = app.auth();
+export const timestamp = firebase.firestore.Timestamp.now();
 export default app;

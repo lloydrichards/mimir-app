@@ -1,6 +1,9 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Button } from '@material-ui/core';
+import { Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
+import { PasswordField } from '../forms/PasswordField';
+import { TextField } from '../forms/TextField';
 import { useAuth } from './Auth';
 
 const validationSchema = yup.object({
@@ -18,7 +21,7 @@ const Login = () => {
           setSubmitting(true);
           try {
             await login(data.email, data.password).then((res) => {
-              console.log(res);
+              console.log('Logged In!');
             });
             resetForm();
           } catch (error) {
@@ -36,18 +39,22 @@ const Login = () => {
         }}>
         {({ isSubmitting, values, status }) => (
           <Form>
-            <Field type='email' name='email' placeholder='Email' />
-            <ErrorMessage name='email' component='div' />
+            <TextField
+              label='Email '
+              name='email'
+              placeholder='Email'
+              type='input'
+            />
             <br />
-            <Field type='password' name='password' placeholder='Password' />
-            <ErrorMessage name='password' component='div' />
-            <button type='submit' disabled={isSubmitting}>
-              Submit
-            </button>
+            <PasswordField
+              label='Password'
+              name='password'
+              placeholder='Password'
+            />
+            <Button type='submit' disabled={isSubmitting}>
+              Login
+            </Button>
             {status ? <div>{status.message}</div> : null}
-            <h2>DEBUGGER</h2>
-            <pre>{JSON.stringify(values, null, 2)}</pre>
-            <pre>{JSON.stringify(status, null, 2)}</pre>{' '}
           </Form>
         )}
       </Formik>

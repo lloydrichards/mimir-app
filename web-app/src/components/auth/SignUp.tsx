@@ -1,7 +1,10 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { Button } from '@material-ui/core';
+import { Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
-import {  useAuth } from '../auth/Auth';
+import { PasswordField } from '../forms/PasswordField';
+import { TextField } from '../forms/TextField';
+import { useAuth } from './Auth';
 
 const validationSchema = yup.object({
   email: yup.string().required().email(),
@@ -17,9 +20,9 @@ const SignUp = () => {
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
           setSubmitting(true);
           try {
-            await signUp(data.email, data.password).then((res) => {
-              console.log(res);
-            });
+            await signUp(data.email, data.password).then((res) =>
+              res.user?.updateProfile({ displayName: data.name })
+            );
             resetForm();
           } catch (error) {
             console.log('error:', error);
@@ -31,26 +34,35 @@ const SignUp = () => {
         }}
         validationSchema={validationSchema}
         initialValues={{
+          name: '',
           email: '',
           password: '',
         }}>
         {({ isSubmitting, values, status }) => (
           <Form>
-            <Field type='text' name='name' placeholder="Name" />
-            <ErrorMessage name='name' component='div' />
+            <TextField
+              label='Name '
+              name='name'
+              placeholder='Display Name'
+              type='input'
+            />{' '}
             <br />
-            <Field type='email' name='email' placeholder="Email" />
-            <ErrorMessage name='email' component='div' />
+            <TextField
+              label='Email '
+              name='email'
+              placeholder='Email'
+              type='input'
+            />{' '}
             <br />
-            <Field type='password' name='password' placeholder="Password" />
-            <ErrorMessage name='password' component='div' />
-            <button type='submit' disabled={isSubmitting}>
+            <PasswordField
+              label='Password'
+              name='password'
+              placeholder='Password'
+            />
+            <Button type='submit' disabled={isSubmitting}>
               Sign Up
-            </button>
+            </Button>
             {status ? <div>{status.message}</div> : null}
-            <h2>DEBUGGER</h2>
-            <pre>{JSON.stringify(values, null, 2)}</pre>
-            <pre>{JSON.stringify(status, null, 2)}</pre>{' '}
           </Form>
         )}
       </Formik>
