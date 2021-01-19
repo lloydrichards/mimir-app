@@ -1,16 +1,13 @@
 import { Button, MenuItem } from '@material-ui/core';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import * as yup from 'yup';
-import { PasswordField } from '../forms/PasswordField';
+import { Form, Formik } from 'formik';
+import * as React from 'react';
 import { TextField } from '../forms/TextField';
-import { useAuth } from '../auth/Auth';
-import app from '../../firebase';
-import Login from '../auth/Login';
+import app, { timestamp } from '../../firebase';
 import { UserProps } from '../../types/UserType';
 import { TextArea } from '../forms/TextArea';
 import { Selector } from '../forms/Selector';
-import { updateProfile } from '../dispatchers/updateProfile';
+import { Log } from '../../types/GenericType';
+import { useHistory } from 'react-router-dom';
 
 interface Props {
   userId: string;
@@ -19,14 +16,33 @@ interface Props {
 const db = app.firestore();
 
 const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
+  const history = useHistory();
   return (
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
+          const batch = db.batch();
+          const userRef = db.collection('mimirUsers').doc(userId);
+          const userLog = userRef.collection('Logs').doc();
           setSubmitting(true);
           try {
-            await updateProfile(userId, data).then((i) => console.log(i));
-            resetForm();
+            const newLog: Log = {
+              timestamp: timestamp,
+              type: ['USER_UPDATED'],
+              content: { user_id: userId },
+            };
+
+            batch.set(
+              userRef,
+              { ...data, date_modified: timestamp },
+              { merge: true }
+            );
+            batch.set(userLog, newLog);
+
+            return batch.commit().then(() => {
+              console.log('Updated!');
+              return history.push('/');
+            });
           } catch (error) {
             console.log('error:', error);
             alert(error);

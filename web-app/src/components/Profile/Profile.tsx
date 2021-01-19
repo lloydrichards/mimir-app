@@ -10,7 +10,6 @@ const db = app.firestore();
 function Profile() {
   const { currentUser } = useAuth();
   const [userDoc, setUser] = useState<UserProps>();
-  const [update, setUpdate] = useState<boolean>(false);
   if (!currentUser) return <Login />;
 
   db.collection('mimirUsers')

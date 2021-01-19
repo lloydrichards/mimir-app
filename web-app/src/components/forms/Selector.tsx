@@ -2,24 +2,12 @@ import React from 'react';
 import { FieldAttributes, useField } from 'formik';
 import {
   Select,
-  MenuItem,
   FormControl,
   InputLabel,
   makeStyles,
   Theme,
   createStyles,
 } from '@material-ui/core';
-import LocalHotelRoundedIcon from '@material-ui/icons/LocalHotelRounded';
-import KitchenRoundedIcon from '@material-ui/icons/KitchenRounded';
-import LocalDiningRoundedIcon from '@material-ui/icons/LocalDiningRounded';
-import WeekendRoundedIcon from '@material-ui/icons/WeekendRounded';
-import TvRoundedIcon from '@material-ui/icons/TvRounded';
-import WcRoundedIcon from '@material-ui/icons/WcRounded';
-import LaptopChromebookRoundedIcon from '@material-ui/icons/LaptopChromebookRounded';
-import EmojiNatureRoundedIcon from '@material-ui/icons/EmojiNatureRounded';
-import MenuBookRoundedIcon from '@material-ui/icons/MenuBookRounded';
-import DeckRoundedIcon from '@material-ui/icons/DeckRounded';
-import LocalFloristRoundedIcon from '@material-ui/icons/LocalFloristRounded';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
