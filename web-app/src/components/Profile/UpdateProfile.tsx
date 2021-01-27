@@ -3,11 +3,11 @@ import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
 import app, { timestamp } from '../../firebase';
-import { UserProps } from '../../types/UserType';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
-import { Log } from '../../types/GenericType';
 import { useHistory } from 'react-router-dom';
+import { UserProps } from '../../types/UserType';
+import { Log } from '../../types/GenericType';
 
 interface Props {
   userId: string;

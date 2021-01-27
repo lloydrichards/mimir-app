@@ -2,6 +2,7 @@ export type Log = {
   timestamp: FirebaseTimestamp;
   type: Array<
     | 'USER_CREATED' //when a User is created
+    | 'USER_UPDATED'
     | 'SPACE_CREATED' //when a Space is created
     | 'SPACE_UPDATED' //when a Space config is updated
     | 'SPACE_DELETED' //when a Space is deleted

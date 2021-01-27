@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../auth/Auth';
-import Login from '../auth/Login';
-import app from '../../firebase';
-import { UserProps } from '../../types/UserType';
+import { useAuth } from '../components/auth/Auth';
+import Login from '../components/auth/Login';
+import app from '../firebase';
 
-import Spaces from './Spaces';
-import SignUp from '../auth/SignUp';
+import Spaces from '../components/Dashboard/Spaces';
 import { Button } from '@material-ui/core';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import { UserProps } from '../types/UserType';
 
 const db = app.firestore();
 
@@ -35,6 +34,9 @@ function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
+      <Button variant='outlined' onClick={() => history.push('/encyclopedia')}>
+        Add Species
+      </Button>
 
       <p>Date Created: {user?.date_created?.toDate().toDateString()}</p>
       <p>Garden Level: {user?.gardener}</p>
@@ -44,7 +46,6 @@ function Dashboard() {
       </Button>
 
       <Spaces userId={currentUser.uid} />
-      
     </div>
   );
 }

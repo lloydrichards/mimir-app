@@ -4,11 +4,11 @@ export type SpeciesProps = {
   family: string;
   genus: string;
   species: string;
-  subspecies: string;
-  cultivar: string;
+  subspecies: string | null;
+  cultivar: string | null;
   description: string;
   common_name: Array<string>;
-  type: Array<string>;
+  type: Array<PlantType>;
   habitat: Array<HabitatType>;
   form: Array<FormType>;
   origin: Array<string>;
@@ -20,12 +20,12 @@ export type SpeciesProps = {
   exposure: Array<ExposureType>;
   soil: Array<SoilType>;
   water: Array<WaterType>;
-  height_max: number;
-  height_min: number;
-  spread_min: number;
-  spread_max: number;
-  growth_rate: GrowthRateType;
-  maintenance: MaintenanceType;
+  height_max: number | null;
+  height_min: number | null;
+  spread_min: number | null;
+  spread_max: number | null;
+  growth_rate: GrowthRateType | null;
+  maintenance: MaintenanceType | null;
   pests: Array<PestType>;
 };
 
@@ -53,14 +53,34 @@ export type ModelProps = {
     bright_max: number;
     full_min: number;
     full_max: number;
+    lux_min: number;
     lux_max: number;
   };
   air: { max: number };
 };
 
+type PlantType =
+  | 'ANNUAL'
+  | 'AQUATIC_PLANT'
+  | 'BAMBOO'
+  | 'BIENNIAL'
+  | 'BROADLEAF_EVERGREEN'
+  | 'CONIFER'
+  | 'FERN'
+  | 'FLOWERING_CUT_PLANT'
+  | 'FLOWERING_POT_PLANT'
+  | 'GREENHOUSE_PRODUCE_PLANT'
+  | 'GROUND_COVER'
+  | 'HERBACEOUS_PERENNIAL'
+  | 'INDOOR_FOLIAGE_PLANT'
+  | 'INVASIVE_PLANT'
+  | 'POALES_(GRASS-LIKE)'
+  | 'SEMI-EVERGREEN'
+  | 'SHRUB_DECIDUOUS'
+  | 'TREE_DECIDUOUS'
+  | 'WEED_(HORTICULTURAL)';
+
 type FormType =
-  | 'CLIMBING'
-  | 'COLUMNAR'
   | 'CREEPING_MAT-LIKE'
   | 'IRREGULAR'
   | 'MOUNDED'

@@ -12,6 +12,8 @@ export const TextArea: React.FC<MySelectProps> = ({
   const [field, meta] = useField<{}>(props);
   const errorText = meta.error && meta.touched ? meta.error : '';
   return (
+
+    <div style={{margin:"4px 0px"}}>
     <TextField
       fullWidth
       variant="standard"
@@ -24,5 +26,6 @@ export const TextArea: React.FC<MySelectProps> = ({
       helperText={errorText}
       error={!!errorText}
     />
+    </div>
   );
 };

@@ -20,26 +20,30 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type Props = { label: string } & FieldAttributes<{}>;
+type Props = { label: string; multiple?: boolean } & FieldAttributes<{}>;
 
 export const Selector: React.FC<Props> = ({
   label,
   placeholder,
+  multiple = false,
   children,
   ...props
 }) => {
   const [field] = useField<{}>(props);
   const classes = useStyles();
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id='demo-simple-select-label'>{label}</InputLabel>
-      <Select
-        id='demo-simple-select'
-        labelId='demo-simple-select-label'
-        {...field}
-        placeholder={placeholder}>
-        {children}
-      </Select>
-    </FormControl>
+    <div style={{ margin: '4px 0px' }}>
+      <FormControl className={classes.formControl}>
+        <InputLabel id='demo-simple-select-label'>{label}</InputLabel>
+        <Select
+          id='demo-simple-select'
+          labelId='demo-simple-select-label'
+          multiple={multiple}
+          {...field}
+          placeholder={placeholder}>
+          {children}
+        </Select>
+      </FormControl>
+    </div>
   );
 };
