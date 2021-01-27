@@ -2,8 +2,8 @@ import { Button } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
-import { PasswordField } from '../forms/PasswordField';
-import { TextField } from '../forms/TextField';
+import { PasswordField } from '../Atom-Inputs/PasswordField';
+import { TextField } from '../Atom-Inputs/TextField';
 import { useAuth } from './Auth';
 
 const validationSchema = yup.object({

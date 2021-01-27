@@ -21,10 +21,7 @@ function Profile() {
   return (
     <div>
       <h2>Profile</h2>
-      <UpdateProfile
-        userId={currentUser.uid}
-        userDoc={userDoc}
-      />
+      <UpdateProfile userId={currentUser.uid} userDoc={userDoc} />
     </div>
   );
 }

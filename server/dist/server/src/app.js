@@ -27,6 +27,7 @@ const admin = __importStar(require("firebase-admin"));
 const app_1 = __importDefault(require("firebase/app"));
 require('firebase/functions');
 var serviceAccount = require('../serviceAccountKey.json');
+var combinedData = require('../combined.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
@@ -44,7 +45,46 @@ exports.db = admin.firestore();
 exports.timestamp = admin.firestore.Timestamp.now();
 //const increment = admin.firestore.FieldValue.increment;
 console.log('Starting mimir-app Server...');
-test();
+combinedData.forEach((s) => {
+    const batch = exports.db.batch();
+    const { family, genus, species, subspecies, cultivar, description, common_name, type, habitat, form, origin, edible, poisonous, pet_friendly, air_purifying, hardiness, exposure, soil, water, height_max, height_min, spread_min, spread_max, growth_rate, maintenance, pests, model, } = s;
+    const species_id = s.id;
+    const speciesDoc = exports.db.collection('mimirSpecies').doc(species_id);
+    const modelDoc = speciesDoc.collection('Model').doc('V0.1');
+    if (!species)
+        return console.log(species_id, 'Missing Species');
+    const doc = {
+        family,
+        genus,
+        species,
+        subspecies,
+        cultivar,
+        description,
+        common_name,
+        type,
+        habitat,
+        form,
+        origin,
+        edible,
+        poisonous,
+        pet_friendly,
+        air_purifying,
+        hardiness,
+        exposure,
+        soil,
+        water,
+        height_max,
+        height_min,
+        spread_min,
+        spread_max,
+        growth_rate,
+        maintenance,
+        pests,
+    };
+    batch.set(speciesDoc, doc);
+    batch.set(modelDoc, Object.assign(Object.assign({}, model), { timestamp: exports.timestamp, current: true }));
+    return batch.commit().then(() => console.log(species_id, 'Added'));
+});
 // space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
 //   name: 'Test Space #2',
 //   description: 'A Space for testing things',

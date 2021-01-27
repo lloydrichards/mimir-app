@@ -1,11 +1,11 @@
 import { Button, MenuItem } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
-import { TextField } from '../forms/TextField';
+import { TextField } from '../Atom-Inputs/TextField';
 import app, { timestamp } from '../../firebase';
 import { UserProps } from '../../types/UserType';
-import { TextArea } from '../forms/TextArea';
-import { Selector } from '../forms/Selector';
+import { TextArea } from '../Atom-Inputs/TextArea';
+import { Selector } from '../Atom-Inputs/Selector';
 import { Log } from '../../types/GenericType';
 import { useHistory } from 'react-router-dom';
 
