@@ -1,3 +1,4 @@
+import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import firebase from 'firebase';
 
 export type Log = {
@@ -64,6 +65,7 @@ export type Location = {
   region: string;
   country: string;
   city: string;
+  geo: firebase.firestore.GeoPoint;
 };
 
 export type Space = {
@@ -97,3 +99,9 @@ export type Air = {
 };
 
 export type FirebaseTimestamp = firebase.firestore.Timestamp;
+
+export interface MapProps {
+  id: string;
+  field: string;
+  icon: (props: SvgIconProps, colour: string) => JSX.Element;
+}

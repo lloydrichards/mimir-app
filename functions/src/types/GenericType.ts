@@ -1,3 +1,5 @@
+import firebase from 'firebase';
+
 export type Log = {
   timestamp: FirebaseTimestamp;
   type: Array<
@@ -62,6 +64,7 @@ export type Location = {
   region: string;
   country: string;
   city: string;
+  geo: firebase.firestore.GeoPoint;
 };
 
 export type Space = {

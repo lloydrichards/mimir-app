@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import firebase from 'firebase';
+import { UserProps } from '../../types/UserType';
 
 type ContextProps = {
   currentUser: firebase.User | null;
+  userDoc: UserProps | null;
   signUp: (
     email: string,
     password: string
@@ -13,6 +15,7 @@ type ContextProps = {
     password: string
   ) => Promise<firebase.auth.UserCredential>;
   authenticated: boolean;
+  setUserDoc: React.Dispatch<React.SetStateAction<UserProps | null>>;
 };
 
 export const AuthContext = React.createContext<ContextProps>(
@@ -23,6 +26,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: any) => {
   const [currentUser, setCurrentUser] = useState(null as firebase.User | null);
+  const [userDoc, setUserDoc] = useState(null as UserProps | null);
   const [loadingAuthState, setLoadingAuthState] = useState(true);
 
   const signUp = (email: string, password: string) => {
@@ -46,6 +50,8 @@ export const AuthProvider = ({ children }: any) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        userDoc,
+        setUserDoc,
         signUp,
         login,
         authenticated: currentUser !== null,

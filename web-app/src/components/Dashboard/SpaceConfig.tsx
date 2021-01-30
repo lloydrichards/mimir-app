@@ -29,7 +29,7 @@ const SpaceConfig: React.FC<Props> = ({ spaceId }) => {
   );
 
   useObservable(config$, setConfig);
-  console.log(config);
+  console.log("Config: ",config);
 
   if (!config.plants) return <div>No Plants</div>;
   return (

@@ -24,20 +24,10 @@ export type PlantProps = {
     cultivar: string;
     id: string;
   };
-  form:
-    | 'CREEPING'
-    | 'IRREGULAR'
-    | 'MOUNDED'
-    | 'OVAL'
-    | 'PYRAMIDAL'
-    | 'ROUND'
-    | 'VASE'
-    | 'WEEPING'
-    | 'CLIMBING'
-    | 'COLUMNAR';
+  form: FormType;
   pot: {
     size: number;
-    type: 'TERRACOTTA' | 'WOODEN' | 'METAL' | 'PLASTIC' | 'FIBERGLASS' | 'CONCRETE' | 'FABRIC';
+    type: PotType;
     tray: boolean;
     hanging: boolean;
   };
@@ -52,6 +42,26 @@ export type PlantProps = {
   roles: Roles;
 };
 
+export type PotType =
+  | 'TERRACOTTA'
+  | 'WOODEN'
+  | 'METAL'
+  | 'PLASTIC'
+  | 'FIBERGLASS'
+  | 'CONCRETE'
+  | 'FABRIC';
+
+export type FormType =
+  | 'CREEPING'
+  | 'IRREGULAR'
+  | 'MOUNDED'
+  | 'OVAL'
+  | 'PYRAMIDAL'
+  | 'ROUND'
+  | 'VASE'
+  | 'WEEPING'
+  | 'CLIMBING'
+  | 'COLUMNAR';
 export type PlantCreateInput = Omit<
   PlantProps,
   'roles' | 'alive' | 'date_created' | 'date_modified'

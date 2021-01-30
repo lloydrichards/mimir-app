@@ -1,12 +1,4 @@
-import classes from '*.module.css';
-import {
-  FormControlLabel,
-  Grid,
-  Input,
-  Slider,
-  Switch,
-  Typography,
-} from '@material-ui/core';
+import { Grid, Input, Slider, Typography } from '@material-ui/core';
 
 import { FieldAttributes, useField } from 'formik';
 import React from 'react';
@@ -50,7 +42,9 @@ const MySlider: React.FC<MySelectProps> = ({
               style: { textAlign: 'center' },
               'aria-labelledby': 'input-slider',
             }}
+            error={!!errorText}
           />
+          <p>{!!errorText ? errorText : null}</p>
         </Grid>
       </Grid>
     </div>

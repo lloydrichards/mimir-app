@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../components/auth/Auth';
 import Login from '../components/auth/Login';
 import app from '../firebase';
@@ -7,45 +7,67 @@ import Spaces from '../components/Dashboard/Spaces';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { UserProps } from '../types/UserType';
+import SpaceForm from '../components/Organism-Forms/SpaceForm';
+import { COLOUR_SUBTLE } from '../Styles/Colours';
 
 const db = app.firestore();
 
 function Dashboard() {
-  const { currentUser } = useAuth();
+  const { currentUser, userDoc, setUserDoc } = useAuth();
   const history = useHistory();
-  const [user, setUser] = useState<UserProps>({} as UserProps);
+
   useEffect(() => {
     if (currentUser) {
       db.collection('mimirUsers')
         .doc(currentUser.uid)
         .get()
         .then((i) => {
-          console.log(i.data());
-          setUser(i.data() as UserProps);
+          setUserDoc(i.data() as UserProps);
         })
         .catch((err) => alert(err));
     } else {
-      setUser({} as UserProps);
+      setUserDoc({} as UserProps);
     }
-  }, [currentUser]);
+  }, [currentUser, setUserDoc]);
 
   if (!currentUser) return <Login />;
 
+  console.log("User:", userDoc)
   return (
     <div>
       <h1>Dashboard</h1>
       <Button variant='outlined' onClick={() => history.push('/encyclopedia')}>
         Add Species
       </Button>
+      {userDoc?.profile_picture ? (
+          <img
+            alt="Profile Picture"
+            src={userDoc?.profile_picture.url}
+            height='180'
+            width='180'
+            style={{ borderRadius: '1rem' }}></img>
+        ) : (
+          <div
+            style={{
+              borderRadius: '1rem',
+              width: 180,
+              height: 180,
+              backgroundColor: COLOUR_SUBTLE,
+            }}
+          />
+        )}
 
-      <p>Date Created: {user?.date_created?.toDate().toDateString()}</p>
-      <p>Garden Level: {user?.gardener}</p>
-      <p>Subscription: {user?.subscription}</p>
+      <p>Date Created: {userDoc?.date_created?.toDate().toDateString()}</p>
+      <p>Garden Level: {userDoc?.gardener}</p>
+      <p>Subscription: {userDoc?.subscription}</p>
       <Button variant='text' onClick={() => history.push('/profile')}>
         Update Profile
       </Button>
 
-      <Spaces userId={currentUser.uid} />
+      {/* <Spaces userId={currentUser.uid} /> */}
+      <div style={{width:"600px"}}>
+        <SpaceForm />
+      </div>
     </div>
   );
 }

@@ -2,12 +2,14 @@ import { Button, MenuItem } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
-import app, { timestamp } from '../../firebase';
+import app, { auth, timestamp } from '../../firebase';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
 import { useHistory } from 'react-router-dom';
 import { UserProps } from '../../types/UserType';
-import { Log } from '../../types/GenericType';
+import { Log, Picture } from '../../types/GenericType';
+import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
+import { useAuth } from '../auth/Auth';
 
 interface Props {
   userId: string;
@@ -17,6 +19,12 @@ const db = app.firestore();
 
 const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
   const history = useHistory();
+  const { currentUser } = useAuth();
+
+  const [picture, setPicture] = React.useState<Picture | null>(
+    userDoc.profile_picture
+  );
+
   return (
     <div>
       <Formik
@@ -32,14 +40,19 @@ const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
               content: { user_id: userId },
             };
 
-            batch.set(
-              userRef,
-              { ...data, date_modified: timestamp },
-              { merge: true }
-            );
+            batch.update(userRef, {
+              ...data,
+              profile_picture: picture,
+              date_modified: timestamp,
+            });
             batch.set(userLog, newLog);
 
             return batch.commit().then(() => {
+              auth.currentUser?.updateProfile({
+                displayName: data.username,
+                photoURL: picture?.url,
+              });
+              resetForm();
               console.log('Updated!');
               return history.push('/');
             });
@@ -55,19 +68,31 @@ const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
           username: userDoc.username,
           first_name: userDoc.first_name,
           last_name: userDoc.last_name,
+          profile_picture: userDoc.profile_picture,
           bio: userDoc.bio,
           gardener: userDoc.gardener,
           units: userDoc.units,
           location: userDoc.location,
           social_media: userDoc.social_media,
         }}>
-        {({ isSubmitting, values, status }) => (
+        {({ isSubmitting, values, status, setFieldValue }) => (
           <Form>
             <TextField
               label='Username'
               name='username'
               placeholder='Display Name'
               type='input'
+            />
+            <UploadPictureForm
+              label='Profile Picture'
+              helperText='Select an image for your profile...'
+              customRef={`users/${currentUser?.uid}/image`}
+              setPicture={setPicture}
+              image={picture?.url}
+              onComplete={() => {
+                console.log('Uploaded');
+                setFieldValue('profile_picture', picture);
+              }}
             />
             <TextField
               label='First Name '

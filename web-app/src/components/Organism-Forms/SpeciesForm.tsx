@@ -1,17 +1,10 @@
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Typography,
-} from '@material-ui/core';
+import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
 import app, { timestamp } from '../../firebase';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
-import { Log } from '../../types/GenericType';
 import { useHistory } from 'react-router-dom';
 import { Switch } from '../Atom-Inputs/Switch';
 import { Slider } from '../Atom-Inputs/Slider';
@@ -47,7 +40,7 @@ const speciesIdBuilder = (
   return id;
 };
 
-const SpeciesForm: React.FC<Props> = ({}) => {
+const SpeciesForm: React.FC<Props> = () => {
   const history = useHistory();
   return (
     <div>

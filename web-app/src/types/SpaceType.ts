@@ -15,8 +15,9 @@ export type SpaceProps = {
   date_created: FirebaseTimestamp;
   date_modified: string | null;
   description: string;
-  profile_picture: null | Picture;
+  picture: null | Picture;
   room_type:
+    | ''
     | 'BEDROOM'
     | 'GUEST'
     | 'FAMILY'
@@ -29,7 +30,7 @@ export type SpaceProps = {
     | 'LIBRARY'
     | 'KITCHEN'
     | 'OTHER';
-  light_direction: 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
+  light_direction: Array<LightType>;
   location: Location;
   owner: Owner;
   roles: Roles;
@@ -39,6 +40,8 @@ export type SpaceCreateInput = Omit<
   SpaceProps,
   'date_created' | 'date_modified' | 'roles'
 >;
+
+export type LightType = 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
 
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;

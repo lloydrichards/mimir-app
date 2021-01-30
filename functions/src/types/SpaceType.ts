@@ -15,7 +15,7 @@ export type SpaceProps = {
   date_created: FirebaseTimestamp;
   date_modified: string | null;
   description: string;
-  profile_picture: null | Picture;
+  picture: null | Picture;
   room_type:
     | 'BEDROOM'
     | 'GUEST'

@@ -3,7 +3,7 @@ import app from '../../firebase';
 import { UserProps } from '../../types/UserType';
 import { useAuth } from '../auth/Auth';
 import Login from '../auth/Login';
-import UpdateProfile from './UpdateProfile';
+import UpdateProfile from '../Organism-Forms/ProfileForm';
 
 const db = app.firestore();
 

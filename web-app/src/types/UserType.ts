@@ -1,4 +1,4 @@
-import { FirebaseTimestamp, Location } from './GenericType';
+import { FirebaseTimestamp, Location, Picture } from './GenericType';
 
 export type UserProps = {
   username: string;
@@ -11,6 +11,7 @@ export type UserProps = {
   units: 'METRIC' | 'IMPERIAL';
   subscription: 'FREE' | 'PREMIUM' | 'BETA';
   location: Location;
+  profile_picture: Picture;
   social_media: {
     facebook: string;
     instagram: string;
