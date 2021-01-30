@@ -29,7 +29,7 @@ import { countryLookUp } from '../Molecule-Data/CountryLookUp';
 import { Location, Log, Picture } from '../../types/GenericType';
 import ValueField from '../Atom-Inputs/ValueField';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
-import { SpaceProps } from '../../types/SpaceType';
+import { RoomType, SpaceProps } from '../../types/SpaceType';
 import { useHistory } from 'react-router-dom';
 import { Switch } from '../Atom-Inputs/Switch';
 
@@ -137,7 +137,7 @@ const SpaceForm: React.FC<Props> = () => {
           {
             name: '',
             description: '',
-            room_type: '',
+            room_type: '' as RoomType,
             light_direction: [] as Array<string>,
             picture: null,
             location,

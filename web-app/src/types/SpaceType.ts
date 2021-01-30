@@ -16,25 +16,27 @@ export type SpaceProps = {
   date_modified: string | null;
   description: string;
   picture: null | Picture;
-  room_type:
-    | ''
-    | 'BEDROOM'
-    | 'GUEST'
-    | 'FAMILY'
-    | 'DINING'
-    | 'BATHROOM'
-    | 'OFFICE'
-    | 'LIVING'
-    | 'BALCONY'
-    | 'STORAGE'
-    | 'LIBRARY'
-    | 'KITCHEN'
-    | 'OTHER';
+  room_type: RoomType;
   light_direction: Array<LightType>;
   location: Location;
   owner: Owner;
   roles: Roles;
 };
+
+export type RoomType =
+  | 'BEDROOM'
+  | 'GUEST'
+  | 'PLAY'
+  | 'FAMILY'
+  | 'DINING'
+  | 'BATHROOM'
+  | 'OFFICE'
+  | 'LIVING'
+  | 'BALCONY'
+  | 'STORAGE'
+  | 'LIBRARY'
+  | 'KITCHEN'
+  | 'OTHER';
 
 export type SpaceCreateInput = Omit<
   SpaceProps,

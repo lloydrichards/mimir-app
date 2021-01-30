@@ -64,10 +64,7 @@ function Dashboard() {
         Update Profile
       </Button>
 
-      {/* <Spaces userId={currentUser.uid} /> */}
-      <div style={{width:"600px"}}>
-        <SpaceForm />
-      </div>
+      <Spaces userId={currentUser.uid} />
     </div>
   );
 }

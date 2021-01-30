@@ -4,7 +4,7 @@ import { FeatherIconProps } from '../../Styles/Icons';
 import { MapProps } from '../../types/GenericType';
 import { LightType } from '../../types/SpaceType';
 
-export const NorthIcon = (props: SvgIconProps, colour: string) => {
+export const NorthIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -16,7 +16,7 @@ export const NorthIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const NorthwestIcon = (props: SvgIconProps, colour: string) => {
+export const NorthwestIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -28,7 +28,7 @@ export const NorthwestIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const WestIcon = (props: SvgIconProps, colour: string) => {
+export const WestIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -40,7 +40,7 @@ export const WestIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const SouthwestIcon = (props: SvgIconProps, colour: string) => {
+export const SouthwestIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -52,7 +52,7 @@ export const SouthwestIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const SouthIcon = (props: SvgIconProps, colour: string) => {
+export const SouthIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -64,7 +64,7 @@ export const SouthIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const SoutheastIcon = (props: SvgIconProps, colour: string) => {
+export const SoutheastIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -76,7 +76,7 @@ export const SoutheastIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const EastIcon = (props: SvgIconProps, colour: string) => {
+export const EastIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path
@@ -88,7 +88,7 @@ export const EastIcon = (props: SvgIconProps, colour: string) => {
   );
 };
 
-export const NortheastIcon = (props: SvgIconProps, colour: string) => {
+export const NortheastIcon = (props?: SvgIconProps, colour?: string) => {
   return (
     <SvgIcon {...props}>
       <path

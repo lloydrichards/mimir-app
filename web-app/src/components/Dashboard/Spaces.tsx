@@ -3,6 +3,7 @@ import { collectionData } from 'rxfire/firestore';
 import app from '../../firebase';
 import { SpaceProps } from '../../types/SpaceType';
 import useObservable from '../helper/useObservable';
+import SpaceCard from '../Organism-Cards/SpaceCard';
 import SpaceConfig from './SpaceConfig';
 import SpaceReading from './SpaceReading';
 
@@ -32,11 +33,7 @@ const Spaces: React.FC<Props> = ({ userId }) => {
       <h3>Spaces</h3>
       {spaces.map((space) => (
         <div key={space.id}>
-          <h3>
-            {space.name} ({space.room_type})
-          </h3>
-          <SpaceReading spaceId={space.id} />
-          <SpaceConfig spaceId={space.id} />
+          <SpaceCard spaceDoc={space} />
         </div>
       ))}
     </div>
