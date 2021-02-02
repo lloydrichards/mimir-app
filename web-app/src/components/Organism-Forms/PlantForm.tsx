@@ -20,6 +20,7 @@ import { COLOUR_ACCENT } from '../../Styles/Colours';
 import { PotTypeMap } from '../Molecule-Data/PotTypeMap';
 import { useAuth } from '../auth/Auth';
 import { FormTypeMap } from '../Molecule-Data/FormTypeMap';
+import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
 
 interface Props {}
 const db = app.firestore();
@@ -95,10 +96,11 @@ const PlantForm: React.FC<Props> = ({}) => {
               placeholder='Whats the plant like?'
               rowsMax={3}
             />
-            <TextField
-              label='Species'
-              name='species.id'
-              placeholder='Display Name'
+            <SearchSpecies
+              initialValue=''
+              onChange={(option: any) =>
+                setFieldValue('species', option.value)
+              }
             />
             <Selector label='Form' name='form'>
               {FormTypeMap.map((form) => (

@@ -45,7 +45,7 @@ function Dashboard() {
             src={userDoc?.profile_picture.url}
             height='180'
             width='180'
-            style={{ borderRadius: '1rem' }}></img>
+            style={{ borderRadius: '20rem' }}></img>
         ) : (
           <div
             style={{

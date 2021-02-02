@@ -16,29 +16,34 @@ export type SpaceProps = {
   date_modified: string | null;
   description: string;
   picture: null | Picture;
-  room_type:
-    | 'BEDROOM'
-    | 'GUEST'
-    | 'FAMILY'
-    | 'DINING'
-    | 'BATHROOM'
-    | 'OFFICE'
-    | 'LIVING'
-    | 'BALCONY'
-    | 'STORAGE'
-    | 'LIBRARY'
-    | 'KITCHEN'
-    | 'OTHER';
-  light_direction: 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
+  room_type: RoomType;
+  light_direction: Array<LightType>;
   location: Location;
   owner: Owner;
   roles: Roles;
 };
 
+export type RoomType =
+  | 'BEDROOM'
+  | 'GUEST'
+  | 'PLAY'
+  | 'FAMILY'
+  | 'DINING'
+  | 'BATHROOM'
+  | 'OFFICE'
+  | 'LIVING'
+  | 'BALCONY'
+  | 'STORAGE'
+  | 'LIBRARY'
+  | 'KITCHEN'
+  | 'OTHER';
+
 export type SpaceCreateInput = Omit<
   SpaceProps,
   'date_created' | 'date_modified' | 'roles'
 >;
+
+export type LightType = 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
 
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;

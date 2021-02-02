@@ -8,6 +8,7 @@ export const initUserDoc = (
     username: email.split('@')[0],
     date_created: timestamp,
     date_modified: null,
+    profile_picture: null,
     first_name: '',
     last_name: '',
     bio: '',
@@ -18,6 +19,7 @@ export const initUserDoc = (
       region: '',
       country: '',
       city: '',
+      geo: null,
     },
     social_media: {
       facebook: '',

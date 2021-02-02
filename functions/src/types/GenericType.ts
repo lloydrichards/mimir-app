@@ -64,7 +64,7 @@ export type Location = {
   region: string;
   country: string;
   city: string;
-  geo: firebase.firestore.GeoPoint;
+  geo: firebase.firestore.GeoPoint | null;
 };
 
 export type Space = {
@@ -97,4 +97,4 @@ export type Air = {
   max: number;
 };
 
-export type FirebaseTimestamp = FirebaseFirestore.Timestamp;
+export type FirebaseTimestamp = firebase.firestore.Timestamp;

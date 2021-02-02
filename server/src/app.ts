@@ -67,7 +67,7 @@ combinedData.forEach((s) => {
 
   const species_id = s.id;
   const speciesDoc = db.collection('mimirSpecies').doc(species_id);
-  const modelDoc = speciesDoc.collection('Model').doc('V0.1');
+  const modelDoc = speciesDoc.collection('Model').doc('--Init--');
 
   if (!species) return console.log(species_id, 'Missing Species');
   const doc: SpeciesProps = {
@@ -78,6 +78,7 @@ combinedData.forEach((s) => {
     cultivar,
     description,
     common_name,
+    images: [],
     type,
     habitat,
     form,

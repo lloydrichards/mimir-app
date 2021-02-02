@@ -50,7 +50,7 @@ combinedData.forEach((s) => {
     const { family, genus, species, subspecies, cultivar, description, common_name, type, habitat, form, origin, edible, poisonous, pet_friendly, air_purifying, hardiness, exposure, soil, water, height_max, height_min, spread_min, spread_max, growth_rate, maintenance, pests, model, } = s;
     const species_id = s.id;
     const speciesDoc = exports.db.collection('mimirSpecies').doc(species_id);
-    const modelDoc = speciesDoc.collection('Model').doc('V0.1');
+    const modelDoc = speciesDoc.collection('Model').doc('--Init--');
     if (!species)
         return console.log(species_id, 'Missing Species');
     const doc = {
@@ -61,6 +61,7 @@ combinedData.forEach((s) => {
         cultivar,
         description,
         common_name,
+        images: [],
         type,
         habitat,
         form,
