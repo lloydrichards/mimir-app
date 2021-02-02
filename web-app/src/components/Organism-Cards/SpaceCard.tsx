@@ -1,6 +1,6 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
-import { COLOUR_LIGHT, COLOUR_SUBTLE } from '../../Styles/Colours';
+import { COLOUR_LIGHT, COLOUR_SECONDARY, COLOUR_SUBTLE } from '../../Styles/Colours';
 import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
 import ValueField from '../Atom-Inputs/ValueField';
 import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
@@ -62,6 +62,22 @@ const SpaceCard: React.FC<Props> = ({ spaceDoc, config }) => {
             label='Plants'
             value={config ? `${config?.plant_ids.length}` : undefined}
           />
+          {config?.devices && (
+            <div>
+              {config.devices.map((device) => (
+                <div
+                  style={{
+                    padding: '1rem',
+                    borderRadius: '1rem',
+                    backgroundColor: COLOUR_SECONDARY,
+                  }}
+                  onDragStart={(e) => console.log("start",e)}
+                  onDrop={(e) => console.log("drop",e)}
+                  key={device}>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div>
           <Button size='large' variant='outlined' fullWidth>

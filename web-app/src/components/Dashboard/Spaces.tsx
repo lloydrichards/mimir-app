@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { collectionData } from 'rxfire/firestore';
 import app from '../../firebase';
-import { SpaceProps } from '../../types/SpaceType';
+import {
+  SpaceAggProps,
+  SpaceConfigProps,
+  SpaceProps,
+} from '../../types/SpaceType';
+import { joinSpace } from '../helper/Operators/JoinSpace';
 import useObservable from '../helper/useObservable';
 import SpaceCard from '../Organism-Cards/SpaceCard';
-import SpaceConfig from './SpaceConfig';
-import SpaceReading from './SpaceReading';
 
 interface Props {
   userId: string;
@@ -14,13 +17,17 @@ interface Props {
 const db = app.firestore();
 
 const Spaces: React.FC<Props> = ({ userId }) => {
-  const [spaces, setSpaces] = useState<Array<SpaceProps & { id: string }>>([]);
+  const [spaces, setSpaces] = useState<
+    Array<
+      SpaceProps & { id: string; config: SpaceConfigProps; agg: SpaceAggProps }
+    >
+  >([]);
   const data$ = useMemo(
     () =>
       collectionData(
         db.collection('mimirSpaces').where(`roles.${userId}`, '>=', ''),
         'id'
-      ),
+      ).pipe(joinSpace(db)),
     [userId]
   );
 
@@ -33,7 +40,7 @@ const Spaces: React.FC<Props> = ({ userId }) => {
       <h3>Spaces</h3>
       {spaces.map((space) => (
         <div key={space.id}>
-          <SpaceCard spaceDoc={space} />
+          <SpaceCard spaceDoc={space} config={space.config} />
         </div>
       ))}
     </div>

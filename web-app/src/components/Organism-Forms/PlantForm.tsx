@@ -1,18 +1,12 @@
-import {
-  Button,
-  FormControlLabel,
-  MenuItem,
-  Typography,
-} from '@material-ui/core';
+import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
-import app, { timestamp } from '../../firebase';
+import app from '../../firebase';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
 import { useHistory } from 'react-router-dom';
-import { UserProps } from '../../types/UserType';
-import { Log, Picture } from '../../types/GenericType';
+import { Picture } from '../../types/GenericType';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 import { NumberField } from '../Atom-Inputs/NumberField';
 import { Switch } from '../Atom-Inputs/Switch';
@@ -98,9 +92,7 @@ const PlantForm: React.FC<Props> = ({}) => {
             />
             <SearchSpecies
               initialValue=''
-              onChange={(option: any) =>
-                setFieldValue('species', option.value)
-              }
+              onChange={(option: any) => setFieldValue('species', option.value)}
             />
             <Selector label='Form' name='form'>
               {FormTypeMap.map((form) => (
