@@ -1,18 +1,17 @@
-import { Button, MenuItem, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
-import app, { timestamp } from '../../firebase';
-import { TextArea } from '../Atom-Inputs/TextArea';
-import { Selector } from '../Atom-Inputs/Selector';
+import app from '../../firebase';
 import { useHistory } from 'react-router-dom';
-import { UserProps } from '../../types/UserType';
-import { Log } from '../../types/GenericType';
 
-interface Props {}
+interface Props {
+  altButton?: { label: string; onClick: () => void };
+  debug?: boolean;
+}
 const db = app.firestore();
 
-const basicForm: React.FC<Props> = ({}) => {
+const basicForm: React.FC<Props> = ({ altButton, debug }) => {
   const history = useHistory();
   return (
     <div>
@@ -22,6 +21,7 @@ const basicForm: React.FC<Props> = ({}) => {
 
           setSubmitting(true);
           try {
+            console.log(data);
           } catch (error) {
             console.log('error:', error);
             alert(error);
@@ -31,7 +31,7 @@ const basicForm: React.FC<Props> = ({}) => {
           setSubmitting(false);
         }}
         initialValues={{}}>
-        {({ isSubmitting, values, status }) => (
+        {({ isSubmitting, values, status, errors }) => (
           <Form>
             <TextField
               label='Username'
@@ -39,10 +39,21 @@ const basicForm: React.FC<Props> = ({}) => {
               placeholder='Display Name'
             />
 
-            <Button variant='contained' type='submit' disabled={isSubmitting}>
-              Update
-            </Button>
-            <Button variant='outlined'>Cancel</Button>
+            <div style={{ display: 'flex' }}>
+              {altButton && (
+                <Button fullWidth onClick={altButton.onClick}>
+                  {altButton.label}
+                </Button>
+              )}
+              <Button
+                fullWidth
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={isSubmitting}>
+                Update
+              </Button>
+            </div>
             <div
               style={{
                 border: '2px dashed lightgrey',
@@ -53,7 +64,12 @@ const basicForm: React.FC<Props> = ({}) => {
               }}>
               <Typography variant='h4'>Debug</Typography>
               {status ? <div>{status.message}</div> : null}
-              <pre>{JSON.stringify(values, null, 2)}</pre>
+              {debug ? (
+                <div>
+                  <pre>{JSON.stringify(values, null, 2)}</pre>
+                  <pre>{JSON.stringify(errors, null, 2)}</pre>
+                </div>
+              ) : null}
             </div>
           </Form>
         )}

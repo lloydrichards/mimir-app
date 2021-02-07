@@ -2,27 +2,45 @@ import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
-import app from '../../firebase';
+import app, { timestamp } from '../../firebase';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
-import { useHistory } from 'react-router-dom';
-import { Picture } from '../../types/GenericType';
+import { Log, Picture } from '../../types/GenericType';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 import { NumberField } from '../Atom-Inputs/NumberField';
 import { Switch } from '../Atom-Inputs/Switch';
-import { COLOUR_ACCENT } from '../../Styles/Colours';
+import { COLOUR_ACCENT, COLOUR_DARK } from '../../Styles/Colours';
 import { PotTypeMap } from '../Molecule-Data/PotTypeMap';
 import { useAuth } from '../auth/Auth';
 import { FormTypeMap } from '../Molecule-Data/FormTypeMap';
 import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
+import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
+import { useState, useEffect } from 'react';
+import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
+import { FormType, PlantProps, PotType } from '../../types/PlantType';
 
-interface Props {}
+interface Props {
+  addToSpace?: string;
+  spaces?: Array<SpaceProps & { id: string }>;
+  altButton?: { label: string; onClick: () => void };
+  debug?: boolean;
+}
 const db = app.firestore();
 
-const PlantForm: React.FC<Props> = ({}) => {
-  const history = useHistory();
-  const { currentUser, userDoc } = useAuth();
+const PlantForm: React.FC<Props> = ({
+  spaces,
+  altButton,
+  debug,
+  addToSpace,
+}) => {
+  const { currentUser } = useAuth();
+  const [userSpaces, setUserSpaces] = useState<
+    Array<SpaceProps & { id: string }>
+  >(spaces || []);
 
+  useEffect(() => {
+    if (spaces) setUserSpaces(spaces);
+  }, [spaces]);
   const [picture, setPicture] = React.useState<Picture | null>(null);
   const [ownerToggle, setOwnerToggle] = React.useState<boolean>(true);
 
@@ -32,13 +50,82 @@ const PlantForm: React.FC<Props> = ({}) => {
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const batch = db.batch();
+          const userRef = db
+            .collection('mimirUsers')
+            .doc(currentUser?.uid || '');
+          const plantRef = db.collection('mimirPlants').doc();
+          const spaceRef = db.collection('mimirSpaces').doc(data.space_id);
 
+          const userLog = userRef.collection('Logs').doc();
+          const spaceLog = spaceRef.collection('Logs').doc();
+          const plantLog = plantRef.collection('Logs').doc();
+
+          const newLog: Log = {
+            timestamp,
+            type: ['PLANT_CREATED', 'SPACE_UPDATED', 'USER_UPDATED'],
+            content: {},
+          };
           setSubmitting(true);
           try {
-            console.log(data);
-            setSubmitting(false);
-            resetForm();
+            return db
+              .runTransaction(async (t) => {
+                const currentConfig = spaceRef
+                  .collection('Configs')
+                  .where('current', '==', true)
+                  .orderBy('timestamp', 'desc');
+                const newConfigRef = spaceRef.collection('Configs').doc();
+
+                const currentConfigDoc = await currentConfig.get();
+                if (currentConfigDoc.empty) throw { error: 'No Configs' };
+
+                const currentDoc = currentConfigDoc.docs[0].data() as SpaceConfigProps;
+                const newConfig: SpaceConfigProps = {
+                  ...currentDoc,
+                  plant_ids: currentDoc.plant_ids.concat(plantRef.id),
+                  plants: [
+                    ...currentDoc.plants,
+                    {
+                      id: plantRef.id,
+                      nickname: data.nickname,
+                      type: data.form,
+                      botanical_name: data.species.id,
+                      size: `${data.pot.size}`,
+                    },
+                  ],
+                };
+
+                const newPlantDoc: PlantProps = {
+                  date_created: timestamp,
+                  nickname: data.nickname,
+                  date_modified: null,
+                  alive: true,
+                  description: data.description,
+                  form: data.form,
+                  owner: data.owner,
+                  parent: data.parent,
+                  pot: data.pot,
+                  picture: data.picture,
+                  roles: {
+                    [currentUser?.uid || '']: 'ADMIN',
+                  },
+                  species: data.species,
+                };
+
+                t.set(plantRef, newPlantDoc);
+                t.set(newConfigRef, newConfig);
+                t.set(userLog, newLog);
+                t.set(spaceLog, newLog);
+                t.set(plantLog, newLog);
+
+                currentConfigDoc.docs.forEach((doc) =>
+                  t.update(doc.ref, { current: false })
+                );
+              })
+              .then(() => {
+                console.log('Success!');
+                setSubmitting(false);
+                resetForm();
+              });
           } catch (error) {
             console.log('error:', error);
             alert(error);
@@ -48,29 +135,54 @@ const PlantForm: React.FC<Props> = ({}) => {
           setSubmitting(false);
         }}
         initialValues={{
+          space_id: addToSpace || '',
           nickname: '',
           description: '',
-          species: '',
-          form: '',
+          species: {
+            family: '',
+            genus: '',
+            species: '',
+            subspecies: '',
+            cultivar: '',
+            id: '',
+          },
+          form: '' as FormType,
           parent: null,
           picture: null,
           pot: {
             hanging: false,
-            size: '',
+            size: 0,
             tray: true,
-            type: '',
+            type: '' as PotType,
           },
           owner: {
-            id: currentUser?.uid || null,
-            name: currentUser?.displayName || null,
-            email: currentUser?.email || null,
+            id: currentUser?.uid || '',
+            name: currentUser?.displayName || '',
+            email: currentUser?.email || '',
           },
         }}>
-        {({ isSubmitting, values, status, setFieldValue }) => (
+        {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>
+            {!addToSpace && (
+              <Selector
+                label='Space'
+                name='space_id'
+                placeholder='Select Space for plant...'>
+                {userSpaces.map((s) => (
+                  <MenuItem key={s.id} value={s.id}>
+                    {RoomTypeMap.find((i) => i.id === s.room_type)?.icon(
+                      {},
+                      COLOUR_DARK
+                    )}
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </Selector>
+            )}
+
             <TextField
               label='Nickname'
-              name='nickanme'
+              name='nickname'
               placeholder='Plants name...'
             />
             <UploadPictureForm
@@ -188,35 +300,37 @@ const PlantForm: React.FC<Props> = ({}) => {
                 />
               </div>
             ) : null}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                columnGap: '0.5rem',
-              }}>
-              <Button variant='outlined' fullWidth>
-                Cancel
-              </Button>
+            <div style={{ display: 'flex' }}>
+              {altButton && (
+                <Button fullWidth onClick={altButton.onClick}>
+                  {altButton.label}
+                </Button>
+              )}
               <Button
+                fullWidth
                 variant='contained'
+                color='primary'
                 type='submit'
-                disabled={isSubmitting}
-                fullWidth>
+                disabled={isSubmitting}>
                 Update
               </Button>
             </div>
-            <div
-              style={{
-                border: '2px dashed lightgrey',
-                background: 'snow',
-                margin: '1rem 0',
-                borderRadius: '1rem',
-                padding: '1rem',
-              }}>
-              <Typography variant='h4'>Debug</Typography>
-              {status ? <div>{status.message}</div> : null}
-              <pre>{JSON.stringify(values, null, 2)}</pre>
-            </div>
+
+            {status ? <div>{status.message}</div> : null}
+            {debug ? (
+              <div
+                style={{
+                  border: '2px dashed tomato',
+                  background: 'snow',
+                  margin: '1rem 0',
+                  borderRadius: '1rem',
+                  padding: '0.5rem',
+                }}>
+                <Typography variant='h4'>Debug</Typography>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
+                <pre>{JSON.stringify(errors, null, 2)}</pre>
+              </div>
+            ) : null}
           </Form>
         )}
       </Formik>

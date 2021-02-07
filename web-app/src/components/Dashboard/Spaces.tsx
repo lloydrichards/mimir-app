@@ -1,4 +1,6 @@
+import { Button } from '@material-ui/core';
 import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { collectionData } from 'rxfire/firestore';
 import app from '../../firebase';
 import {
@@ -6,7 +8,7 @@ import {
   SpaceConfigProps,
   SpaceProps,
 } from '../../types/SpaceType';
-import { joinSpace } from '../helper/Operators/JoinSpace';
+import { spaceList } from '../helper/Operators/spaceList';
 import useObservable from '../helper/useObservable';
 import SpaceCard from '../Organism-Cards/SpaceCard';
 
@@ -17,9 +19,14 @@ interface Props {
 const db = app.firestore();
 
 const Spaces: React.FC<Props> = ({ userId }) => {
+  const history = useHistory();
   const [spaces, setSpaces] = useState<
     Array<
-      SpaceProps & { id: string; config: SpaceConfigProps; agg: SpaceAggProps }
+      SpaceProps & {
+        id: string;
+        config: SpaceConfigProps & { id: string };
+        agg: SpaceAggProps & { id: string };
+      }
     >
   >([]);
   const data$ = useMemo(
@@ -27,7 +34,7 @@ const Spaces: React.FC<Props> = ({ userId }) => {
       collectionData(
         db.collection('mimirSpaces').where(`roles.${userId}`, '>=', ''),
         'id'
-      ).pipe(joinSpace(db)),
+      ).pipe(spaceList(db)),
     [userId]
   );
 
@@ -43,6 +50,13 @@ const Spaces: React.FC<Props> = ({ userId }) => {
           <SpaceCard spaceDoc={space} config={space.config} />
         </div>
       ))}
+      <Button
+      fullWidth
+        variant='contained'
+        size='medium'
+        onClick={() => history.push('/addSpace')}>
+        Add Space
+      </Button>
     </div>
   );
 };

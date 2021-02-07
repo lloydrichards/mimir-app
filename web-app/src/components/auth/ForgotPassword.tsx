@@ -1,21 +1,20 @@
 import { Button, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
-import React from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import * as yup from 'yup';
-import { PasswordField } from '../Atom-Inputs/PasswordField';
 import { TextField } from '../Atom-Inputs/TextField';
 import { useAuth } from './Auth';
 
 const validationSchema = yup.object({
   email: yup.string().required().email(),
-  password: yup.string().required(),
 });
 
-const Login = () => {
-  const history = useHistory();
-  const { login } = useAuth();
-  if (!login) return <div />;
+const ForgotPassoword = () => {
+  const { resetPassword } = useAuth();
+
+  const [message, setMessage] = useState<string>('');
+  const [error, setError] = useState<string>('');
   return (
     <div>
       <div
@@ -25,21 +24,22 @@ const Login = () => {
           borderRadius: '0.5rem',
         }}>
         <Typography variant='h4' align='center'>
-          Login
+          Password Reset
         </Typography>
         <Formik
           onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-            setSubmitting(true);
             try {
-              await login(data.email, data.password).then((res) => {
-                console.log('Logged In!');
-              });
+              setSubmitting(true);
+              setMessage('');
+              setError('');
+              await resetPassword(data.email);
+              setMessage('Check your email for further instructions.');
               resetForm();
-              history.push('/');
             } catch (error) {
               console.log('error:', error);
               alert(error);
               setStatus(error);
+              setError('Failed to reset password');
             }
 
             setSubmitting(false);
@@ -47,21 +47,27 @@ const Login = () => {
           validationSchema={validationSchema}
           initialValues={{
             email: '',
-            password: '',
           }}>
           {({ isSubmitting, values, status }) => (
             <Form>
+              {message && (
+                <Typography
+                  align='center'
+                  color='textSecondary'
+                  variant='body1'>
+                  {message}
+                </Typography>
+              )}
+              {error && (
+                <Typography align='center' color='error' variant='body1'>
+                  {error}
+                </Typography>
+              )}
               <TextField
                 label='Email '
                 name='email'
                 placeholder='Email'
                 type='input'
-              />
-              <br />
-              <PasswordField
-                label='Password'
-                name='password'
-                placeholder='Password'
               />
               <Button
                 style={{ marginTop: '1rem' }}
@@ -70,7 +76,7 @@ const Login = () => {
                 variant='contained'
                 type='submit'
                 disabled={isSubmitting}>
-                Login
+                Reset Password
               </Button>
               {status ? <div>{status.message}</div> : null}
             </Form>
@@ -80,7 +86,7 @@ const Login = () => {
           style={{ marginTop: '1rem' }}
           variant='body1'
           align='center'>
-          <Link to='/forgot-password'>Forgot Password?</Link>
+          <Link to='/login'>Login</Link>
         </Typography>
       </div>
       <Typography style={{ margin: '1rem' }} variant='body1' align='center'>
@@ -90,4 +96,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassoword;

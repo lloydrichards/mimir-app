@@ -8,25 +8,25 @@ export type SpeciesProps = {
   cultivar: string | null;
   description: string;
   common_name: Array<string>;
-  type: Array<PlantType>;
-  habitat: Array<HabitatType>;
-  form: Array<FormType>;
+  type: Array<PlantTypes>;
+  habitat: Array<HabitatTypes>;
+  form: Array<FormTypes>;
   origin: Array<string>;
   edible: boolean;
   poisonous: boolean;
   pet_friendly: boolean;
   air_purifying: boolean;
-  hardiness: Array<HardinessType>;
-  exposure: Array<ExposureType>;
-  soil: Array<SoilType>;
-  water: Array<WaterType>;
+  hardiness: Array<HardinessTypes>;
+  exposure: Array<ExposureTypes>;
+  soil: Array<SoilTypes>;
+  water: Array<WaterTypes>;
   height_max: number | null;
   height_min: number | null;
   spread_min: number | null;
   spread_max: number | null;
-  growth_rate: GrowthRateType | null;
-  maintenance: MaintenanceType | null;
-  pests: Array<PestType>;
+  growth_rate: GrowthRateTypes | null;
+  maintenance: MaintenanceTypes | null;
+  pests: Array<PestTypes>;
 };
 
 export type ModelProps = {
@@ -59,7 +59,7 @@ export type ModelProps = {
   air: { max: number };
 };
 
-type PlantType =
+export type PlantTypes =
   | 'ANNUAL'
   | 'AQUATIC_PLANT'
   | 'BAMBOO'
@@ -80,7 +80,7 @@ type PlantType =
   | 'TREE_DECIDUOUS'
   | 'WEED_(HORTICULTURAL)';
 
-type FormType =
+export type FormTypes =
   | 'CREEPING_MAT-LIKE'
   | 'IRREGULAR'
   | 'MOUNDED'
@@ -93,7 +93,7 @@ type FormType =
   | 'WEEPING'
   | 'UNKNOWN';
 
-type HabitatType =
+export type HabitatTypes =
   | 'ARCHING'
   | 'DENSE'
   | 'EPIPHYTIC'
@@ -108,12 +108,10 @@ type HabitatType =
   | 'UPRIGHT'
   | 'UNKNOWN';
 
-type GrowthRateType = 'FAST' | 'MODERATE' | 'UNKNOWN' | 'SLOW';
+export type GrowthRateTypes = 'FAST' | 'MODERATE' | 'UNKNOWN' | 'SLOW';
 
-type HardinessType =
+export type HardinessTypes =
   | 'ZONE_1'
-  | 'ZONE_10'
-  | 'ZONE_11'
   | 'ZONE_2'
   | 'ZONE_3'
   | 'ZONE_4'
@@ -122,9 +120,13 @@ type HardinessType =
   | 'ZONE_7'
   | 'ZONE_8A'
   | 'ZONE_8B'
-  | 'ZONE_9';
+  | 'ZONE_9'
+  | 'ZONE_10'
+  | 'ZONE_11'
+  | 'ZONE_12'
+  | 'ZONE_13';
 
-type ExposureType =
+export type ExposureTypes =
   | 'UNKNOWN'
   | 'DEEP_SHADE'
   | 'FILTERED_SHADE'
@@ -132,7 +134,7 @@ type ExposureType =
   | 'PART_SHADE'
   | 'SHELTERED';
 
-type SoilType =
+export type SoilTypes =
   | 'UNKNOWN'
   | 'ACIDIC'
   | 'ALKALINE'
@@ -143,7 +145,7 @@ type SoilType =
   | 'ROCKY'
   | 'WELL-DRAINED';
 
-type WaterType =
+export type WaterTypes =
   | 'AQUATIC'
   | 'HIGH'
   | 'LOW'
@@ -153,8 +155,8 @@ type WaterType =
   | 'WETLANDS'
   | 'WINTER_DRY';
 
-type MaintenanceType = 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN';
-type PestType =
+export type MaintenanceTypes = 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN';
+export type PestTypes =
   | 'ABIOTIC_DISORDER'
   | 'ADELGIDS'
   | 'ANTHRACNOSE'

@@ -1,16 +1,22 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
-import { COLOUR_LIGHT, COLOUR_SECONDARY, COLOUR_SUBTLE } from '../../Styles/Colours';
+import { useHistory } from 'react-router-dom';
+import {
+  COLOUR_LIGHT,
+  COLOUR_SECONDARY,
+  COLOUR_SUBTLE,
+} from '../../Styles/Colours';
 import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
 import ValueField from '../Atom-Inputs/ValueField';
 import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
 
 interface Props {
-  spaceDoc: SpaceProps;
+  spaceDoc: SpaceProps & { id: string };
   config?: SpaceConfigProps;
 }
 
 const SpaceCard: React.FC<Props> = ({ spaceDoc, config }) => {
+  const history = useHistory();
   const roomType = RoomTypeMap.find((i) => i.id === spaceDoc.room_type);
   return (
     <div
@@ -25,7 +31,7 @@ const SpaceCard: React.FC<Props> = ({ spaceDoc, config }) => {
       <div style={{ display: 'grid', gridTemplateColumns: '180px auto 80px' }}>
         {spaceDoc.picture ? (
           <img
-            alt={`Picture of ${spaceDoc.name}`}
+            alt={`${spaceDoc.name}`}
             src={spaceDoc.picture.url}
             height='180'
             width='180'
@@ -71,17 +77,20 @@ const SpaceCard: React.FC<Props> = ({ spaceDoc, config }) => {
                     borderRadius: '1rem',
                     backgroundColor: COLOUR_SECONDARY,
                   }}
-                  onDragStart={(e) => console.log("start",e)}
-                  onDrop={(e) => console.log("drop",e)}
-                  key={device}>
-                </div>
+                  onDragStart={(e) => console.log('start', e)}
+                  onDrop={(e) => console.log('drop', e)}
+                  key={device}></div>
               ))}
             </div>
           )}
         </div>
         <div>
-          <Button size='large' variant='outlined' fullWidth>
-            Move
+          <Button
+            size='large'
+            variant='outlined'
+            fullWidth
+            onClick={() => history.push(`/space/${spaceDoc.id}`)}>
+            Details
           </Button>
           <Button size='large' variant='outlined' fullWidth>
             Edit

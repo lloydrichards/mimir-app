@@ -9,8 +9,13 @@ import { useHistory } from 'react-router-dom';
 import { Switch } from '../Atom-Inputs/Switch';
 import { Slider } from '../Atom-Inputs/Slider';
 import { ModelProps, SpeciesProps } from '../../types/SpeciesType';
+import { HardinessTypeMap } from '../Molecule-Data/HardinessTypeMap';
+import {ExposureTypeMap} from "../Molecule-Data/ExposureTypeMap"
 
-interface Props {}
+interface Props {
+  altButton?: { label: string; onClick: () => void };
+  debug?: boolean;
+}
 const db = app.firestore();
 
 const speciesIdBuilder = (
@@ -40,7 +45,7 @@ const speciesIdBuilder = (
   return id;
 };
 
-const SpeciesForm: React.FC<Props> = () => {
+const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
   const history = useHistory();
   return (
     <div>
@@ -189,17 +194,8 @@ const SpeciesForm: React.FC<Props> = () => {
             air: { max: 500 },
           },
         }}>
-        {({ isSubmitting, values, status }) => (
+        {({ isSubmitting, values, status, errors }) => (
           <Form>
-            <p>
-              {speciesIdBuilder(
-                values.genus,
-                values.species,
-                values.subspecies,
-                values.cultivar,
-                values.hybrid
-              )}
-            </p>
             <TextField
               label='Family'
               name='family'
@@ -327,26 +323,19 @@ const SpeciesForm: React.FC<Props> = () => {
               checked={values.air_purifying}
             />
             <Selector label='Hardiness' name='hardiness' multiple>
-              <MenuItem value='ZONE_1'>Zone 1</MenuItem>
-              <MenuItem value='ZONE_10'>Zone 10</MenuItem>
-              <MenuItem value='ZONE_11'>Zone 11</MenuItem>
-              <MenuItem value='ZONE_2'>Zone 2</MenuItem>
-              <MenuItem value='ZONE_3'>Zone 3</MenuItem>
-              <MenuItem value='ZONE_4'>Zone 4</MenuItem>
-              <MenuItem value='ZONE_5'>Zone 5</MenuItem>
-              <MenuItem value='ZONE_6'>Zone 6</MenuItem>
-              <MenuItem value='ZONE_7'>Zone 7</MenuItem>
-              <MenuItem value='ZONE_8A'>Zone 8a</MenuItem>
-              <MenuItem value='ZONE_8B'>Zone 8b</MenuItem>
-              <MenuItem value='ZONE_9'>Zone 9</MenuItem>
+              {HardinessTypeMap.map((h) => (
+                <MenuItem value={h.id}>
+                  {h.name}
+                  <small>
+                    ({h.low} to {h.high}°C)
+                  </small>
+                </MenuItem>
+              ))}
             </Selector>
             <Selector label='Exposure' name='exposure' multiple>
-              <MenuItem value='FULL_SUN'>Full Sun</MenuItem>
-              <MenuItem value='FILTERED_SHADE'>Filtered Shade</MenuItem>
-              <MenuItem value='PART_SHADE'>Part Shade</MenuItem>
-              <MenuItem value='SHELTERED'>Sheltered</MenuItem>
-              <MenuItem value='DEEP_SHADE'>Deep Shade</MenuItem>
-              <MenuItem value='UNKNOWN'>Unknown</MenuItem>
+              {ExposureTypeMap.map((e) => (
+                <MenuItem value={e.id}>{e.name}</MenuItem>
+              ))}
             </Selector>
             <Selector label='Soil' name='soil' multiple>
               <MenuItem value='UNKNOWN'>Unknown</MenuItem>
@@ -501,17 +490,46 @@ const SpeciesForm: React.FC<Props> = () => {
                 inputProps={{ max: 80000, min: 0, step: 1 }}
               />
             </div>
-            <div style={{ margin: '16px 0px' }}>
+            <div style={{ display: 'flex' }}>
+              {altButton && (
+                <Button fullWidth onClick={altButton.onClick}>
+                  {altButton.label}
+                </Button>
+              )}
               <Button
                 fullWidth
                 variant='contained'
+                color='primary'
                 type='submit'
                 disabled={isSubmitting}>
-                Add Species
+                Update
               </Button>
             </div>
             {status ? <div>{status.message}</div> : null}
-            <pre>{JSON.stringify(values, null, 2)}</pre>
+            {debug ? (
+              <div
+                style={{
+                  border: '2px dashed tomato',
+                  background: 'snow',
+                  margin: '1rem 0',
+                  borderRadius: '1rem',
+                  padding: '0.5rem',
+                }}>
+                <Typography variant='h4'>Debug</Typography>
+                <p>
+                  Species Id:
+                  {speciesIdBuilder(
+                    values.genus,
+                    values.species,
+                    values.subspecies,
+                    values.cultivar,
+                    values.hybrid
+                  )}
+                </p>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
+                <pre>{JSON.stringify(errors, null, 2)}</pre>
+              </div>
+            ) : null}
           </Form>
         )}
       </Formik>

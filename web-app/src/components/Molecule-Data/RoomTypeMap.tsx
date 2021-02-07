@@ -1,6 +1,5 @@
 import { OverrideProps } from '@material-ui/core/OverridableComponent';
-import SvgIcon, {
-  SvgIconProps,
+import {
   SvgIconTypeMap,
 } from '@material-ui/core/SvgIcon';
 import { RoomType } from '../../types/SpaceType';

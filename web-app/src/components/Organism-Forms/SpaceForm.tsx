@@ -33,10 +33,13 @@ import { RoomType, SpaceProps } from '../../types/SpaceType';
 import { useHistory } from 'react-router-dom';
 import { Switch } from '../Atom-Inputs/Switch';
 
-interface Props {}
+interface Props {
+  altButton?: { label: string; onClick: () => void };
+  debug?: boolean;
+}
 const db = app.firestore();
 
-const SpaceForm: React.FC<Props> = () => {
+const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
   const history = useHistory();
   const { currentUser, userDoc } = useAuth();
   const [ownerToggle, setOwnerToggle] = React.useState<boolean>(true);
@@ -148,7 +151,7 @@ const SpaceForm: React.FC<Props> = () => {
             },
           } as Omit<SpaceProps, 'date_created' | 'date_modified' | 'roles'>
         }>
-        {({ isSubmitting, values, status, setFieldValue }) => (
+        {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>
             <TextField
               label='Space Name'
@@ -319,35 +322,38 @@ const SpaceForm: React.FC<Props> = () => {
                 />
               </div>
             ) : null}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                columnGap: '0.5rem',
-              }}>
+            <div style={{ display: 'flex' }}>
+              {altButton && (
+                <Button fullWidth onClick={altButton.onClick}>
+                  {altButton.label}
+                </Button>
+              )}
               <Button
+                fullWidth
                 variant='contained'
+                color='primary'
                 type='submit'
-                disabled={isSubmitting}
-                fullWidth>
+                disabled={isSubmitting}>
                 Update
               </Button>
-              <Button variant='outlined' fullWidth>
-                Cancel
-              </Button>
             </div>
-            <div
-              style={{
-                border: '2px dashed lightgrey',
-                background: 'snow',
-                margin: '1rem 0',
-                borderRadius: '1rem',
-                padding: '1rem',
-              }}>
-              <Typography variant='h4'>Debug</Typography>
+           
               {status ? <div>{status.message}</div> : null}
-              <pre>{JSON.stringify(values, null, 2)}</pre>
-            </div>
+              {debug ? (
+              <div
+                style={{
+                  border: '2px dashed tomato',
+                  background: 'snow',
+                  margin: '1rem 0',
+                  borderRadius: '1rem',
+                  padding: '0.5rem',
+                }}>
+                <Typography variant='h4'>Debug</Typography>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
+                <pre>{JSON.stringify(errors, null, 2)}</pre>
+              </div>
+            ) : null}
+         
           </Form>
         )}
       </Formik>

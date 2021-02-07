@@ -14,6 +14,7 @@ type ContextProps = {
     email: string,
     password: string
   ) => Promise<firebase.auth.UserCredential>;
+  resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
   setUserDoc: React.Dispatch<React.SetStateAction<UserProps | null>>;
 };
@@ -36,6 +37,10 @@ export const AuthProvider = ({ children }: any) => {
   const login = (email: string, password: string) => {
     return auth.signInWithEmailAndPassword(email, password);
   };
+
+  const resetPassword = (email: string) => {
+    return auth.sendPasswordResetEmail(email);
+  };
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(
       (user: firebase.User | null) => {
@@ -54,6 +59,7 @@ export const AuthProvider = ({ children }: any) => {
         setUserDoc,
         signUp,
         login,
+        resetPassword,
         authenticated: currentUser !== null,
       }}>
       {!loadingAuthState && children}

@@ -1,10 +1,9 @@
 import firebase from 'firebase';
-
 import { combineLatest, defer } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
-import { collectionData, docData } from 'rxfire/firestore';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { collectionData } from 'rxfire/firestore';
 
-export const joinSpace = (db: firebase.firestore.Firestore) => {
+export const spaceList = (db: firebase.firestore.Firestore) => {
   return (source: any) =>
     defer(() => {
       let parent: any;
@@ -19,7 +18,8 @@ export const joinSpace = (db: firebase.firestore.Firestore) => {
                 .doc(`mimirSpaces/${space.id}`)
                 .collection('Aggs')
                 .orderBy('timestamp', 'desc')
-                .limit(1)
+                .limit(1),
+              'id'
             );
 
             return collectionData(
@@ -28,7 +28,8 @@ export const joinSpace = (db: firebase.firestore.Firestore) => {
                 .collection('Configs')
                 .where('current', '==', true)
                 .orderBy('timestamp', 'desc')
-                .limit(1)
+                .limit(1),
+              'id'
             ).pipe(
               withLatestFrom(aggs$),
               map(([config, aggs]) => {

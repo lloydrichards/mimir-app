@@ -1,4 +1,4 @@
-import { Button, MenuItem } from '@material-ui/core';
+import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { TextField } from '../Atom-Inputs/TextField';
@@ -14,10 +14,17 @@ import { useAuth } from '../auth/Auth';
 interface Props {
   userId: string;
   userDoc: UserProps;
+  altButton?: { label: string; onClick: () => void };
+  debug?: boolean;
 }
 const db = app.firestore();
 
-const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
+const UpdateProfile: React.FC<Props> = ({
+  userId,
+  userDoc,
+  altButton,
+  debug,
+}) => {
   const history = useHistory();
   const { currentUser } = useAuth();
 
@@ -75,7 +82,7 @@ const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
           location: userDoc.location,
           social_media: userDoc.social_media,
         }}>
-        {({ isSubmitting, values, status, setFieldValue }) => (
+        {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>
             <TextField
               label='Username'
@@ -141,12 +148,36 @@ const UpdateProfile: React.FC<Props> = ({ userId, userDoc }) => {
               type='input'
             />
 
-            <Button variant='contained' type='submit' disabled={isSubmitting}>
-              Update
-            </Button>
-            <Button variant='outlined'>Cancel</Button>
+            <div style={{ display: 'flex' }}>
+              {altButton && (
+                <Button fullWidth onClick={altButton.onClick}>
+                  {altButton.label}
+                </Button>
+              )}
+              <Button
+                fullWidth
+                variant='contained'
+                color='primary'
+                type='submit'
+                disabled={isSubmitting}>
+                Update
+              </Button>
+            </div>
             {status ? <div>{status.message}</div> : null}
-            <pre>{JSON.stringify(values, null, 2)}</pre>
+            {debug ? (
+              <div
+                style={{
+                  border: '2px dashed tomato',
+                  background: 'snow',
+                  margin: '1rem 0',
+                  borderRadius: '1rem',
+                  padding: '0.5rem',
+                }}>
+                <Typography variant='h4'>Debug</Typography>
+                <pre>{JSON.stringify(values, null, 2)}</pre>
+                <pre>{JSON.stringify(errors, null, 2)}</pre>
+              </div>
+            ) : null}
           </Form>
         )}
       </Formik>

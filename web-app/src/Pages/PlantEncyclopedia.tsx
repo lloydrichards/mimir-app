@@ -1,10 +1,21 @@
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import SpeciesForm from '../components/Organism-Forms/SpeciesForm';
 
 function PlantEncyclopedia() {
   return (
-    <div style={{ width: 600, padding: '32px', border: '1px solid grey' }}>
-      <SpeciesForm />
+    <div>
+      <div
+        style={{
+          border: '1px solid lightgrey',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+        }}>
+        <Typography align='center' variant='h4'>
+          Add Species
+        </Typography>
+        <SpeciesForm debug />
+      </div>
     </div>
   );
 }

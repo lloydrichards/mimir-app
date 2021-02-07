@@ -1,4 +1,10 @@
-import { FirebaseTimestamp } from './GenericType';
+import {
+  Air,
+  FirebaseTimestamp,
+  Humidity,
+  Light,
+  Temperature,
+} from './GenericType';
 
 export type ReadingProps = {
   user_id: string;
@@ -20,4 +26,24 @@ export type ReadingProps = {
   bearing: number;
   batteryVoltage: number;
   batteryPercent: number;
+};
+
+export type DailyProps = {
+  timestamp: FirebaseTimestamp;
+  temperature: Temperature;
+  humidity: Humidity;
+  air: Air;
+  light: Light;
+  data: {
+    [hour: string]: {
+      timestamp: FirebaseTimestamp;
+      eVOC: number;
+      iaq: number;
+      humidity: number;
+      eCO2: number;
+      luminance: number;
+      total: number;
+      temperature: number;
+    };
+  };
 };

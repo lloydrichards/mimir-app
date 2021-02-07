@@ -88,6 +88,7 @@ export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
       <components.Option {...props}>
         <MenuItem>
           <img
+            alt={data.description}
             style={{ width: 30, borderRadius: '15%', paddingRight: '10px' }}
             src={data.image}
           />

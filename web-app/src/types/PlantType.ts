@@ -15,7 +15,7 @@ export type PlantProps = {
   date_created: FirebaseTimestamp;
   date_modified: null | FirebaseTimestamp;
   description: string;
-  profile_picture: null | Picture;
+  picture: null | Picture;
   species: {
     family: string;
     genus: string;

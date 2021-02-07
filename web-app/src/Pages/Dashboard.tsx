@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../components/auth/Auth';
 import Login from '../components/auth/Login';
 import app from '../firebase';
@@ -7,14 +7,15 @@ import Spaces from '../components/Dashboard/Spaces';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { UserProps } from '../types/UserType';
-import SpaceForm from '../components/Organism-Forms/SpaceForm';
 import { COLOUR_SUBTLE } from '../Styles/Colours';
+import DeviceForm from '../components/Organism-Forms/DeviceForm';
 
 const db = app.firestore();
 
 function Dashboard() {
   const { currentUser, userDoc, setUserDoc } = useAuth();
   const history = useHistory();
+  const [toggleDeviceForm, setToggleDeviceForm] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -32,30 +33,27 @@ function Dashboard() {
 
   if (!currentUser) return <Login />;
 
-  console.log("User:", userDoc)
+  console.log('User:', userDoc);
   return (
     <div>
       <h1>Dashboard</h1>
-      <Button variant='outlined' onClick={() => history.push('/encyclopedia')}>
-        Add Species
-      </Button>
       {userDoc?.profile_picture ? (
-          <img
-            alt="Profile Picture"
-            src={userDoc?.profile_picture.url}
-            height='180'
-            width='180'
-            style={{ borderRadius: '20rem' }}></img>
-        ) : (
-          <div
-            style={{
-              borderRadius: '1rem',
-              width: 180,
-              height: 180,
-              backgroundColor: COLOUR_SUBTLE,
-            }}
-          />
-        )}
+        <img
+          alt={`Profile of ${userDoc.username}`}
+          src={userDoc?.profile_picture.url}
+          height='180'
+          width='180'
+          style={{ borderRadius: '20rem' }}></img>
+      ) : (
+        <div
+          style={{
+            borderRadius: '1rem',
+            width: 180,
+            height: 180,
+            backgroundColor: COLOUR_SUBTLE,
+          }}
+        />
+      )}
 
       <p>Date Created: {userDoc?.date_created?.toDate().toDateString()}</p>
       <p>Garden Level: {userDoc?.gardener}</p>
@@ -63,6 +61,20 @@ function Dashboard() {
       <Button variant='text' onClick={() => history.push('/profile')}>
         Update Profile
       </Button>
+      <div>
+        {toggleDeviceForm ? (
+          <DeviceForm
+            altButton={{
+              label: 'Cancel',
+              onClick: () => setToggleDeviceForm(false),
+            }}
+          />
+        ) : (
+          <Button variant='outlined' onClick={() => setToggleDeviceForm(true)}>
+            Register Device
+          </Button>
+        )}
+      </div>
 
       <Spaces userId={currentUser.uid} />
     </div>
