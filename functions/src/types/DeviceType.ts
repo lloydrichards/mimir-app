@@ -10,15 +10,18 @@ export type DeviceProps = {
     hardware: string;
     software: string;
   };
-  owner: null| Owner;
+  owner: null | Owner;
   roles: null | Roles;
 };
 
-export type DeviceRegisterInput = Omit<DeviceProps, 'date_created' | 'date_modified' | 'roles'>;
+export type DeviceRegisterInput = Omit<
+  DeviceProps,
+  'date_created' | 'date_modified' | 'roles'
+>;
 
 export type DeviceAggProps = {
   timestamp: FirebaseTimestamp;
-  space: null | Space
+  space: null | Space;
   reading_total: number;
   battery_percent: number;
   charge: boolean;

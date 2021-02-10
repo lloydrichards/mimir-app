@@ -14,25 +14,29 @@ import Layout from './components/Organism-UI/Layout';
 import './Styles/App.css';
 import SpaceDetails from './Pages/SpaceDetails';
 import SpeciesForm from './components/Organism-Forms/SpeciesForm';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 const App = () => {
   return (
     <Router>
       <AuthProvider>
-        <Layout>
-          <Switch>
-            <PrivateRoute exact path='/' component={Dashboard} />
-            <Route path='/signup' component={SignUp} />
-            <Route path='/login' component={Login} />
-            <Route path='/forgot-password' component={ForgotPassword} />
-            <PrivateRoute path='/profile' component={Profile} />
-            <Route path='/encyclopedia' component={PlantEncyclopedia} />
-            <PrivateRoute path='/addSpecies' component={SpeciesForm} />
-            <PrivateRoute path='/addSpace' component={SpaceForm} />
-            <PrivateRoute path='/addPlant' component={PlantForm} />
-            <PrivateRoute path='/space/:space_id' component={SpaceDetails} />
-          </Switch>
-        </Layout>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Layout>
+            <Switch>
+              <PrivateRoute exact path='/' component={Dashboard} />
+              <Route path='/signup' component={SignUp} />
+              <Route path='/login' component={Login} />
+              <Route path='/forgot-password' component={ForgotPassword} />
+              <PrivateRoute path='/profile' component={Profile} />
+              <Route path='/encyclopedia' component={PlantEncyclopedia} />
+              <PrivateRoute path='/addSpecies' component={SpeciesForm} />
+              <PrivateRoute path='/addSpace' component={SpaceForm} />
+              <PrivateRoute path='/addPlant' component={PlantForm} />
+              <PrivateRoute path='/space/:space_id' component={SpaceDetails} />
+            </Switch>
+          </Layout>
+        </MuiPickersUtilsProvider>
       </AuthProvider>
     </Router>
   );

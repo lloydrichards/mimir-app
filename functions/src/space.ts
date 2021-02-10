@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initSpaceAgg, initSpaceConfig } from './docs/space';
 import { FirebaseTimestamp, Log } from './types/GenericType';
-import { SpaceAggProps } from './types/SpaceType';
+import { SpaceAggProps, SpaceProps, SpaceType } from './types/SpaceType';
 import { reCalc } from './helpers';
 import { once, setEventSuccess } from './util/once';
 
@@ -19,31 +19,33 @@ export const spaceCreated = functions.firestore
       //device Added
       return db
         .runTransaction(async (t) => {
-          const newSpace = db.collection('mimirSpaces').doc(space.id);
-          const newAgg = newSpace.collection('Aggs').doc('--init--');
-          const newConfig = newSpace.collection('Configs').doc('--init--');
+          const newAgg = space.ref.collection('Aggs').doc('--init--');
+          const newConfig = space.ref.collection('Configs').doc('--init--');
 
+          const spaceDoc = (await space.data()) as SpaceProps;
           t.set(newAgg, initSpaceAgg(timestamp));
           t.set(newConfig, initSpaceConfig(timestamp));
 
+          const light_direction = {};
+          spaceDoc.light_direction.forEach((dir) => {
+            return { [dir]: increment(1) };
+          });
           setEventSuccess(t, context).set(
             stats,
             {
               spaces_total: increment(1),
               room_type: {
-                [space.data().room_type || 'undefined']: increment(1),
+                [space.data().room_type || 'UNDEFINED']: increment(1),
               },
-              light_direction: {
-                [space.data().light_direction || 'undefined']: increment(1),
-              },
+              light_direction,
               region: {
-                [space.data().location.region || 'undefined']: increment(1),
+                [space.data().location.region || 'UNDEFINED']: increment(1),
               },
               country: {
-                [space.data().location.country || 'undefined']: increment(1),
+                [space.data().location.country || 'UNDEFINED']: increment(1),
               },
               city: {
-                [space.data().location.city || 'undefined']: increment(1),
+                [space.data().location.city || 'UNDEFINED']: increment(1),
               },
               last_added: timestamp,
             },
@@ -56,71 +58,128 @@ export const spaceCreated = functions.firestore
 
 export const spaceUpdated = functions.firestore
   .document('mimirSpaces/{space_id}')
-  .onUpdate((space, context) => {
-    const spaceBefore = space.before.data();
-    const spaceAfter = space.after.data();
-    //const space_id = context.params.space_id;
+  .onUpdate(async (space, context) => {
+    const spaceBefore = space.before.data() as SpaceProps;
+    const spaceAfter = space.after.data() as SpaceProps;
+    const space_id = context.params.space_id;
     if (spaceBefore === spaceAfter) return;
 
-    return db
-      .runTransaction(async (t) => {
-        t.set(
-          stats,
-          {
-            last_added: timestamp,
-            room_type: {
-              [spaceBefore.room_type || 'undefined']: increment(
-                spaceBefore.room_type === spaceAfter.room_type ? 0 : -1
-              ),
-              [spaceAfter.room_type || 'undefined']: increment(
-                spaceBefore.room_type === spaceAfter.room_type ? 0 : 1
-              ),
-            },
-            light_direction: {
-              [spaceBefore.light_direction || 'undefined']: increment(
-                spaceBefore.light_direction === spaceAfter.light_direction ? 0 : -1
-              ),
-              [spaceAfter.light_direction || 'undefined']: increment(
-                spaceBefore.light_direction === spaceAfter.light_direction ? 0 : 1
-              ),
-            },
-            region: {
-              [spaceBefore.location.region || 'undefined']: increment(
-                spaceBefore.location.region === spaceAfter.location.region
-                  ? 0
-                  : -1
-              ),
-              [spaceAfter.location.region || 'undefined']: increment(
-                spaceBefore.location.region === spaceAfter.location.region
-                  ? 0
-                  : 1
-              ),
-            },
-            country: {
-              [spaceBefore.location.country || 'undefined']: increment(
-                spaceBefore.location.country === spaceAfter.location.country
-                  ? 0
-                  : -1
-              ),
-              [spaceAfter.location.country || 'undefined']: increment(
-                spaceBefore.location.country === spaceAfter.location.country
-                  ? 0
-                  : 1
-              ),
-            },
-            city: {
-              [spaceBefore.location.city || 'undefined']: increment(
-                spaceBefore.location.city === spaceAfter.location.city ? 0 : -1
-              ),
-              [spaceAfter.location.city || 'undefined']: increment(
-                spaceBefore.location.city === spaceAfter.location.city ? 0 : 1
-              ),
-            },
-          },
-          { merge: true }
-        );
-      })
-      .catch((error) => console.error(error));
+    const batchArr: FirebaseFirestore.WriteBatch[] = [];
+    batchArr.push(db.batch());
+    let opCounter = 0;
+    let batchIndex = 0;
+
+    const docSnapArr: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>[] = [];
+
+    const oldSpace: SpaceType = {
+      id: space_id,
+      name: spaceBefore.name,
+      light_direction: spaceBefore.light_direction,
+      room_type: spaceBefore.room_type,
+      thumb: spaceBefore.picture?.thumb || '',
+    };
+    const updateSpace: SpaceType = {
+      id: space_id,
+      name: spaceAfter.name,
+      light_direction: spaceAfter.light_direction,
+      room_type: spaceAfter.room_type,
+      thumb: spaceAfter.picture?.thumb || '',
+    };
+
+    if (oldSpace !== updateSpace) {
+      await db
+        .collection('mimirWaterings')
+        .where('space.id', '==', space_id)
+        .get()
+        .then((snap) => snap.docs.forEach((doc) => docSnapArr.push(doc)));
+      await db
+        .collection('mimirInspections')
+        .where('space.id', '==', space_id)
+        .get()
+        .then((snap) => snap.docs.forEach((doc) => docSnapArr.push(doc)));
+    }
+
+    docSnapArr.forEach((docSnap) => {
+      batchArr[batchIndex].update(docSnap.ref, { space: updateSpace });
+      opCounter++;
+
+      if (opCounter === 499) {
+        batchArr.push(db.batch());
+        batchIndex++;
+        opCounter = 0;
+      }
+    });
+
+    const bothDirections = [
+      ...new Set([
+        ...spaceBefore.light_direction,
+        ...spaceAfter.light_direction,
+      ]),
+    ];
+    const light_direction: any = {};
+    bothDirections.forEach((dir) => {
+      if (
+        spaceBefore.light_direction.includes(dir) &&
+        !spaceAfter.light_direction.includes(dir)
+      ) {
+        light_direction[dir] = increment(-1);
+      } else if (
+        !spaceBefore.light_direction.includes(dir) &&
+        spaceAfter.light_direction.includes(dir)
+      ) {
+        light_direction[dir] = increment(-1);
+      } else if (
+        spaceBefore.light_direction.includes(dir) &&
+        spaceAfter.light_direction.includes(dir)
+      ) {
+        light_direction[dir] = increment(0);
+      }
+    });
+
+    batchArr[batchIndex].set(
+      stats,
+      {
+        last_added: timestamp,
+        room_type: {
+          [spaceBefore.room_type || 'UNDEFINED']: increment(
+            spaceBefore.room_type === spaceAfter.room_type ? 0 : -1
+          ),
+          [spaceAfter.room_type || 'UNDEFINED']: increment(
+            spaceBefore.room_type === spaceAfter.room_type ? 0 : 1
+          ),
+        },
+        light_direction,
+        region: {
+          [spaceBefore.location.region || 'UNDEFINED']: increment(
+            spaceBefore.location.region === spaceAfter.location.region ? 0 : -1
+          ),
+          [spaceAfter.location.region || 'UNDEFINED']: increment(
+            spaceBefore.location.region === spaceAfter.location.region ? 0 : 1
+          ),
+        },
+        country: {
+          [spaceBefore.location.country || 'UNDEFINED']: increment(
+            spaceBefore.location.country === spaceAfter.location.country
+              ? 0
+              : -1
+          ),
+          [spaceAfter.location.country || 'UNDEFINED']: increment(
+            spaceBefore.location.country === spaceAfter.location.country ? 0 : 1
+          ),
+        },
+        city: {
+          [spaceBefore.location.city || 'UNDEFINED']: increment(
+            spaceBefore.location.city === spaceAfter.location.city ? 0 : -1
+          ),
+          [spaceAfter.location.city || 'UNDEFINED']: increment(
+            spaceBefore.location.city === spaceAfter.location.city ? 0 : 1
+          ),
+        },
+      },
+      { merge: true }
+    );
+
+    return batchArr.forEach(async (batch) => await batch.commit());
   });
 
 export const spaceAggregation = functions.firestore

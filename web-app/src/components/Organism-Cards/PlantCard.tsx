@@ -1,4 +1,4 @@
-import { Typography, Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { COLOUR_SUBTLE } from '../../Styles/Colours';
 import { PlantProps } from '../../types/PlantType';

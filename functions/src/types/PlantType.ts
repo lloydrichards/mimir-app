@@ -15,15 +15,8 @@ export type PlantProps = {
   date_created: FirebaseTimestamp;
   date_modified: null | FirebaseTimestamp;
   description: string;
-  profile_picture: null | Picture;
-  species: {
-    family: string;
-    genus: string;
-    species: string;
-    subspecies: string;
-    cultivar: string;
-    id: string;
-  };
+  picture: null | Picture;
+  species: SpeciesType;
   form: FormType;
   pot: {
     size: number;
@@ -38,8 +31,26 @@ export type PlantProps = {
     owner_name: string;
     owner_id: string;
   };
-  owner: null | Owner;
+  owner: Owner;
   roles: Roles;
+};
+
+export type PlantType = {
+  nickname: string;
+  id: string;
+  botanical_name: string;
+  type: PlantTypes;
+  size: number;
+};
+
+export type SpeciesType = {
+  family: string;
+  genus: string;
+  species: string;
+  subspecies: null | string;
+  cultivar: null | string;
+  id: string;
+  type: PlantTypes;
 };
 
 export type PotType =
@@ -62,6 +73,27 @@ export type FormType =
   | 'WEEPING'
   | 'CLIMBING'
   | 'COLUMNAR';
+
+export type PlantTypes =
+  | 'GRASS'
+  | 'CLIMBER'
+  | 'CACTI'
+  | 'BAMBOO'
+  | 'GROUND_COVER'
+  | 'ANNUAL'
+  | 'HERBACEOUS'
+  | 'BROADLEAF_EVERGREEN'
+  | 'DECIDUOUS_SHRUB'
+  | 'PERENNIAL_FLOWER'
+  | 'BONSAI'
+  | 'SEMI_EVERGREEN'
+  | 'FERN'
+  | 'PALM'
+  | 'DECIDUOUS_TREE'
+  | 'CONIFER'
+  | 'AQUATIC'
+  | 'UNKNOWN';
+
 export type PlantCreateInput = Omit<
   PlantProps,
   'roles' | 'alive' | 'date_created' | 'date_modified'

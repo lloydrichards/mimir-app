@@ -1,4 +1,4 @@
-import { UserAggProps, UserProps } from '../types/UserType';
+import { UserAggProps, UserProps, UserSettingsProps } from '../types/UserType';
 
 export const initUserDoc = (
   email: string,
@@ -8,13 +8,11 @@ export const initUserDoc = (
     username: email.split('@')[0],
     date_created: timestamp,
     date_modified: null,
-    profile_picture: null,
+    profile_picture: { ref: '', thumb: '', url: '' },
     first_name: '',
     last_name: '',
     bio: '',
     gardener: 'BEGINNER',
-    units: 'METRIC',
-    subscription: 'FREE',
     location: {
       region: '',
       country: '',
@@ -27,6 +25,17 @@ export const initUserDoc = (
       twitter: '',
       email: email,
     },
+  };
+};
+
+export const initUserSetting = (
+  timestamp: FirebaseFirestore.Timestamp
+): UserSettingsProps => {
+  return {
+    date_modified: timestamp,
+    date_format: 'dd/MM/yyyy',
+    subscription: 'FREE',
+    units: 'METRIC',
   };
 };
 

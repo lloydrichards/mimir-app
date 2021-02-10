@@ -9,6 +9,8 @@ import {
   Air,
   FirebaseTimestamp,
 } from './GenericType';
+import { PlantProps, PlantType } from './PlantType';
+import { DailyProps } from './ReadingType';
 
 export type SpaceProps = {
   name: string;
@@ -21,6 +23,22 @@ export type SpaceProps = {
   location: Location;
   owner: Owner;
   roles: Roles;
+};
+
+export type SpaceType = {
+  id: string;
+  name: string;
+  room_type: RoomType;
+  light_direction: Array<LightType>;
+  thumb: string;
+};
+
+export type SpaceDetailProps = SpaceProps & {
+  id: string;
+  config: SpaceConfigProps & { id: string };
+  aggs: SpaceAggProps & { id: string };
+  plants: Array<PlantProps & { id: string }>;
+  daily: Array<DailyProps & { id: string }>;
 };
 
 export type RoomType =
@@ -49,18 +67,11 @@ export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;
   current: boolean;
   devices: Array<string>;
-  plant_ids: Array<null | string>;
-  plants: Array<null | PlantsConfig>;
-  diseases: Array<null | string>;
+  plant_ids: Array<string>;
+  plants: Array<PlantType>;
+  diseases: Array<string>;
 };
 
-export interface PlantsConfig {
-  nickname: string;
-  id: string;
-  botanical_name: string;
-  type: string;
-  size: string;
-}
 export type SpaceAggProps = {
   timestamp: FirebaseTimestamp;
   reading_total: number;

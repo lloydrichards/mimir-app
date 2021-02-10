@@ -41,6 +41,7 @@ export const Selector: React.FC<Props> = ({
           multiple={multiple}
           {...field}
           placeholder={placeholder}>
+          renderValue={(selected: Array<string>) => selected.join(', ')}
           {children}
         </Select>
       </FormControl>

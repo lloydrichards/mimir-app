@@ -8,7 +8,9 @@ import useObservable from '../components/helper/useObservable';
 import { RoomTypeMap } from '../components/Molecule-Data/RoomTypeMap';
 import PlantCard from '../components/Organism-Cards/PlantCard';
 import PlantForm from '../components/Organism-Forms/PlantForm';
+import WateringForm from '../components/Organism-Forms/WarteringForm';
 import app from '../firebase';
+import { COLOUR_ACCENT, COLOUR_LIGHT } from '../Styles/Colours';
 import { PlantProps } from '../types/PlantType';
 import { DailyProps } from '../types/ReadingType';
 import {
@@ -25,6 +27,7 @@ const SpaceDetails: React.FC<Props> = ({ match }) => {
   const space_id = match?.params.space_id;
 
   const [toggleAddPlant, setToggleAddPlant] = useState<boolean>(false);
+  const [toggleWatering, setToggleWatering] = useState<boolean>(false);
   const [space, setSpace] = useState<
     SpaceProps & {
       id: string;
@@ -99,6 +102,33 @@ const SpaceDetails: React.FC<Props> = ({ match }) => {
           )}
         </div>
         <hr />
+        <Button
+          variant='outlined'
+          fullWidth
+          onClick={() => setToggleWatering(!toggleWatering)}>
+          Water Plants
+        </Button>
+
+        {toggleWatering && (
+          <div
+            style={{
+              background: COLOUR_ACCENT,
+              padding: '1rem',
+              borderRadius: '0.5rem',
+            }}>
+            <WateringForm
+              space={{
+                id: space.id,
+                name: space.name,
+                room_type: space.room_type,
+                light_direction: space.light_direction,
+                thumb: space.picture?.thumb || '',
+              }}
+              plants={space.plants}
+              onComplete={() => setToggleWatering(false)}
+            />
+          </div>
+        )}
 
         {space.plants.map((plant) => (
           <PlantCard key={plant.id} plant={plant} />

@@ -1,4 +1,5 @@
-import { FirebaseTimestamp, Picture } from './GenericType';
+import { FirebaseTimestamp } from './GenericType';
+import { PlantTypes } from './PlantType';
 
 export type SpeciesProps = {
   family: string;
@@ -8,26 +9,25 @@ export type SpeciesProps = {
   cultivar: string | null;
   description: string;
   common_name: Array<string>;
-  images: Array<Picture>;
-  type: Array<PlantType>;
-  habitat: Array<HabitatType>;
-  form: Array<FormType>;
+  type: PlantTypes;
+  habitat: Array<HabitatTypes>;
+  form: Array<FormTypes>;
   origin: Array<string>;
   edible: boolean;
   poisonous: boolean;
   pet_friendly: boolean;
   air_purifying: boolean;
-  hardiness: Array<HardinessType>;
-  exposure: Array<ExposureType>;
-  soil: Array<SoilType>;
-  water: Array<WaterType>;
+  hardiness: Array<HardinessTypes>;
+  exposure: Array<ExposureTypes>;
+  soil: Array<SoilTypes>;
+  water: Array<WaterTypes>;
   height_max: number | null;
   height_min: number | null;
   spread_min: number | null;
   spread_max: number | null;
-  growth_rate: GrowthRateType | null;
-  maintenance: MaintenanceType | null;
-  pests: Array<PestType>;
+  growth_rate: GrowthRateTypes | null;
+  maintenance: MaintenanceTypes | null;
+  pests: Array<PestTypes>;
 };
 
 export type ModelProps = {
@@ -60,28 +60,28 @@ export type ModelProps = {
   air: { max: number };
 };
 
-type PlantType =
-  | 'ANNUAL'
-  | 'AQUATIC_PLANT'
-  | 'BAMBOO'
-  | 'BIENNIAL'
-  | 'BROADLEAF_EVERGREEN'
-  | 'CONIFER'
-  | 'FERN'
-  | 'FLOWERING_CUT_PLANT'
-  | 'FLOWERING_POT_PLANT'
-  | 'GREENHOUSE_PRODUCE_PLANT'
-  | 'GROUND_COVER'
-  | 'HERBACEOUS_PERENNIAL'
-  | 'INDOOR_FOLIAGE_PLANT'
-  | 'INVASIVE_PLANT'
-  | 'POALES_(GRASS-LIKE)'
-  | 'SEMI-EVERGREEN'
-  | 'SHRUB_DECIDUOUS'
-  | 'TREE_DECIDUOUS'
-  | 'WEED_(HORTICULTURAL)';
+// export type PlantTypes =
+//   | 'ANNUAL'
+//   | 'AQUATIC_PLANT' //"AQUATIC"
+//   | 'BAMBOO'
+//   | 'BIENNIAL' //"ANNUAL"
+//   | 'BROADLEAF_EVERGREEN'
+//   | 'CONIFER'
+//   | 'FERN'
+//   | 'FLOWERING_CUT_PLANT' //"PERENNIAL_FLOWER"
+//   | 'FLOWERING_POT_PLANT' //"PERENNIAL_FLOWER"
+//   | 'GREENHOUSE_PRODUCE_PLANT' //"'ANNUAL'"
+//   | 'GROUND_COVER'
+//   | 'HERBACEOUS_PERENNIAL' //"HERBACEOUS"
+//   | 'INDOOR_FOLIAGE_PLANT' //"BROADLEAF_EVERGREEN"
+//   | 'INVASIVE_PLANT' //"UNKNOWN"
+//   | 'POALES_(GRASS-LIKE)' //"GRASS"
+//   | 'SEMI-EVERGREEN' //"SEMI_EVERGREEN"
+//   | 'SHRUB_DECIDUOUS' //"DECIDUOUS_SHRUB"
+//   | 'TREE_DECIDUOUS' //"DECIDUOUS_TREE"
+//   | 'WEED_(HORTICULTURAL)'; //"UNKNOWN"
 
-type FormType =
+export type FormTypes =
   | 'CREEPING_MAT-LIKE'
   | 'IRREGULAR'
   | 'MOUNDED'
@@ -94,7 +94,7 @@ type FormType =
   | 'WEEPING'
   | 'UNKNOWN';
 
-type HabitatType =
+export type HabitatTypes =
   | 'ARCHING'
   | 'DENSE'
   | 'EPIPHYTIC'
@@ -109,12 +109,10 @@ type HabitatType =
   | 'UPRIGHT'
   | 'UNKNOWN';
 
-type GrowthRateType = 'FAST' | 'MODERATE' | 'UNKNOWN' | 'SLOW';
+export type GrowthRateTypes = 'FAST' | 'MODERATE' | 'UNKNOWN' | 'SLOW';
 
-type HardinessType =
+export type HardinessTypes =
   | 'ZONE_1'
-  | 'ZONE_10'
-  | 'ZONE_11'
   | 'ZONE_2'
   | 'ZONE_3'
   | 'ZONE_4'
@@ -123,9 +121,13 @@ type HardinessType =
   | 'ZONE_7'
   | 'ZONE_8A'
   | 'ZONE_8B'
-  | 'ZONE_9';
+  | 'ZONE_9'
+  | 'ZONE_10'
+  | 'ZONE_11'
+  | 'ZONE_12'
+  | 'ZONE_13';
 
-type ExposureType =
+export type ExposureTypes =
   | 'UNKNOWN'
   | 'DEEP_SHADE'
   | 'FILTERED_SHADE'
@@ -133,7 +135,7 @@ type ExposureType =
   | 'PART_SHADE'
   | 'SHELTERED';
 
-type SoilType =
+export type SoilTypes =
   | 'UNKNOWN'
   | 'ACIDIC'
   | 'ALKALINE'
@@ -144,7 +146,7 @@ type SoilType =
   | 'ROCKY'
   | 'WELL-DRAINED';
 
-type WaterType =
+export type WaterTypes =
   | 'AQUATIC'
   | 'HIGH'
   | 'LOW'
@@ -154,8 +156,8 @@ type WaterType =
   | 'WETLANDS'
   | 'WINTER_DRY';
 
-type MaintenanceType = 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN';
-type PestType =
+export type MaintenanceTypes = 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN';
+export type PestTypes =
   | 'ABIOTIC_DISORDER'
   | 'ADELGIDS'
   | 'ANTHRACNOSE'

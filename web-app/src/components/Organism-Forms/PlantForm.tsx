@@ -17,7 +17,12 @@ import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
 import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
 import { useState, useEffect } from 'react';
 import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
-import { FormType, PlantProps, PotType } from '../../types/PlantType';
+import {
+  FormType,
+  PlantProps,
+  PlantTypes,
+  PotType,
+} from '../../types/PlantType';
 
 interface Props {
   addToSpace?: string;
@@ -87,9 +92,9 @@ const PlantForm: React.FC<Props> = ({
                     {
                       id: plantRef.id,
                       nickname: data.nickname,
-                      type: data.form,
+                      type: data.species.type,
                       botanical_name: data.species.id,
-                      size: `${data.pot.size}`,
+                      size: data.pot.size,
                     },
                   ],
                 };
@@ -145,6 +150,7 @@ const PlantForm: React.FC<Props> = ({
             subspecies: '',
             cultivar: '',
             id: '',
+            type: '' as PlantTypes,
           },
           form: '' as FormType,
           parent: null,

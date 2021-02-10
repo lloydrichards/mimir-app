@@ -2,10 +2,7 @@ import firebase from 'firebase';
 import { combineLatest, defer, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { collectionData, docData } from 'rxfire/firestore';
-import {
-  SpaceConfigProps,
-  SpaceProps,
-} from '../../../types/SpaceType';
+import { SpaceConfigProps, SpaceProps } from '../../../types/SpaceType';
 
 export const spaceDetails = (db: firebase.firestore.Firestore) => {
   return (source: any) =>
@@ -50,7 +47,7 @@ export const spaceDetails = (db: firebase.firestore.Firestore) => {
               const plants$: Array<Observable<unknown>> = [];
               current.plant_ids.forEach((id) =>
                 plants$.push(
-                  docData(db.collection('mimirPlants').doc(id || ''))
+                  docData(db.collection('mimirPlants').doc(id || ''), 'id')
                 )
               );
               return combineLatest([...plants$]);

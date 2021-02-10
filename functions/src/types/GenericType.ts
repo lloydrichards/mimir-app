@@ -60,11 +60,16 @@ export type Roles = {
   [user_id: string]: 'ADMIN' | 'EDITOR' | 'GUEST';
 };
 
+export type Note = {
+  content: string;
+  tags?: Array<{ [user_id: string]: string }>;
+};
+
 export type Location = {
   region: string;
   country: string;
   city: string;
-  geo: firebase.firestore.GeoPoint | null;
+  geo: null | firebase.firestore.GeoPoint;
 };
 
 export type Space = {

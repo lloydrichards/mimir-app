@@ -16,7 +16,7 @@ export const TextArea: React.FC<MySelectProps> = ({
     <div style={{margin:"4px 0px"}}>
     <TextField
       fullWidth
-      variant="standard"
+      variant="outlined"
       multiline
       rows={3}
       rowsMax={rowsMax}

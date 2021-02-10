@@ -7,11 +7,9 @@ export type UserProps = {
   first_name: string;
   last_name: string;
   bio: string;
-  gardener: 'BEGINNER' | 'EXPERT' | 'PRO';
-  units: 'METRIC' | 'IMPERIAL';
-  subscription: 'FREE' | 'PREMIUM' | 'BETA';
+  gardener: GardenerTypes;
   location: Location;
-  profile_picture: Picture | null;
+  profile_picture: Picture;
   social_media: {
     facebook: string;
     instagram: string;
@@ -19,6 +17,23 @@ export type UserProps = {
     email: string;
   };
 };
+
+export type UserSettingsProps = {
+  date_modified: FirebaseTimestamp;
+  date_format: DateFormatTypes;
+  units: 'METRIC' | 'IMPERIAL';
+  subscription: 'FREE' | 'PREMIUM' | 'BETA';
+};
+
+export type DateFormatTypes = 'dd/MM/yyyy' | 'MM/dd/yyyy';
+
+export type UserType = {
+  id: string;
+  username: string;
+  gardener: GardenerTypes;
+};
+
+export type GardenerTypes = 'BEGINNER' | 'EXPERT' | 'PRO';
 
 export type UserAggProps = {
   timestamp: FirebaseTimestamp;
