@@ -1,7 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { auth } from '../../firebase';
 import firebase from 'firebase';
-import { UserProps } from '../../types/UserType';
+import React, { useContext, useEffect, useState } from 'react';
+import { auth, functions } from '../../firebase';
+import { PlantType } from '../../types/PlantType';
+import { SpaceType } from '../../types/SpaceType';
+import { UserProps, UserType } from '../../types/UserType';
 
 type ContextProps = {
   currentUser: firebase.User | null;
@@ -14,6 +16,16 @@ type ContextProps = {
     email: string,
     password: string
   ) => Promise<firebase.auth.UserCredential>;
+  movePlant: (
+    user: UserType,
+    plant: PlantType,
+    toSpace: SpaceType
+  ) => Promise<firebase.functions.HttpsCallableResult>;
+  moveDevice: (
+    user: UserType,
+    device_id: string,
+    toSpace: SpaceType
+  ) => Promise<firebase.functions.HttpsCallableResult>;
   resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
   setUserDoc: React.Dispatch<React.SetStateAction<UserProps | null>>;
@@ -38,6 +50,17 @@ export const AuthProvider = ({ children }: any) => {
     return auth.signInWithEmailAndPassword(email, password);
   };
 
+  const movePlant = (user: UserType, plant: PlantType, toSpace: SpaceType) => {
+    return functions.httpsCallable('movePlant')({ user, plant, toSpace });
+  };
+  const moveDevice = (
+    user: UserType,
+    device_id: string,
+    toSpace: SpaceType
+  ) => {
+    return functions.httpsCallable('moveDevice')({ user, device_id, toSpace });
+  };
+
   const resetPassword = (email: string) => {
     return auth.sendPasswordResetEmail(email);
   };
@@ -60,6 +83,8 @@ export const AuthProvider = ({ children }: any) => {
         signUp,
         login,
         resetPassword,
+        movePlant,
+        moveDevice,
         authenticated: currentUser !== null,
       }}>
       {!loadingAuthState && children}

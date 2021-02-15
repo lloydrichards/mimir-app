@@ -1,7 +1,7 @@
 import firebase from 'firebase';
-import { combineLatest, defer, EMPTY, from, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
 import { collectionData, docData } from 'rxfire/firestore';
+import { combineLatest, defer, Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { SpaceConfigProps, SpaceProps } from '../../../types/SpaceType';
 
 export const spaceDetails = (db: firebase.firestore.Firestore) => {
@@ -10,7 +10,6 @@ export const spaceDetails = (db: firebase.firestore.Firestore) => {
       let parent: SpaceProps & { id: string };
 
       return source.pipe(
-        tap((i) => console.log(i)),
         switchMap((data: SpaceProps & { id: string }) => {
           parent = data;
 
@@ -54,7 +53,7 @@ export const spaceDetails = (db: firebase.firestore.Firestore) => {
               if (plants$.length === 0) return of(['REMOVE']);
               return combineLatest([...plants$]);
             }),
-            map((arr: Array<any>) => arr.filter((i) => i != 'REMOVE'))
+            map((arr: Array<any>) => arr.filter((i) => i !== 'REMOVE'))
           );
 
           return combineLatest([config$, aggs$, daily$, plants$]);

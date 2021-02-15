@@ -1,19 +1,17 @@
-import { Button, Grid, MenuItem, Typography } from '@material-ui/core';
+import { Button, MenuItem, Typography } from '@material-ui/core';
+import { KeyboardDatePicker } from '@material-ui/pickers';
+import firebase from 'firebase';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
-import { TextField } from '../Atom-Inputs/TextField';
 import app from '../../firebase';
-import { useHistory } from 'react-router-dom';
-import { SpaceType } from '../../types/SpaceType';
+import { Log } from '../../types/LogType';
 import { PlantProps } from '../../types/PlantType';
-import { useAuth } from '../auth/Auth';
+import { SpaceType } from '../../types/SpaceType';
+import { WateringProps } from '../../types/WateringType';
 import { Selector } from '../Atom-Inputs/Selector';
 import { Switch } from '../Atom-Inputs/Switch';
-import { KeyboardDatePicker } from '@material-ui/pickers';
 import { TextArea } from '../Atom-Inputs/TextArea';
-import { WateringProps } from '../../types/WateringType';
-import firebase from 'firebase';
-import { Log } from '../../types/LogType';
+import { useAuth } from '../auth/Auth';
 
 interface Props {
   space: SpaceType;

@@ -1,4 +1,3 @@
-import { SettingsPhoneTwoTone } from '@material-ui/icons';
 import React from 'react';
 
 interface Props {

@@ -25,7 +25,7 @@ const DeviceForm: React.FC<Props> = ({ altButton, debug, spaces }) => {
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
           setSubmitting(true);
           try {
-            if (!data.device_id) throw { error: 'No Device ID' };
+            if (!data.device_id) throw new Error('No Device ID');
 
             const batch = db.batch();
             const deviceRef = db.collection('mimirDevices').doc(data.device_id);
@@ -46,6 +46,7 @@ const DeviceForm: React.FC<Props> = ({ altButton, debug, spaces }) => {
 
             batch.set(newSpaceConfig, {
               ...currentConfig,
+              timestamp,
               current: true,
               devices: [...currentConfig.devices, deviceRef.id],
             });

@@ -10,7 +10,7 @@ import PlantCard from '../components/Organism-Cards/PlantCard';
 import PlantForm from '../components/Organism-Forms/PlantForm';
 import WateringForm from '../components/Organism-Forms/WarteringForm';
 import app from '../firebase';
-import { COLOUR_ACCENT, COLOUR_LIGHT } from '../Styles/Colours';
+import { COLOUR_ACCENT } from '../Styles/Colours';
 import { PlantProps } from '../types/PlantType';
 import { DailyProps } from '../types/ReadingType';
 import {
@@ -48,7 +48,6 @@ const SpaceDetails: React.FC<Props> = ({ match }) => {
   useObservable(spaceData$, setSpace);
 
   const roomType = RoomTypeMap.find((i) => i.id === space?.room_type || '');
-  console.log(space);
   if (!space) {
     return <Typography>Loading</Typography>;
   } else

@@ -1,29 +1,28 @@
 import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
-import { TextField } from '../Atom-Inputs/TextField';
+import { useEffect, useState } from 'react';
 import app, { timestamp } from '../../firebase';
-import { TextArea } from '../Atom-Inputs/TextArea';
-import { Selector } from '../Atom-Inputs/Selector';
+import { COLOUR_ACCENT } from '../../Styles/Colours';
 import { Picture } from '../../types/GenericType';
-import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
-import { NumberField } from '../Atom-Inputs/NumberField';
-import { Switch } from '../Atom-Inputs/Switch';
-import { COLOUR_ACCENT, COLOUR_DARK } from '../../Styles/Colours';
-import { PotTypeMap } from '../Molecule-Data/PotTypeMap';
-import { useAuth } from '../auth/Auth';
-import { FormTypeMap } from '../Molecule-Data/FormTypeMap';
-import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
-import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
-import { useState, useEffect } from 'react';
-import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
+import { Log } from '../../types/LogType';
 import {
   FormType,
   PlantProps,
   PlantTypes,
-  PotType,
+  PotType
 } from '../../types/PlantType';
-import { Log } from '../../types/LogType';
+import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
+import { NumberField } from '../Atom-Inputs/NumberField';
+import { Selector } from '../Atom-Inputs/Selector';
+import { Switch } from '../Atom-Inputs/Switch';
+import { TextArea } from '../Atom-Inputs/TextArea';
+import { TextField } from '../Atom-Inputs/TextField';
+import { useAuth } from '../auth/Auth';
+import { FormTypeMap } from '../Molecule-Data/FormTypeMap';
+import { PotTypeMap } from '../Molecule-Data/PotTypeMap';
+import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
+import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 
 interface Props {
   addToSpace?: string;
@@ -82,11 +81,12 @@ const PlantForm: React.FC<Props> = ({
                 const newConfigRef = spaceRef.collection('Configs').doc();
 
                 const currentConfigDoc = await currentConfig.get();
-                if (currentConfigDoc.empty) throw { error: 'No Configs' };
+                if (currentConfigDoc.empty) throw new Error("No Config");
 
                 const currentDoc = currentConfigDoc.docs[0].data() as SpaceConfigProps;
                 const newConfig: SpaceConfigProps = {
                   ...currentDoc,
+                  timestamp,
                   plant_ids: currentDoc.plant_ids.concat(plantRef.id),
                   plants: [
                     ...currentDoc.plants,

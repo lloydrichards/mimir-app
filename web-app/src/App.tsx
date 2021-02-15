@@ -3,7 +3,6 @@ import { AuthProvider } from './components/auth/Auth';
 import SignUp from './components/auth/SignUp';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Dashboard from './Pages/Dashboard';
-import Profile from './components/Profile/Profile';
 import Login from './components/auth/Login';
 import PlantEncyclopedia from './Pages/PlantEncyclopedia';
 import SpaceForm from './components/Organism-Forms/SpaceForm';
@@ -28,7 +27,6 @@ const App = () => {
               <Route path='/signup' component={SignUp} />
               <Route path='/login' component={Login} />
               <Route path='/forgot-password' component={ForgotPassword} />
-              <PrivateRoute path='/profile' component={Profile} />
               <Route path='/encyclopedia' component={PlantEncyclopedia} />
               <PrivateRoute path='/addSpecies' component={SpeciesForm} />
               <PrivateRoute path='/addSpace' component={SpaceForm} />

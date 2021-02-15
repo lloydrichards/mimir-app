@@ -9,16 +9,13 @@ import useObservable from '../components/helper/useObservable';
 import SpaceCard from '../components/Organism-Cards/SpaceCard';
 import DeviceForm from '../components/Organism-Forms/DeviceForm';
 import app from '../firebase';
-import {
-  SpaceListItemProps, SpaceType
-} from '../types/SpaceType';
+import { SpaceListItemProps, SpaceType } from '../types/SpaceType';
 import { UserProps } from '../types/UserType';
-
 
 const db = app.firestore();
 
 function Dashboard() {
-  const { currentUser, userDoc, setUserDoc } = useAuth();
+  const { currentUser, setUserDoc } = useAuth();
   const history = useHistory();
   const [toggleDeviceForm, setToggleDeviceForm] = useState<boolean>(false);
   const [spaces, setSpaces] = useState<Array<SpaceListItemProps>>([]);
@@ -34,8 +31,6 @@ function Dashboard() {
   );
 
   useObservable(data$, setSpaces);
-
-  console.log('Spaces: ', spaces);
 
   useEffect(() => {
     if (currentUser) {
@@ -53,7 +48,6 @@ function Dashboard() {
 
   if (!currentUser) return <Login />;
 
-  console.log('User:', userDoc);
   return (
     <div>
       <h1>Dashboard</h1>

@@ -40,100 +40,33 @@ const app = app_1.default.initializeApp({
     appId: '1:999550951543:web:2822c33ea1a8ec68d36672',
     measurementId: 'G-CFQVCR1SEH',
 });
-const test = app.functions().httpsCallable('readingTest');
+const testScore = app.functions().httpsCallable('scoreCalculatorTest');
+const plants_MOVE = app.functions().httpsCallable('movePlants');
 exports.db = admin.firestore();
 exports.timestamp = admin.firestore.Timestamp.now();
 //const increment = admin.firestore.FieldValue.increment;
 console.log('Starting mimir-app Server...');
-combinedData.forEach((s) => {
-    const batch = exports.db.batch();
-    const { family, genus, species, subspecies, cultivar, description, common_name, type, habitat, form, origin, edible, poisonous, pet_friendly, air_purifying, hardiness, exposure, soil, water, height_max, height_min, spread_min, spread_max, growth_rate, maintenance, pests, model, } = s;
-    const species_id = s.id;
-    const speciesDoc = exports.db.collection('mimirSpecies').doc(species_id);
-    const modelDoc = speciesDoc.collection('Model').doc('--Init--');
-    if (!species)
-        return console.log(species_id, 'Missing Species');
-    const doc = {
-        family,
-        genus,
-        species,
-        subspecies,
-        cultivar,
-        description,
-        common_name,
-        images: [],
-        type,
-        habitat,
-        form,
-        origin,
-        edible,
-        poisonous,
-        pet_friendly,
-        air_purifying,
-        hardiness,
-        exposure,
-        soil,
-        water,
-        height_max,
-        height_min,
-        spread_min,
-        spread_max,
-        growth_rate,
-        maintenance,
-        pests,
-    };
-    batch.set(speciesDoc, doc);
-    batch.set(modelDoc, Object.assign(Object.assign({}, model), { timestamp: exports.timestamp, current: true }));
-    return batch.commit().then(() => console.log(species_id, 'Added'));
-});
-// space_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', {
-//   name: 'Test Space #2',
-//   description: 'A Space for testing things',
-//   room_type: 'BEDROOM',
-//   sun_exposure: 'HALF_SHADE',
-//   location: {
-//     region: 'Europe',
-//     country: 'Switzerland',
-//     city: 'Zurich',
-//     address: '',
-//   },
-//   profile_picture: null,
-//   owner: {
-//     name: 'Tester',
-//     email: 'tester@word.com',
-//     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-//   },
-// });
-// plant_CREATE('LXSJXgTDOIPiPgFDP3iVcfo0qdc2', 'jdzguo67OlB5lu3KXTpo', {
-//   nickname: 'Pothos',
-//   description: ' Tester Plant',
-//   profile_picture: null,
-//   form: 'OVAL',
-//   pot: {
-//     type: 'TERRACOTTA',
-//     size: 17,
-//     tray: true,
-//     hanging: false,
-//   },
-//   owner: {
-//     name: 'Tester',
-//     email: '',
-//     id: 'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-//   },
-//   parent: null,
-//   species: {
-//     family: 'Araceae',
-//     genus: 'Scindapsus',
-//     species: 'pictus',
-//     subspecies: '',
-//     cultivar: '',
-//     id: 'Scindapsus pictus',
-//   },
-// });
-// plant_MOVED(
-//   'LXSJXgTDOIPiPgFDP3iVcfo0qdc2',
-//   'agHYKTtkN6CpS313rw8X',
-//   'Ax7QWEsm2g33AV0UjFya',
-//   'jdzguo67OlB5lu3KXTpo'
-// );
+// testScore({ plant_id: 'QoDIiogM6MFuACdbLJrQ' });
+const data = {
+    user: {
+        gardener: 'BEGINNER',
+        id: 'BOnlHozQMadp2zgn3WiF3iDQL8T2',
+        username: 'tester',
+    },
+    plant: {
+        botanical_name: 'Vanilla planifolia',
+        id: '10Awh8CnY3rDxoxLW2SM',
+        nickname: 'Vanilla Orchid',
+        size: 20,
+        type: 'SEMI_EVERGREEN',
+    },
+    toSpace: {
+        id: '969KEoPkzc6nbNZm39SZ',
+        name: 'Bedroom Desk',
+        light_direction: ['NW', 'W', 'SW'],
+        room_type: 'BEDROOM',
+        thumb: '',
+    },
+};
+plants_MOVE(data);
 //# sourceMappingURL=app.js.map

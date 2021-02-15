@@ -13,3 +13,5 @@ export {
   userAggregation,
 } from './user';
 export { addToIndex, deleteFromIndex, updateSpecies } from './species';
+export { movePlant } from './Plant/MovePlant';
+export { moveDevice } from './Device/MoveDevice';

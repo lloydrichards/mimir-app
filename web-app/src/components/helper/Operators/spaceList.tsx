@@ -1,7 +1,7 @@
 import firebase from 'firebase';
-import { combineLatest, defer } from 'rxjs';
-import { map, switchMap, withLatestFrom, tap } from 'rxjs/operators';
 import { collectionData } from 'rxfire/firestore';
+import { combineLatest, defer } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 export const spaceList = (db: firebase.firestore.Firestore) => {
   return (source: any) =>
@@ -45,7 +45,6 @@ export const spaceList = (db: firebase.firestore.Firestore) => {
 
           return combineLatest([...spaces$]);
         }),
-        tap((i) => console.log('tap', i)),
         map((arr: Array<Array<any>>) =>
           parent.map((space: any, idx: any) => {
             const config = arr[idx][1][0];
@@ -54,7 +53,6 @@ export const spaceList = (db: firebase.firestore.Firestore) => {
             return { ...space, config, aggs, readings };
           })
         ),
-        tap((i) => console.log('finished', i))
       );
     });
 };

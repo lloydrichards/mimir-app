@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/analytics';
 import 'firebase/firestore';
+import 'firebase/functions';
 import 'firebase/storage';
 
 const app = firebase.initializeApp({
@@ -17,5 +18,7 @@ if (typeof window !== 'undefined') firebase.analytics();
 
 export const auth = app.auth();
 export const storage = app.storage();
+export const db = app.firestore();
+export const functions = app.functions();
 export const timestamp = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
 export default app;

@@ -217,30 +217,33 @@ export const dailyReading = functions.pubsub
             const newAcc = acc;
             const hour = cur.timestamp.toDate().getHours();
             const hourData = acc[hour];
+            const newTotal = (hourData?.total || 0) + 1;
             newAcc[hour] = {
-              total: (hourData?.total || 0) + 1,
+              total: newTotal,
               timestamp: cur.timestamp,
-              temperature:
-                ((hourData?.temperature || 0 * (hourData?.total || 1)) +
-                  cur.temperature) /
-                ((hourData?.total || 0) + 1),
-              humidity:
-                ((hourData?.humidity || 0 * (hourData?.total || 1)) +
-                  cur.humidity) /
-                ((hourData?.total || 0) + 1),
-              iaq:
-                ((hourData?.iaq || 0 * (hourData?.total || 1)) + cur.iaq) /
-                ((hourData?.total || 0) + 1),
-              eCO2:
-                ((hourData?.eCO2 || 0 * (hourData?.total || 1)) + cur.eCO2) /
-                ((hourData?.total || 0) + 1),
-              eVOC:
-                ((hourData?.eVOC || 0 * (hourData?.total || 1)) + cur.eVOC) /
-                ((hourData?.total || 0) + 1),
-              luminance:
-                ((hourData?.luminance || 0 * (hourData?.total || 1)) +
-                  cur.luminance) /
-                ((hourData?.total || 0) + 1),
+              temperature: hourData?.temperature
+                ? (hourData.temperature * (hourData?.total || 1) +
+                    cur.temperature) /
+                  newTotal
+                : cur.temperature,
+              humidity: hourData?.humidity
+                ? (hourData.humidity * (hourData?.total || 1) + cur.humidity) /
+                  newTotal
+                : cur.humidity,
+              iaq: hourData?.iaq
+                ? (hourData.iaq * (hourData?.total || 1) + cur.iaq) / newTotal
+                : cur.iaq,
+              eCO2: hourData?.eCO2
+                ? (hourData.eCO2 * (hourData?.total || 1) + cur.eCO2) / newTotal
+                : cur.eCO2,
+              eVOC: hourData?.eVOC
+                ? (hourData.eVOC * (hourData?.total || 1) + cur.eVOC) / newTotal
+                : cur.eVOC,
+              luminance: hourData?.luminance
+                ? (hourData.luminance * (hourData?.total || 1) +
+                    cur.luminance) /
+                  newTotal
+                : cur.luminance,
             };
             return newAcc;
           }, {} as DailyReadingData);
@@ -380,6 +383,14 @@ type DailyReadingData = {
 //       .catch((err) => console.error(err));
 //   });
 
+export const scoreUpdate = functions.firestore
+  .document('mimirPlants/{plant_id}/Daily/{daily_id}')
+  .onCreate((_daily, context) => {
+    // const plant_id = context.params.plant_id
+    // const daily = _daily.data() as DailyProps
+    //Update the Score
+  });
+
 export const scoreCalculatorTest = functions.https.onCall(
   (data: { plant_id: string }, context) => {
     const plantRef = db.collection('mimirPlants').doc(data.plant_id);
@@ -455,7 +466,12 @@ export const scoreCalculatorTest = functions.https.onCall(
         // Initialise a dictionary for population
         // var score_dict: { [index: string]: number } = {};
 
-        const scoreArray = var_array.map((i) => {
+        const scoreTest: {
+          humidity?: number;
+          temperature?: number;
+          light?: number;
+        } = {};
+        var_array.forEach((i) => {
           // Get the average value, ideal min and ideal max
           const av_value = lastDaily.data()[i].avg;
           const min = extreme_dict[i][0];
@@ -464,11 +480,10 @@ export const scoreCalculatorTest = functions.https.onCall(
           // Use the range function to get the score
           const score = rangeFunc(min, max, av_value);
 
-          return { [i]: score };
+          scoreTest[i] = score;
         });
 
         //Return either score or error
-        const scoreTest = scoreArray;
 
         // if (!scoreTest) throw `Error: ${scoreTest}`;
         //if successful, update the daily document with the score

@@ -4,14 +4,13 @@ import { useHistory } from 'react-router-dom';
 import {
   COLOUR_LIGHT,
   COLOUR_SECONDARY,
-  COLOUR_SUBTLE,
+  COLOUR_SUBTLE
 } from '../../Styles/Colours';
 import {
-  SpaceConfigProps,
-  SpaceListItemProps,
-  SpaceProps,
+  SpaceListItemProps
 } from '../../types/SpaceType';
 import ValueField from '../Atom-Inputs/ValueField';
+import { useAuth } from '../auth/Auth';
 import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
 import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
 import DraggableWrapper from '../Molecule-Wrappers/DraggableWrapper';
@@ -22,18 +21,33 @@ interface Props {
 }
 
 const SpaceCard: React.FC<Props> = ({ space }) => {
+  const { moveDevice, currentUser, userDoc } = useAuth();
   const history = useHistory();
   const [open, setOpen] = useState<boolean>(false);
   const roomType = RoomTypeMap.find((i) => i.id === space.room_type);
+
+  const handleDrop = (data: any, status: string) => {
+    if (space.config.devices.find((i) => i === data))
+      return console.log('Do Nothing');
+    console.log(`Move ${data} to ${space.name}`);
+    moveDevice(
+      {
+        id: currentUser?.uid || '',
+        username: userDoc?.username || '',
+        gardener: userDoc?.gardener || 'BEGINNER',
+      },
+      data,
+      {
+        id: space.id,
+        name: space.name,
+        light_direction: space.light_direction,
+        thumb: space.picture?.thumb || '',
+        room_type: space.room_type,
+      }
+    );
+  };
   return (
-    <DropWrapper
-      onOpen={setOpen}
-      onDrop={(data, status) => {
-        if (space.config.devices.find((i) => i === data))
-          return console.log('Do Nothing');
-        console.log(`Move ${data} to ${space.name}`);
-      }}
-      status='okay'>
+    <DropWrapper onOpen={setOpen} onDrop={handleDrop} status='okay'>
       <div
         style={{
           border: '2px solid lightgrey',
@@ -85,9 +99,9 @@ const SpaceCard: React.FC<Props> = ({ space }) => {
                 space.config ? `${space.config?.plant_ids.length}` : undefined
               }
             />
-            {space.config?.plants.map((i) => {
+            {space.config?.plants.map((i, idx) => {
               const plantType = PlantTypesMap.find((m) => m.id === i.type);
-              return plantType?.icon();
+              return plantType?.icon({ key: idx });
             })}
             {space.config?.devices && (
               <div>
