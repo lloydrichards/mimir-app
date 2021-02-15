@@ -10,7 +10,7 @@ import {
   FirebaseTimestamp,
 } from './GenericType';
 import { PlantProps, PlantType } from './PlantType';
-import { DailyProps } from './ReadingType';
+import { DailyProps, ReadingProps } from './ReadingType';
 
 export type SpaceProps = {
   name: string;
@@ -60,6 +60,13 @@ export type SpaceCreateInput = Omit<
   SpaceProps,
   'date_created' | 'date_modified' | 'roles'
 >;
+
+export type SpaceListItemProps = SpaceProps & {
+  id: string;
+  config: SpaceConfigProps & { id: string };
+  agg: SpaceAggProps & { id: string };
+  readings: Array<ReadingProps & { id: string }>;
+};
 
 export type LightType = 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
 

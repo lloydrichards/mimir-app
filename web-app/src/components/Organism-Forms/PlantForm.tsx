@@ -5,7 +5,7 @@ import { TextField } from '../Atom-Inputs/TextField';
 import app, { timestamp } from '../../firebase';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
-import { Log, Picture } from '../../types/GenericType';
+import { Picture } from '../../types/GenericType';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 import { NumberField } from '../Atom-Inputs/NumberField';
 import { Switch } from '../Atom-Inputs/Switch';
@@ -23,6 +23,7 @@ import {
   PlantTypes,
   PotType,
 } from '../../types/PlantType';
+import { Log } from '../../types/LogType';
 
 interface Props {
   addToSpace?: string;
@@ -107,7 +108,7 @@ const PlantForm: React.FC<Props> = ({
                   description: data.description,
                   form: data.form,
                   owner: data.owner,
-                  parent: data.parent,
+                  parent: data.parent ? data.parent : null,
                   pot: data.pot,
                   picture: data.picture,
                   roles: {
@@ -153,7 +154,12 @@ const PlantForm: React.FC<Props> = ({
             type: '' as PlantTypes,
           },
           form: '' as FormType,
-          parent: null,
+          parent: {
+            name: '',
+            id: '',
+            owner_name: '',
+            owner_id: '',
+          },
           picture: null,
           pot: {
             hanging: false,
@@ -176,10 +182,6 @@ const PlantForm: React.FC<Props> = ({
                 placeholder='Select Space for plant...'>
                 {userSpaces.map((s) => (
                   <MenuItem key={s.id} value={s.id}>
-                    {RoomTypeMap.find((i) => i.id === s.room_type)?.icon(
-                      {},
-                      COLOUR_DARK
-                    )}
                     {s.name}
                   </MenuItem>
                 ))}
@@ -210,7 +212,9 @@ const PlantForm: React.FC<Props> = ({
             />
             <SearchSpecies
               initialValue=''
-              onChange={(option: any) => setFieldValue('species', option.value)}
+              onChange={(option: any) =>
+                setFieldValue('species', option?.value)
+              }
             />
             <Selector label='Form' name='form'>
               {FormTypeMap.map((form) => (
@@ -219,7 +223,9 @@ const PlantForm: React.FC<Props> = ({
                 </MenuItem>
               ))}
             </Selector>
-            <Selector label='Parent' name='parent'></Selector>
+            <Selector label='Parent' name='parent.id'>
+              <MenuItem disabled>No Parents</MenuItem>
+            </Selector>
             <div
               style={{
                 display: 'grid',

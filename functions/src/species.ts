@@ -20,6 +20,7 @@ export const addToIndex = functions.firestore
 
     return index.saveObject({ ...speciesData, objectID });
   });
+
 export const updateSpecies = functions.firestore
   .document('mimirSpecies/{species_id}')
   .onUpdate(async (species, context) => {
@@ -29,7 +30,7 @@ export const updateSpecies = functions.firestore
 
     const speciesBefore = species.before.data() as SpeciesProps;
     const speciesAfter = species.after.data() as SpeciesProps;
-    const species_id = context.params.space_id;
+    const species_id = context.params.species_id;
     if (speciesBefore === speciesAfter) return;
 
     const batchArr: FirebaseFirestore.WriteBatch[] = [];

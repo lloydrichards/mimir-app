@@ -3,6 +3,7 @@ import React from 'react';
 import { COLOUR_SUBTLE } from '../../Styles/Colours';
 import { PlantProps } from '../../types/PlantType';
 import ValueField from '../Atom-Inputs/ValueField';
+import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
 
 interface Props {
   plant: PlantProps & { id: string };
@@ -24,6 +25,11 @@ const PlantCard: React.FC<Props> = ({ plant }) => {
         </Typography>
         <ValueField label='Description' value={plant.description} />
         <ValueField label='Species' value={plant.species.id} />
+        <ValueField
+          label='Type'
+          icon={PlantTypesMap.find((i) => i.id === plant.species.type)?.icon()}
+          value={plant.species.type}
+        />
         <ValueField
           label='Pot'
           value={`${plant.pot.type} (${plant.pot.size}L)`}

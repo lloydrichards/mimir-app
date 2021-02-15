@@ -34,3 +34,17 @@ export type ProblemTypes =
   | 'FRUIT_DROP'
   | 'FRUIT_BORE'
   | 'MOLD';
+
+  export type InspectionType = {
+    id: string;
+    created_by: UserType;
+    happiness: number;
+    health: number;
+    leafing: boolean;
+    flowering: boolean;
+    fruiting: boolean;
+    root_bound: boolean;
+    problems: Array<ProblemTypes>;
+    pests: Array<PestTypes>;
+  };
+  

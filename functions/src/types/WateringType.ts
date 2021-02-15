@@ -13,3 +13,9 @@ export type WateringProps = {
   pictures: Array<Picture>;
   note: Note;
 };
+
+export type WaterType = {
+  id: string;
+  created_by: UserType;
+  fertilizer: boolean;
+};

@@ -1,50 +1,7 @@
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import firebase from 'firebase';
 
-export type Log = {
-  timestamp: FirebaseTimestamp;
-  type: Array<
-    | 'USER_CREATED' //when a User is created
-    | 'USER_UPDATED'
-    | 'SPACE_CREATED' //when a Space is created
-    | 'SPACE_UPDATED' //when a Space config is updated
-    | 'SPACE_DELETED' //when a Space is deleted
-    | 'PLANT_CREATED' //when a Plant is created
-    | 'PLANT_CUTTING' //when a Plant is duplicated
-    | 'PLANT_DIED' //when a Plant dies
-    | 'PLANT_MOVED' //when a Plant is moved to new Space
-    | 'PLANT_DELETED' //when a Plant is deleted
-    | 'DEVICE_CREATED'
-    | 'DEVICE_REGISTERED'
-    | 'DEVICE_MOVED'
-    | 'DEVICE_UPDATE'
-    | 'DEVICE_DELETED'
-    | 'WATERING'
-    | 'INSPECTION'
-    | 'POINTS'
-  >;
-  content: {
-    user_id?: string;
-    user_email?: string;
-    space_id?: string;
-    space_type?: string;
-    space_name?: string;
-    plant_id?: string;
-    device_id?: string;
-    readings?: number;
-    toSpace_id?: string;
-    fromSpace_id?: string;
-    points?: number;
-    health?: number;
-    happiness?: number;
-    fertilizer?: boolean;
-    temperature?: Temperature;
-    humidity?: Humidity;
-    light?: Light;
-    ait?: Air;
-    battery_percent?: number;
-  };
-};
+
 export type Picture = {
   url: string;
   ref: string;

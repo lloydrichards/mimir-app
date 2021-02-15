@@ -3,6 +3,7 @@ import { MenuItem } from '@material-ui/core';
 import { components, OptionProps, StylesConfig } from 'react-select';
 import algoliasearch from 'algoliasearch';
 import AsyncSelect from 'react-select/async';
+import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
 
 interface Props {
   onChange: (option: any) => void;
@@ -18,15 +19,17 @@ const index = searchClient.initIndex('mimirSpecies');
 export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
   const promiseOptions = async (inputValue: string) => {
     const resp = await index.search(inputValue).then(({ hits }) => hits);
-    const result = await Object.values(resp).map((item: any) => ({
-      label: item.id,
+    console.log('respnonse', resp);
+    const result = resp.map((item: any) => ({
+      label: item.objectID,
       value: {
         family: item.family,
         genus: item.genus,
         species: item.species,
         subspecies: item.subspecies,
         cultivar: item.cultivar,
-        id: item.id,
+        type: item.type,
+        id: item.objectID,
       },
       image: item.images[0],
       common: item.common_name[0],
@@ -84,15 +87,20 @@ export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
 
   const CustomOption = (props: OptionProps<any, any>) => {
     const { data } = props;
+    const plantType = PlantTypesMap.find((i) => i.id === data.value.type);
+
     return (
       <components.Option {...props}>
         <MenuItem>
-          <img
-            alt={data.description}
-            style={{ width: 30, borderRadius: '15%', paddingRight: '10px' }}
-            src={data.image}
-          />
-          {data.common}({data.label}) -- {data.description}
+          {data.image && (
+            <img
+              alt={`${data.label}`}
+              style={{ width: 30, borderRadius: '15%', paddingRight: '10px' }}
+              src={data.image[0].thumb}
+            />
+          )}
+          {plantType?.icon()}
+          {data.common}({data.value.id}) -- {data.description}
         </MenuItem>
       </components.Option>
     );

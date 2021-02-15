@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { Button } from '@material-ui/core';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import { collectionData } from 'rxfire/firestore';
 import { useAuth } from '../components/auth/Auth';
 import Login from '../components/auth/Login';
-import app from '../firebase';
-
-import Spaces from '../components/Dashboard/Spaces';
-import { Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
-import { UserProps } from '../types/UserType';
-import { COLOUR_SUBTLE } from '../Styles/Colours';
+import { spaceList } from '../components/helper/Operators/spaceList';
+import useObservable from '../components/helper/useObservable';
+import SpaceCard from '../components/Organism-Cards/SpaceCard';
 import DeviceForm from '../components/Organism-Forms/DeviceForm';
+import app from '../firebase';
+import {
+  SpaceListItemProps, SpaceType
+} from '../types/SpaceType';
+import { UserProps } from '../types/UserType';
+
 
 const db = app.firestore();
 
@@ -16,6 +21,21 @@ function Dashboard() {
   const { currentUser, userDoc, setUserDoc } = useAuth();
   const history = useHistory();
   const [toggleDeviceForm, setToggleDeviceForm] = useState<boolean>(false);
+  const [spaces, setSpaces] = useState<Array<SpaceListItemProps>>([]);
+  const data$ = useMemo(
+    () =>
+      collectionData(
+        db
+          .collection('mimirSpaces')
+          .where(`roles.${currentUser?.uid || ''}`, '>=', ''),
+        'id'
+      ).pipe(spaceList(db)),
+    [currentUser]
+  );
+
+  useObservable(data$, setSpaces);
+
+  console.log('Spaces: ', spaces);
 
   useEffect(() => {
     if (currentUser) {
@@ -37,33 +57,20 @@ function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      {userDoc?.profile_picture ? (
-        <img
-          alt={`Profile of ${userDoc.username}`}
-          src={userDoc?.profile_picture.url}
-          height='180'
-          width='180'
-          style={{ borderRadius: '20rem' }}></img>
-      ) : (
-        <div
-          style={{
-            borderRadius: '1rem',
-            width: 180,
-            height: 180,
-            backgroundColor: COLOUR_SUBTLE,
-          }}
-        />
-      )}
 
-      <p>Date Created: {userDoc?.date_created?.toDate().toDateString()}</p>
-      <p>Garden Level: {userDoc?.gardener}</p>
-      <p>Subscription: {userDoc?.subscription}</p>
-      <Button variant='text' onClick={() => history.push('/profile')}>
-        Update Profile
-      </Button>
       <div>
         {toggleDeviceForm ? (
           <DeviceForm
+            spaces={spaces.map((s) => {
+              const spaceTy: SpaceType = {
+                id: s.id,
+                light_direction: s.light_direction,
+                room_type: s.room_type,
+                name: s.name,
+                thumb: s.picture?.thumb || '',
+              };
+              return spaceTy;
+            })}
             altButton={{
               label: 'Cancel',
               onClick: () => setToggleDeviceForm(false),
@@ -76,7 +83,19 @@ function Dashboard() {
         )}
       </div>
 
-      <Spaces userId={currentUser.uid} />
+      <div>
+        <h3>Spaces</h3>
+        {spaces.map((space) => (
+          <SpaceCard key={space.id} space={space} />
+        ))}
+        <Button
+          fullWidth
+          variant='contained'
+          size='medium'
+          onClick={() => history.push('/addSpace')}>
+          Add Space
+        </Button>
+      </div>
     </div>
   );
 }

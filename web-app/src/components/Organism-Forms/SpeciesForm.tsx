@@ -10,7 +10,9 @@ import { Switch } from '../Atom-Inputs/Switch';
 import { Slider } from '../Atom-Inputs/Slider';
 import { ModelProps, SpeciesProps } from '../../types/SpeciesType';
 import { HardinessTypeMap } from '../Molecule-Data/HardinessTypeMap';
-import {ExposureTypeMap} from "../Molecule-Data/ExposureTypeMap"
+import { ExposureTypeMap } from '../Molecule-Data/ExposureTypeMap';
+import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
+import { PlantTypes } from '../../types/PlantType';
 
 interface Props {
   altButton?: { label: string; onClick: () => void };
@@ -87,12 +89,13 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               exposure: data.exposure,
               soil: data.soil,
               water: data.water,
-              height_max: data.height_max,
-              height_min: data.height_min,
-              spread_min: data.spread_min,
-              spread_max: data.spread_max,
+              height_max: parseInt(data.height_max || '0'),
+              height_min: parseInt(data.height_min || '0'),
+              spread_min: parseInt(data.spread_min || '0'),
+              spread_max: parseInt(data.spread_max || '0'),
               growth_rate: data.growth_rate,
               maintenance: data.maintenance,
+              images: [],
               pests: data.pests,
             };
 
@@ -147,7 +150,7 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
           hybrid: false,
           description: '',
           common_name: '',
-          type: [],
+          type: '' as PlantTypes,
           habitat: [],
           form: [],
           origin: '',
@@ -163,8 +166,8 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
           height_min: null,
           spread_min: null,
           spread_max: null,
-          growth_rate: null,
-          maintenance: null,
+          growth_rate: '' as Partial<SpeciesProps['growth_rate']>,
+          maintenance: '' as Partial<SpeciesProps['maintenance']>,
           pests: [],
           model: {
             temperature: {
@@ -241,34 +244,13 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               type='input'
               rowsMax={5}
             />
-            <Selector label='Plant Type' name='type' multiple>
-              <MenuItem value='ANNUAL'>Annual</MenuItem>
-              <MenuItem value='AQUATIC_PLANT'>Aquatic</MenuItem>
-              <MenuItem value='BAMBOO'>Bamboo</MenuItem>
-              <MenuItem value='BIENNIAL'>Biennial</MenuItem>
-              <MenuItem value='BROADLEAF_EVERGREEN'>
-                Broadlead Evergreen
-              </MenuItem>
-              <MenuItem value='CONIFER'>Conifer</MenuItem>
-              <MenuItem value='FERN'>Fern</MenuItem>
-              <MenuItem value='FLOWERING_CUT_PLANT'>Flowering (Cut)</MenuItem>
-              <MenuItem value='FLOWERING_POT_PLANT'>Flowering (Pot)</MenuItem>
-              <MenuItem value='GREENHOUSE_PRODUCE_PLANT'>
-                Greenhouse Produce
-              </MenuItem>
-              <MenuItem value='GROUND_COVER'>Ground Cover</MenuItem>
-              <MenuItem value='HERBACEOUS_PERENNIAL'>
-                Herbaceous Perennial
-              </MenuItem>
-              <MenuItem value='INDOOR_FOLIAGE_PLANT'>Indoor Foliage</MenuItem>
-              <MenuItem value='INVASIVE_PLANT'>Invasive</MenuItem>
-              <MenuItem value='POALES_(GRASS-LIKE)'>
-                Poales (Grass Like)
-              </MenuItem>
-              <MenuItem value='SEMI-EVERGREEN'>Semi-Evergreen</MenuItem>
-              <MenuItem value='SHRUB_DECIDUOUS'>Deciduous Shrub</MenuItem>
-              <MenuItem value='TREE_DECIDUOUS'>Deciduous Tree</MenuItem>
-              <MenuItem value='WEED_(HORTICULTURAL)'>Weed</MenuItem>
+            <Selector label='Plant Type' name='type'>
+              {PlantTypesMap.map((i) => (
+                <MenuItem key={i.id} value={i.id}>
+                  {i.icon()}
+                  {i.name}
+                </MenuItem>
+              ))}
             </Selector>
             <Selector label='Habitat' name='habitat' multiple>
               <MenuItem value='ARCHING'>Arching</MenuItem>

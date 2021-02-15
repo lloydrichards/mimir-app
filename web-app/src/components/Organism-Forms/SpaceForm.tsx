@@ -26,12 +26,13 @@ import { useAuth } from '../auth/Auth';
 import PlacesAutocomplete from 'react-places-autocomplete';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import { countryLookUp } from '../Molecule-Data/CountryLookUp';
-import { Location, Log, Picture } from '../../types/GenericType';
+import { Location, Picture } from '../../types/GenericType';
 import ValueField from '../Atom-Inputs/ValueField';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 import { RoomType, SpaceProps } from '../../types/SpaceType';
 import { useHistory } from 'react-router-dom';
 import { Switch } from '../Atom-Inputs/Switch';
+import { Log } from '../../types/LogType';
 
 interface Props {
   altButton?: { label: string; onClick: () => void };
@@ -97,10 +98,18 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
               timestamp,
               type: ['SPACE_CREATED'],
               content: {
-                user_id: currentUser?.uid,
-                user_email: currentUser?.email || undefined,
-                space_id: spaceDoc.id,
-                space_name: data.name,
+                user: {
+                  id: currentUser?.uid || '',
+                  username: userDoc?.username || '',
+                  gardener: userDoc?.gardener || 'BEGINNER',
+                },
+                space: {
+                  id: spaceDoc.id,
+                  name: data.name,
+                  light_direction: data.light_direction,
+                  room_type: data.room_type,
+                  thumb: data.picture?.thumb || '',
+                },
               },
             };
             const newSpace: SpaceProps = {
@@ -275,7 +284,7 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
                     label='Geo'
                     value={
                       location
-                        ? `${location?.geo.latitude}, ${location?.geo.longitude}`
+                        ? `${location?.geo?.latitude}, ${location?.geo?.longitude}`
                         : undefined
                     }
                   />
@@ -337,9 +346,9 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
                 Update
               </Button>
             </div>
-           
-              {status ? <div>{status.message}</div> : null}
-              {debug ? (
+
+            {status ? <div>{status.message}</div> : null}
+            {debug ? (
               <div
                 style={{
                   border: '2px dashed tomato',
@@ -353,7 +362,6 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
                 <pre>{JSON.stringify(errors, null, 2)}</pre>
               </div>
             ) : null}
-         
           </Form>
         )}
       </Formik>

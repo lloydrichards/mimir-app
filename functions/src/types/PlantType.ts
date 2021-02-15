@@ -6,9 +6,9 @@ import {
   Owner,
   Picture,
   Roles,
-  Space,
   Temperature,
 } from './GenericType';
+import { SpaceType } from './SpaceType';
 
 export type PlantProps = {
   nickname: string;
@@ -101,7 +101,7 @@ export type PlantCreateInput = Omit<
 
 export type PlantAggProps = {
   timestamp: FirebaseTimestamp;
-  space: null | Space;
+  space: null | SpaceType;
   children_total: number;
   happiness_total: number;
   happiness_current: number;

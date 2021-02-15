@@ -1,6 +1,6 @@
 import firebase from 'firebase';
 import { combineLatest, defer } from 'rxjs';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, withLatestFrom, tap } from 'rxjs/operators';
 import { collectionData } from 'rxfire/firestore';
 
 export const spaceList = (db: firebase.firestore.Firestore) => {
@@ -12,7 +12,7 @@ export const spaceList = (db: firebase.firestore.Firestore) => {
         switchMap((data) => {
           parent = data;
 
-          const config$ = parent.map((space: any) => {
+          const spaces$ = parent.map((space: any) => {
             const aggs$ = collectionData(
               db
                 .doc(`mimirSpaces/${space.id}`)
@@ -22,7 +22,7 @@ export const spaceList = (db: firebase.firestore.Firestore) => {
               'id'
             );
 
-            return collectionData(
+            const config$ = collectionData(
               db
                 .doc(`mimirSpaces/${space.id}`)
                 .collection('Configs')
@@ -30,21 +30,31 @@ export const spaceList = (db: firebase.firestore.Firestore) => {
                 .orderBy('timestamp', 'desc')
                 .limit(1),
               'id'
-            ).pipe(
-              withLatestFrom(aggs$),
-              map(([config, aggs]) => {
-                return { config: config[0], aggs: aggs[0] };
-              })
             );
+            const readings$ = collectionData(
+              db
+                .collection('mimirReadings')
+                .where('space_ids', 'array-contains', space.id)
+                .orderBy('timestamp', 'desc')
+                .limit(2),
+              'id'
+            );
+
+            return combineLatest([aggs$, config$, readings$]);
           });
 
-          return combineLatest([...config$]);
+          return combineLatest([...spaces$]);
         }),
-        map((arr: any) =>
+        tap((i) => console.log('tap', i)),
+        map((arr: Array<Array<any>>) =>
           parent.map((space: any, idx: any) => {
-            return { ...space, ...arr[idx] };
+            const config = arr[idx][1][0];
+            const aggs = arr[idx][0][0];
+            const readings = arr[idx][2];
+            return { ...space, config, aggs, readings };
           })
-        )
+        ),
+        tap((i) => console.log('finished', i))
       );
     });
 };

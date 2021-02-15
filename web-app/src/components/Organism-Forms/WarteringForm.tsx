@@ -13,7 +13,7 @@ import { KeyboardDatePicker } from '@material-ui/pickers';
 import { TextArea } from '../Atom-Inputs/TextArea';
 import { WateringProps } from '../../types/WateringType';
 import firebase from 'firebase';
-import { Log } from '../../types/GenericType';
+import { Log } from '../../types/LogType';
 
 interface Props {
   space: SpaceType;

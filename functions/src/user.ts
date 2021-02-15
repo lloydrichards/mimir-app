@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initUserAgg, initUserDoc, initUserSetting } from './docs/users';
-import { FirebaseTimestamp, Log, Owner } from './types/GenericType';
+import { FirebaseTimestamp, Owner } from './types/GenericType';
 import {
   UserAggProps,
   UserProps,
@@ -9,11 +9,42 @@ import {
   UserType,
 } from './types/UserType';
 import { once, setEventSuccess } from './util/once';
+import { Log } from './types/LogType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
 const db = admin.firestore();
 const stats = db.collection('Admin').doc('--users-stats--');
+
+export const calcUserAgg = (doc: UserAggProps, log: Log) => {
+  const { type, content } = log;
+  const newAgg: UserAggProps = {
+    ...doc,
+    timestamp,
+    space_total: type.includes('SPACE_CREATED')
+      ? doc.space_total + 1
+      : type.includes('SPACE_DELETED')
+      ? doc.space_total - 1
+      : doc.space_total,
+    plant_total:
+      type.includes('PLANT_CREATED') || type.includes('PLANT_CUTTING')
+        ? doc.plant_total + 1
+        : type.includes('PLANT_DIED') || type.includes('PLANT_DELETED')
+        ? doc.plant_total - 1
+        : doc.plant_total,
+    dead_total: type.includes('PLANT_DIED')
+      ? doc.dead_total + 1
+      : doc.dead_total,
+    points: type.includes('POINTS')
+      ? doc.points + (content.points || 0)
+      : doc.points,
+    level: type.includes('POINTS')
+      ? levelUp(doc.points + (content.points || 0))
+      : doc.level,
+  };
+
+  return newAgg;
+};
 
 export const userCreated = functions.auth.user().onCreate(
   once(async (user, context) => {
@@ -28,8 +59,11 @@ export const userCreated = functions.auth.user().onCreate(
           timestamp,
           type: ['USER_CREATED'],
           content: {
-            user_id: user.uid,
-            user_email: user.email,
+            user: {
+              id: user.uid,
+              username: user.displayName || '',
+              gardener: 'BEGINNER',
+            },
           },
         };
 
@@ -229,8 +263,6 @@ export const userAggregation = functions.firestore
   .document('mimirUsers/{user_id}/Logs/{log_id}')
   .onCreate((log, context) => {
     const user_id = context.params.user_id;
-    const type = (log.data() as Log).type;
-    const content = (log.data() as Log).content;
     const user = db.collection('mimirUsers').doc(user_id);
     const newAgg = user.collection('Aggs').doc();
     const oldAgg = user
@@ -241,30 +273,7 @@ export const userAggregation = functions.firestore
     return db
       .runTransaction(async (t) => {
         const doc = (await t.get(oldAgg)).docs[0].data() as UserAggProps;
-        t.set(newAgg, {
-          ...doc,
-          timestamp,
-          space_total: type.includes('SPACE_CREATED')
-            ? doc.space_total + 1
-            : type.includes('SPACE_DELETED')
-            ? doc.space_total - 1
-            : doc.space_total,
-          plant_total:
-            type.includes('PLANT_CREATED') || type.includes('PLANT_CUTTING')
-              ? doc.plant_total + 1
-              : type.includes('PLANT_DIED') || type.includes('PLANT_DELETED')
-              ? doc.plant_total - 1
-              : doc.plant_total,
-          dead_total: type.includes('PLANT_DIED')
-            ? doc.dead_total + 1
-            : doc.dead_total,
-          points: type.includes('POINTS')
-            ? doc.points + (content.points || 0)
-            : doc.points,
-          level: type.includes('POINTS')
-            ? levelUp(doc.points + (content.points || 0))
-            : doc.level,
-        } as UserAggProps);
+        t.set(newAgg, calcUserAgg(doc, log.data() as Log));
       })
       .catch((error) => console.error(error));
   });

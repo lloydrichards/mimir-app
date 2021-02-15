@@ -1,7 +1,8 @@
-import { FirebaseTimestamp } from './GenericType';
+import { FirebaseTimestamp, Picture } from './GenericType';
 import { PlantTypes } from './PlantType';
 
 export type SpeciesProps = {
+  images: Array<Picture>;
   family: string;
   genus: string;
   species: string;
@@ -59,27 +60,6 @@ export type ModelProps = {
   };
   air: { max: number };
 };
-
-// export type PlantTypes =
-//   | 'ANNUAL'
-//   | 'AQUATIC_PLANT' //"AQUATIC"
-//   | 'BAMBOO'
-//   | 'BIENNIAL' //"ANNUAL"
-//   | 'BROADLEAF_EVERGREEN'
-//   | 'CONIFER'
-//   | 'FERN'
-//   | 'FLOWERING_CUT_PLANT' //"PERENNIAL_FLOWER"
-//   | 'FLOWERING_POT_PLANT' //"PERENNIAL_FLOWER"
-//   | 'GREENHOUSE_PRODUCE_PLANT' //"'ANNUAL'"
-//   | 'GROUND_COVER'
-//   | 'HERBACEOUS_PERENNIAL' //"HERBACEOUS"
-//   | 'INDOOR_FOLIAGE_PLANT' //"BROADLEAF_EVERGREEN"
-//   | 'INVASIVE_PLANT' //"UNKNOWN"
-//   | 'POALES_(GRASS-LIKE)' //"GRASS"
-//   | 'SEMI-EVERGREEN' //"SEMI_EVERGREEN"
-//   | 'SHRUB_DECIDUOUS' //"DECIDUOUS_SHRUB"
-//   | 'TREE_DECIDUOUS' //"DECIDUOUS_TREE"
-//   | 'WEED_(HORTICULTURAL)'; //"UNKNOWN"
 
 export type FormTypes =
   | 'CREEPING_MAT-LIKE'

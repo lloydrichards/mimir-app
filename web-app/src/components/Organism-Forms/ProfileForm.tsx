@@ -7,9 +7,10 @@ import { TextArea } from '../Atom-Inputs/TextArea';
 import { Selector } from '../Atom-Inputs/Selector';
 import { useHistory } from 'react-router-dom';
 import { UserProps } from '../../types/UserType';
-import { Log, Picture } from '../../types/GenericType';
+import { Picture } from '../../types/GenericType';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 import { useAuth } from '../auth/Auth';
+import { Log } from '../../types/LogType';
 
 interface Props {
   userId: string;
@@ -44,7 +45,13 @@ const UpdateProfile: React.FC<Props> = ({
             const newLog: Log = {
               timestamp: timestamp,
               type: ['USER_UPDATED'],
-              content: { user_id: userId },
+              content: {
+                user: {
+                  id: userId,
+                  username: userDoc.username,
+                  gardener: userDoc.gardener,
+                },
+              },
             };
 
             batch.update(userRef, {
@@ -78,9 +85,9 @@ const UpdateProfile: React.FC<Props> = ({
           profile_picture: userDoc.profile_picture,
           bio: userDoc.bio,
           gardener: userDoc.gardener,
-          units: userDoc.units,
           location: userDoc.location,
           social_media: userDoc.social_media,
+          units: '',
         }}>
         {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>

@@ -47,3 +47,12 @@ export type DailyProps = {
     };
   };
 };
+
+export type DailyType = {
+  readings: number;
+  batteryPercent: number;
+  temperature: Temperature;
+  humidity: Humidity;
+  air: Air;
+  light: Light;
+};
