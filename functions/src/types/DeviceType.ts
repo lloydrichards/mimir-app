@@ -1,4 +1,5 @@
-import { FirebaseTimestamp, Owner, Picture, Roles, Space } from './GenericType';
+import { FirebaseTimestamp, Owner, Picture, Roles } from './GenericType';
+import { SpaceType } from './SpaceType';
 
 export type DeviceProps = {
   nickname: string;
@@ -21,7 +22,7 @@ export type DeviceRegisterInput = Omit<
 
 export type DeviceAggProps = {
   timestamp: FirebaseTimestamp;
-  space: null | Space;
+  space: null | SpaceType;
   reading_total: number;
   battery_percent: number;
   charge: boolean;

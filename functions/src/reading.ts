@@ -3,7 +3,9 @@ import * as admin from 'firebase-admin';
 import { DataPackageProps } from './types/DeviceType';
 import { ReadingProps } from './types/ReadingType';
 import { FirebaseTimestamp } from './types/GenericType';
-import { PlantType } from './types/PlantType';
+import { PlantProps, PlantType } from './types/PlantType';
+import { rangeFunc } from './helpers';
+import { ModelProps } from './types/SpeciesType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const db = admin.firestore();
@@ -377,3 +379,101 @@ type DailyReadingData = {
 //       })
 //       .catch((err) => console.error(err));
 //   });
+
+export const scoreCalculatorTest = functions.https.onCall(
+  (data: { plant_id: string }, context) => {
+    const plantRef = db.collection('mimirPlants').doc(data.plant_id);
+
+    return db
+      .runTransaction(async (t) => {
+        const plantDoc = (await t.get(plantRef)).data() as PlantProps;
+        if (!plantDoc) throw new Error('Check plant ID');
+        const speciesRef = db
+          .collection('mimirSpecies')
+          .doc(plantDoc.species.id);
+
+        const speciesModels = await t.get(
+          speciesRef
+            .collection('Model')
+            .where('current', '==', true)
+            .orderBy('timestamp', 'desc')
+            .limit(1)
+        );
+        if (speciesModels.docs.length === 0)
+          throw new Error(`No Model for ${plantDoc.species.id}`);
+
+        const curModel = speciesModels.docs[0].data() as ModelProps;
+
+        // const species_id = plantDoc.species.id;
+        const dailyDocs = await plantRef
+          .collection('Daily')
+          .orderBy('timestamp', 'desc')
+          .limit(1)
+          .get();
+        if (dailyDocs.docs.length === 0) throw new Error('No Daily Readings');
+        const lastDaily = dailyDocs.docs[0];
+        // const dailyData = await dailyDoc.get()
+
+        // Run function to generate score using [species_id] and [data]
+
+        // 1. Obtain species given the ID - get the ideal dictionary
+        //  var plant_json =  db.collection('mimirSpecies').doc() // USe an ID when uploaded - same as above
+
+        // 2. Get the Ideal values
+        // var ideal = {
+        //   min_env_humid: 10,
+        //   max_env_humid: 80,
+        //   min_temp: 10,
+        //   max_temp: 80,
+        //   min_light_lux: 10,
+        //   max_light_lux: 1000,
+        // };
+
+        // 3. Create dictionary of max and min values
+        const extreme_dict = {
+          humidity: [curModel.humidity.min, curModel.humidity.max],
+          temperature: [curModel.temperature.min, curModel.temperature.max],
+          light: [curModel.light.lux_min, curModel.light.lux_max],
+        };
+
+        // 4. Create a Dictionary from the actual readings
+        // var reading_dict = {
+        //   humidity: 50,
+        //   temperature: 25,
+        //   light: 250,
+        // };
+
+        // 5. Create the scores dictionary  using the range function
+
+        // Loop through variables and obtain score for each
+        const var_array: Array<'temperature' | 'humidity' | 'light'> = [
+          'humidity',
+          'temperature',
+          'light',
+        ];
+
+        // Initialise a dictionary for population
+        // var score_dict: { [index: string]: number } = {};
+
+        const scoreArray = var_array.map((i) => {
+          // Get the average value, ideal min and ideal max
+          const av_value = lastDaily.data()[i].avg;
+          const min = extreme_dict[i][0];
+          const max = extreme_dict[i][1];
+
+          // Use the range function to get the score
+          const score = rangeFunc(min, max, av_value);
+
+          return { [i]: score };
+        });
+
+        //Return either score or error
+        const scoreTest = scoreArray;
+
+        // if (!scoreTest) throw `Error: ${scoreTest}`;
+        //if successful, update the daily document with the score
+        t.update(lastDaily.ref, { scoreTest });
+      })
+      .catch((err) => console.error(err));
+  }
+);

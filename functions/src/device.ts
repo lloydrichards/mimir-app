@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initDeviceDoc, initDeviceAgg } from './docs/device';
-import { FirebaseTimestamp, Log } from './types/GenericType';
+import { FirebaseTimestamp } from './types/GenericType';
 import { DeviceAggProps } from './types/DeviceType';
+import { Log } from './types/LogType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
@@ -86,7 +87,10 @@ export const deviceAggregation = functions.firestore
     const content = (log.data() as Log).content;
     const device = db.collection('mimirDevices').doc(device_id);
     const newAgg = device.collection('Aggs').doc();
-    const oldAgg = device.collection('Aggs').orderBy('timestamp', 'desc').limit(1);
+    const oldAgg = device
+      .collection('Aggs')
+      .orderBy('timestamp', 'desc')
+      .limit(1);
 
     return db
       .runTransaction(async (t) => {
@@ -94,9 +98,10 @@ export const deviceAggregation = functions.firestore
         t.set(newAgg, {
           ...doc,
           timestamp,
-          space: type.includes('DEVICE_MOVED')
-            ? { id: content.space_id, name: content.space_name, type: content.space_type }
-            : doc.space,
+          space:
+            type.includes('DEVICE_MOVED') && content.space
+              ? content.space
+              : doc.space,
           reading_total: type.includes('DEVICE_UPDATE')
             ? doc.reading_total + (content.readings || 0)
             : doc.reading_total,
