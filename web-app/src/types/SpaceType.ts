@@ -56,7 +56,7 @@ export type RoomType =
   | 'KITCHEN'
   | 'OTHER';
 
-export type SpaceCreateInput = Omit<
+export type SpaceInput = Omit<
   SpaceProps,
   'date_created' | 'date_modified' | 'roles'
 >;

@@ -1,13 +1,13 @@
 import { db, timestamp } from '../../../firebase';
 import { Log } from '../../../types/LogType';
-import { PlantInputProps, PlantProps } from '../../../types/PlantType';
+import { PlantInput, PlantProps } from '../../../types/PlantType';
 import { SpaceConfigProps, SpaceType } from '../../../types/SpaceType';
 import { UserType } from '../../../types/UserType';
 
 export const plant_ADD = (
   user: UserType,
   space: SpaceType,
-  input: PlantInputProps
+  input: PlantInput
 ) => {
   //Dco Refs
   const userRef = db.collection('mimirUsers').doc(user.id);
@@ -81,7 +81,7 @@ export const plant_ADD = (
 
     t.set(plantRef, newPlantDoc);
     t.set(newConfigRef, newConfig);
-    
+
     t.set(userLog, newLog);
     t.set(spaceLog, newLog);
     t.set(plantLog, newLog);

@@ -35,7 +35,7 @@ export type PlantProps = {
   roles: Roles;
 };
 
-export type PlantInputProps = Omit<
+export type PlantInput = Omit<
   PlantProps,
   'date_created' | 'date_modified' | 'roles' | 'alive'
 >;

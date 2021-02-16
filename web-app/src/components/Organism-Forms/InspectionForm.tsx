@@ -1,11 +1,8 @@
 import { Button, MenuItem, Typography } from '@material-ui/core';
 import { KeyboardDatePicker } from '@material-ui/pickers';
+import firebase from 'firebase';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
-import firebase from 'firebase';
-
-import app from '../../firebase';
 import { PlantType } from '../../types/PlantType';
 import { SpaceType } from '../../types/SpaceType';
 import { Selector } from '../Atom-Inputs/Selector';
@@ -16,6 +13,7 @@ import { useAuth } from '../auth/Auth';
 import { PestTypesMap } from '../Molecule-Data/PestTypesMap';
 import { PromblemTypesMap } from '../Molecule-Data/PromblemTypesMap';
 
+
 interface Props {
   space: SpaceType;
   plant: PlantType;
@@ -23,7 +21,6 @@ interface Props {
   altButton?: { label: string; onClick: () => void };
   debug?: boolean;
 }
-const db = app.firestore();
 
 const InspectionForm: React.FC<Props> = ({
   space,
@@ -37,7 +34,6 @@ const InspectionForm: React.FC<Props> = ({
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const batch = db.batch();
           const health =
             (data.leafing ? 2 : 0) +
             (data.flowering ? 3 : 0) +

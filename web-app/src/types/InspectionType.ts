@@ -20,7 +20,7 @@ export type InspectionProps = {
   pictures: Array<Picture>;
   note: Note;
 };
-export type InspectionInputProps = Omit<
+export type InspectionInput = Omit<
   InspectionProps,
   'created_by' | 'space' | 'plant'
 >;

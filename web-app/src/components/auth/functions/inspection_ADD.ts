@@ -1,7 +1,7 @@
 import { db, timestamp } from '../../../firebase';
 import {
-  InspectionInputProps,
-  InspectionProps,
+  InspectionInput,
+  InspectionProps
 } from '../../../types/InspectionType';
 import { Log } from '../../../types/LogType';
 import { PlantType } from '../../../types/PlantType';
@@ -12,7 +12,7 @@ export const inspection_ADD = (
   user: UserType,
   space: SpaceType,
   plant: PlantType,
-  inspectionInput: InspectionInputProps
+  inspectionInput: InspectionInput
 ) => {
   const batch = db.batch();
 

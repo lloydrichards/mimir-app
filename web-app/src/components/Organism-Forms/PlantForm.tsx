@@ -2,19 +2,15 @@ import { Button, MenuItem, Typography } from '@material-ui/core';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import app, { timestamp } from '../../firebase';
 import { COLOUR_ACCENT } from '../../Styles/Colours';
 import { Picture } from '../../types/GenericType';
-import { Log } from '../../types/LogType';
 import {
   FormType,
   PlantProps,
-  PlantType,
-  PlantTypes,
   PotType,
   SpeciesType,
 } from '../../types/PlantType';
-import { SpaceConfigProps, SpaceProps, SpaceType } from '../../types/SpaceType';
+import { SpaceProps, SpaceType } from '../../types/SpaceType';
 import { NumberField } from '../Atom-Inputs/NumberField';
 import { Selector } from '../Atom-Inputs/Selector';
 import { Switch } from '../Atom-Inputs/Switch';
@@ -34,8 +30,6 @@ interface Props {
   onComplete?: () => void;
   debug?: boolean;
 }
-const db = app.firestore();
-
 const PlantForm: React.FC<Props> = ({
   spaces,
   altButton,
@@ -48,14 +42,14 @@ const PlantForm: React.FC<Props> = ({
   const [userSpaces, setUserSpaces] = useState<
     Array<SpaceProps & { id: string }>
   >(spaces || []);
+  const [ownerToggle, setOwnerToggle] = useState<boolean>(true);
 
   useEffect(() => {
     if (spaces) setUserSpaces(spaces);
   }, [spaces]);
-  const [picture, setPicture] = React.useState<Picture | null>(null);
-  const [ownerToggle, setOwnerToggle] = React.useState<boolean>(true);
-
-  const plantDoc = db.collection('mimirPlants').doc();
+  const [picture, setPicture] = React.useState<Picture | null>(
+    edit?.picture || null
+  );
 
   return (
     <div>
@@ -70,6 +64,7 @@ const PlantForm: React.FC<Props> = ({
             light_direction: selectedSpace?.light_direction || [],
             thumb: selectedSpace?.picture?.thumb || '',
           };
+          data.picture = picture;
           try {
             edit
               ? editPlant(
@@ -149,7 +144,7 @@ const PlantForm: React.FC<Props> = ({
             <UploadPictureForm
               label='Upload Image'
               helperText='Select an image for the space...'
-              customRef={`plants/${plantDoc.id}/image`}
+              customRef={`plants/image/`}
               setPicture={setPicture}
               image={picture?.url}
               onComplete={() => {
@@ -277,7 +272,7 @@ const PlantForm: React.FC<Props> = ({
                 color='primary'
                 type='submit'
                 disabled={isSubmitting}>
-                Update
+                {edit ? 'Save Changes' : 'Add Plant'}
               </Button>
             </div>
 

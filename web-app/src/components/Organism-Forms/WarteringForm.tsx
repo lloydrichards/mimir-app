@@ -3,11 +3,8 @@ import { KeyboardDatePicker } from '@material-ui/pickers';
 import firebase from 'firebase';
 import { Form, Formik } from 'formik';
 import * as React from 'react';
-import app from '../../firebase';
-import { Log } from '../../types/LogType';
 import { PlantProps } from '../../types/PlantType';
 import { SpaceType } from '../../types/SpaceType';
-import { WateringProps } from '../../types/WateringType';
 import { Selector } from '../Atom-Inputs/Selector';
 import { Switch } from '../Atom-Inputs/Switch';
 import { TextArea } from '../Atom-Inputs/TextArea';
@@ -20,7 +17,6 @@ interface Props {
   altButton?: { label: string; onClick: () => void };
   debug?: boolean;
 }
-const db = app.firestore();
 
 const WateringForm: React.FC<Props> = ({
   altButton,

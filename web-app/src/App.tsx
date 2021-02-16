@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AuthProvider } from './components/auth/Auth';
 import SignUp from './components/auth/SignUp';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Dashboard from './Pages/Dashboard';
 import Login from './components/auth/Login';
-import PlantEncyclopedia from './Pages/PlantEncyclopedia';
 import SpaceForm from './components/Organism-Forms/SpaceForm';
 import PlantForm from './components/Organism-Forms/PlantForm';
 import PrivateRoute from './components/auth/PrivateRoute';
 import ForgotPassword from './components/auth/ForgotPassword';
 import Layout from './components/Organism-UI/Layout';
 import './Styles/App.css';
-import SpaceDetails from './Pages/SpaceDetails';
 import SpeciesForm from './components/Organism-Forms/SpeciesForm';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { lazy } from 'react';
+import Loading from './components/Organism-UI/Loading';
+
+const Dashboard = lazy(() => import('./Pages/Dashboard'));
+const SpaceDetails = lazy(() => import('./Pages/SpaceDetails'));
+const PlantEncyclopedia = lazy(() => import('./Pages/PlantEncyclopedia'));
 
 const App = () => {
   return (
@@ -22,17 +25,22 @@ const App = () => {
       <AuthProvider>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Layout>
-            <Switch>
-              <PrivateRoute exact path='/' component={Dashboard} />
-              <Route path='/signup' component={SignUp} />
-              <Route path='/login' component={Login} />
-              <Route path='/forgot-password' component={ForgotPassword} />
-              <Route path='/encyclopedia' component={PlantEncyclopedia} />
-              <PrivateRoute path='/addSpecies' component={SpeciesForm} />
-              <PrivateRoute path='/addSpace' component={SpaceForm} />
-              <PrivateRoute path='/addPlant' component={PlantForm} />
-              <PrivateRoute path='/space/:space_id' component={SpaceDetails} />
-            </Switch>
+            <Suspense fallback={Loading}>
+              <Switch>
+                <PrivateRoute exact path='/' component={Dashboard} />
+                <Route path='/signup' component={SignUp} />
+                <Route path='/login' component={Login} />
+                <Route path='/forgot-password' component={ForgotPassword} />
+                <Route path='/encyclopedia' component={PlantEncyclopedia} />
+                <PrivateRoute path='/addSpecies' component={SpeciesForm} />
+                <PrivateRoute path='/addSpace' component={SpaceForm} />
+                <PrivateRoute path='/addPlant' component={PlantForm} />
+                <PrivateRoute
+                  path='/space/:space_id'
+                  component={SpaceDetails}
+                />
+              </Switch>
+            </Suspense>
           </Layout>
         </MuiPickersUtilsProvider>
       </AuthProvider>

@@ -80,7 +80,7 @@ const UploadPictureForm: React.FC<Props> = ({
           </div>
           {file && (
             <UploadProgressBar
-              customRef={customRef}
+              path={customRef}
               file={file}
               setFile={setFile}
               setPicture={setPicture}

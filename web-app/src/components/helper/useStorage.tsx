@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { storage } from '../../firebase';
 import firebase from 'firebase';
 
-const useStorage = (file: File, custom?: string) => {
+const useStorage = (file: File, path?: string) => {
   const [progress, setProgress] = useState<number>(0);
   const [
     error,
@@ -12,7 +12,7 @@ const useStorage = (file: File, custom?: string) => {
   const [ref, setRef] = useState<string | null>(null);
 
   useEffect(() => {
-    const storageRef = storage.ref(custom ? custom : file.name);
+    const storageRef = storage.ref(path ? path + file.name : file.name);
     setRef(storageRef.fullPath);
 
     storageRef.put(file).on(
@@ -26,7 +26,7 @@ const useStorage = (file: File, custom?: string) => {
         setUrl(url);
       }
     );
-  }, [file, custom]);
+  }, [file, path]);
 
   return { progress, url, error, ref };
 };

@@ -14,7 +14,7 @@ export type WateringProps = {
   note: Note;
 };
 
-export type WateringInputProps = Omit<WateringProps, 'created_by' | 'space'>;
+export type WateringInput = Omit<WateringProps, 'created_by' | 'space'>;
 
 export type WaterType = {
   id: string;

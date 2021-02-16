@@ -1,14 +1,16 @@
 import firebase from 'firebase';
 import React, { useContext, useEffect, useState } from 'react';
 import { auth, functions } from '../../firebase';
-import { InspectionInputProps } from '../../types/InspectionType';
-import { PlantInputProps, PlantType } from '../../types/PlantType';
-import { SpaceType } from '../../types/SpaceType';
+import { InspectionInput } from '../../types/InspectionType';
+import { PlantInput, PlantType } from '../../types/PlantType';
+import { SpaceInput, SpaceType } from '../../types/SpaceType';
 import { UserProps, UserType } from '../../types/UserType';
-import { WateringInputProps } from '../../types/WateringType';
+import { WateringInput } from '../../types/WateringType';
 import { inspection_ADD } from './functions/inspection_ADD';
 import { plant_ADD } from './functions/plant_ADD';
 import { plant_EDIT } from './functions/plant_EDIT';
+import { space_ADD } from './functions/space_ADD';
+import { space_EDIT } from './functions/space_EDIT';
 import { watering_ADD } from './functions/watering_add';
 
 type ContextProps = {
@@ -33,15 +35,17 @@ type ContextProps = {
   addInspection: (
     space: SpaceType,
     plant: PlantType,
-    input: InspectionInputProps
+    input: InspectionInput
   ) => Promise<void>;
   editPlant: (
     space: SpaceType,
     plant: PlantType,
-    edit: Partial<PlantInputProps>
+    edit: Partial<PlantInput>
   ) => Promise<void>;
-  addPlant: (space: SpaceType, input: PlantInputProps) => Promise<void>;
-  addWatering: (space: SpaceType, input: WateringInputProps) => Promise<void>;
+  addPlant: (space: SpaceType, input: PlantInput) => Promise<void>;
+  addWatering: (space: SpaceType, input: WateringInput) => Promise<void>;
+  editSpace: (space: SpaceType, edit: Partial<SpaceInput>) => Promise<void>;
+  addSpace: (input: SpaceInput) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
   setUserDoc: React.Dispatch<React.SetStateAction<UserProps | null>>;
@@ -82,25 +86,33 @@ export const AuthProvider = ({ children }: any) => {
   const addInspection = (
     space: SpaceType,
     plant: PlantType,
-    input: InspectionInputProps
+    input: InspectionInput
   ) => {
     return inspection_ADD(user, space, plant, input);
   };
 
-  const addWatering = (space: SpaceType, input: WateringInputProps) => {
+  const addWatering = (space: SpaceType, input: WateringInput) => {
     return watering_ADD(user, space, input);
   };
 
   const editPlant = (
     space: SpaceType,
     plant: PlantType,
-    edit: Partial<PlantInputProps>
+    edit: Partial<PlantInput>
   ) => {
     return plant_EDIT(user, space, plant, edit);
   };
 
-  const addPlant = (space: SpaceType, input: PlantInputProps) => {
+  const addSpace = (input: SpaceInput) => {
+    return space_ADD(user, input);
+  };
+
+  const addPlant = (space: SpaceType, input: PlantInput) => {
     return plant_ADD(user, space, input);
+  };
+
+  const editSpace = (space: SpaceType, edit: Partial<SpaceInput>) => {
+    return space_EDIT(user, space, edit);
   };
 
   const resetPassword = (email: string) => {
@@ -131,6 +143,8 @@ export const AuthProvider = ({ children }: any) => {
         addWatering,
         editPlant,
         addPlant,
+        editSpace,
+        addSpace,
         authenticated: currentUser !== null,
       }}>
       {!loadingAuthState && children}

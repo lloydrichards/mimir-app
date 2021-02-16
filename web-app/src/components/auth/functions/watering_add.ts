@@ -1,14 +1,13 @@
-import firebase from 'firebase';
 import { db } from '../../../firebase';
 import { Log } from '../../../types/LogType';
 import { SpaceType } from '../../../types/SpaceType';
 import { UserType } from '../../../types/UserType';
-import { WateringInputProps, WateringProps } from '../../../types/WateringType';
+import { WateringInput, WateringProps } from '../../../types/WateringType';
 
 export const watering_ADD = (
   user: UserType,
   space: SpaceType,
-  input: WateringInputProps
+  input: WateringInput
 ) => {
   const batch = db.batch();
 

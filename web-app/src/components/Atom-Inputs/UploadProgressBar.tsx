@@ -5,7 +5,7 @@ import useStorage from '../helper/useStorage';
 
 interface Props {
   file: File;
-  customRef?: string;
+  path?: string;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   setPicture: React.Dispatch<React.SetStateAction<Picture | null>>;
   onComplete: () => void;
@@ -13,11 +13,11 @@ interface Props {
 const UploadProgressBar: React.FC<Props> = ({
   file,
   setFile,
-  customRef,
+  path,
   setPicture,
   onComplete,
 }) => {
-  const { url, progress, ref } = useStorage(file, customRef);
+  const { url, progress, ref } = useStorage(file, path);
 
   useEffect(() => {
     if (url && ref) {

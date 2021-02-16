@@ -7,48 +7,61 @@ import {
   MenuItem,
   Typography,
 } from '@material-ui/core';
+import firebase from 'firebase';
 import { FieldArray, Form, Formik } from 'formik';
 import * as React from 'react';
-import { TextField } from '../Atom-Inputs/TextField';
-import app, { timestamp } from '../../firebase';
-import firebase from 'firebase';
-import { TextArea } from '../Atom-Inputs/TextArea';
-import { Selector } from '../Atom-Inputs/Selector';
-import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
-import { LightDirectionMap } from '../Molecule-Data/LightDirectionMap';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
+import { useHistory } from 'react-router-dom';
 import {
   COLOUR_DARK,
   COLOUR_LIGHT,
   COLOUR_SECONDARY,
   COLOUR_SUBTLE,
 } from '../../Styles/Colours';
-import { useAuth } from '../auth/Auth';
-import PlacesAutocomplete from 'react-places-autocomplete';
-import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import { countryLookUp } from '../Molecule-Data/CountryLookUp';
 import { Location, Picture } from '../../types/GenericType';
-import ValueField from '../Atom-Inputs/ValueField';
-import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
-import { RoomType, SpaceProps } from '../../types/SpaceType';
-import { useHistory } from 'react-router-dom';
+import {
+  RoomType,
+  SpaceInput,
+  SpaceProps,
+  SpaceType,
+} from '../../types/SpaceType';
+import { Selector } from '../Atom-Inputs/Selector';
 import { Switch } from '../Atom-Inputs/Switch';
-import { Log } from '../../types/LogType';
+import { TextArea } from '../Atom-Inputs/TextArea';
+import { TextField } from '../Atom-Inputs/TextField';
+import ValueField from '../Atom-Inputs/ValueField';
+import { useAuth } from '../auth/Auth';
+import { countryLookUp } from '../Molecule-Data/CountryLookUp';
+import { LightDirectionMap } from '../Molecule-Data/LightDirectionMap';
+import { RoomTypeMap } from '../Molecule-Data/RoomTypeMap';
+import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 
 interface Props {
+  edit?: SpaceProps & { id: string };
+  onComplete?: () => void;
   altButton?: { label: string; onClick: () => void };
   debug?: boolean;
 }
-const db = app.firestore();
 
-const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
+const SpaceForm: React.FC<Props> = ({ altButton, debug, edit, onComplete }) => {
   const history = useHistory();
-  const { currentUser, userDoc } = useAuth();
+  const { currentUser, addSpace, editSpace } = useAuth();
   const [ownerToggle, setOwnerToggle] = React.useState<boolean>(true);
   const [address, setAddress] = React.useState<string>('');
-  const [location, setLocation] = React.useState<Location | null>(null);
-  const [picture, setPicture] = React.useState<Picture | null>(null);
-
-  const spaceDoc = db.collection('mimirSpaces').doc();
+  const [location, setLocation] = React.useState<Location>(
+    edit?.location || {
+      city: '',
+      country: '',
+      geo: new firebase.firestore.GeoPoint(0, 0),
+      region: '',
+    }
+  );
+  const [picture, setPicture] = React.useState<Picture | null>(
+    edit?.picture || null
+  );
 
   const handleSelect = async (value: string) => {
     const results = await geocodeByAddress(value);
@@ -84,59 +97,26 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const batch = db.batch();
-
+          const space: SpaceType = {
+            id: edit?.id || '',
+            name: edit?.name || '',
+            light_direction: edit?.light_direction || [],
+            room_type: edit?.room_type || 'OTHER',
+            thumb: edit?.picture?.thumb || '',
+          };
+          data.picture = picture;
           try {
-            const userLog = db
-              .collection('mimirUsers')
-              .doc(currentUser?.uid)
-              .collection('Logs')
-              .doc();
-            const spaceLog = spaceDoc.collection('Logs').doc();
-
-            const log: Log = {
-              timestamp,
-              type: ['SPACE_CREATED'],
-              content: {
-                user: {
-                  id: currentUser?.uid || '',
-                  username: userDoc?.username || '',
-                  gardener: userDoc?.gardener || 'BEGINNER',
-                },
-                space: {
-                  id: spaceDoc.id,
-                  name: data.name,
-                  light_direction: data.light_direction,
-                  room_type: data.room_type,
-                  thumb: data.picture?.thumb || '',
-                },
-              },
-            };
-            const newSpace: SpaceProps = {
-              date_created: timestamp,
-              date_modified: null,
-              ...data,
-              picture,
-              location: location ? location : data.location,
-              owner: ownerToggle
-                ? {
-                    id: currentUser?.uid || '',
-                    name: userDoc?.username || '',
-                    email: currentUser?.email || '',
-                  }
-                : data.owner,
-              roles: { [currentUser?.uid || 'UNKNOWN']: 'ADMIN' },
-            };
-
-            batch.set(spaceDoc, newSpace);
-            batch.set(userLog, log);
-            batch.set(spaceLog, log);
-
-            return batch.commit().then(() => {
-              resetForm();
-              setSubmitting(true);
-              history.push('/');
-            });
+            edit
+              ? editSpace(space, { ...data, location }).then(() => {
+                  resetForm();
+                  setSubmitting(true);
+                  onComplete && onComplete();
+                })
+              : addSpace({ ...data, location }).then(() => {
+                  resetForm();
+                  setSubmitting(true);
+                  onComplete ? onComplete() : history.push('/');
+                });
           } catch (error) {
             console.log('error:', error);
             alert(error);
@@ -147,18 +127,18 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
         }}
         initialValues={
           {
-            name: '',
-            description: '',
-            room_type: '' as RoomType,
-            light_direction: [] as Array<string>,
-            picture: null,
+            name: edit?.name || '',
+            description: edit?.description || '',
+            room_type: edit?.room_type || ('' as RoomType),
+            light_direction: edit?.light_direction || ([] as Array<string>),
+            picture,
             location,
-            owner: {
-              id: currentUser?.uid || null,
-              name: currentUser?.displayName || null,
-              email: currentUser?.email || null,
+            owner: edit?.owner || {
+              id: '',
+              name: '',
+              email: '',
             },
-          } as Omit<SpaceProps, 'date_created' | 'date_modified' | 'roles'>
+          } as SpaceInput
         }>
         {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>
@@ -170,7 +150,7 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
             <UploadPictureForm
               label='Upload Image'
               helperText='Select an image for the space...'
-              customRef={`spaces/${spaceDoc.id}/image`}
+              customRef={`spaces/image/`}
               setPicture={setPicture}
               image={picture?.url}
               onComplete={() => {
@@ -343,7 +323,7 @@ const SpaceForm: React.FC<Props> = ({ altButton, debug }) => {
                 color='primary'
                 type='submit'
                 disabled={isSubmitting}>
-                Update
+                {edit ? 'Save Changes' : 'Add Space'}
               </Button>
             </div>
 

@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 import firebase from 'firebase/app';
 import { PlantType } from './PlantType';
 import { SpaceType } from './SpaceType';
-require('firebase/functions');
+import('firebase/functions');
 
 import { ModelProps, SpeciesProps } from './SpeciesType';
 import { UserType } from './UserType';
