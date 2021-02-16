@@ -29,69 +29,37 @@ const WateringForm: React.FC<Props> = ({
   plants,
   onComplete,
 }) => {
-  const { currentUser, userDoc } = useAuth();
+  const { addWatering } = useAuth();
 
   return (
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const batch = db.batch();
-          const userRef = db
-            .collection('mimirUsers')
-            .doc(currentUser?.uid || '');
-          const spaceRef = db.collection('mimirSpaces').doc(space.id);
-          const plantRefs = data.plant_ids.map((i) =>
-            db.collection('mimirPlants').doc(i)
-          );
-          const wateringRef = db.collection('mimirWaterings').doc();
-
-          const userLog = userRef.collection('Logs').doc();
-          const spaceLog = spaceRef.collection('Logs').doc();
           setSubmitting(true);
           try {
-            const newWateringDoc: WateringProps = {
-              ...data,
-              date_created: firebase.firestore.Timestamp.fromDate(
-                new Date(data.date_created)
-              ),
-              created_by: {
-                id: currentUser?.uid || '',
-                username: userDoc?.username || '',
-                gardener: userDoc?.gardener || 'BEGINNER',
-              },
-              space,
-              plants: data.plant_ids
-                .map((id) => plants.find((plant) => plant.id === id))
-                .map((plant) => {
-                  return {
-                    id: plant?.id || '',
-                    type: plant?.species.type || 'UNKNOWN',
-                    nickname: plant?.nickname || '',
-                    botanical_name: plant?.species.id || '',
-                    size: plant?.pot.size || 0,
-                  };
-                }),
-            };
-            const newLog: Log = {
-              timestamp: firebase.firestore.Timestamp.fromDate(
-                new Date(data.date_created)
-              ),
-              type: ['WATERING', 'SPACE_UPDATED'],
-              content: {},
-            };
+            const inputPlants = data.plant_ids
+              .map((id) => plants.find((plant) => plant.id === id))
+              .map((plant) => {
+                return {
+                  id: plant?.id || '',
+                  type: plant?.species.type || 'UNKNOWN',
+                  nickname: plant?.nickname || '',
+                  botanical_name: plant?.species.id || '',
+                  size: plant?.pot.size || 0,
+                };
+              });
 
-            batch.set(wateringRef, newWateringDoc);
-            batch.set(userLog, newLog);
-            batch.set(spaceLog, newLog);
-            plantRefs.forEach((ref) =>
-              batch.set(ref.collection('Logs').doc(), newLog)
-            );
-
-            return batch.commit().then(() => {
-              resetForm();
-              console.log('Watered!');
-              onComplete && onComplete();
+            await addWatering(space, {
+              timestamp: firebase.firestore.Timestamp.fromDate(data.timestamp),
+              fertilizer: data.fertilizer,
+              pictures: [],
+              note: data.note,
+              plant_ids: data.plant_ids,
+              plants: inputPlants,
             });
+            resetForm();
+            console.log('Watered!');
+            onComplete && onComplete();
           } catch (error) {
             console.log('error:', error);
             alert(error);
@@ -101,7 +69,7 @@ const WateringForm: React.FC<Props> = ({
           setSubmitting(false);
         }}
         initialValues={{
-          date_created: new Date(),
+          timestamp: new Date(),
           plant_ids: [] as Array<string>,
           fertilizer: false,
           pictures: [],
@@ -131,10 +99,8 @@ const WateringForm: React.FC<Props> = ({
                 margin='none'
                 id='date-picker-inline'
                 label='Watering Date'
-                value={values.date_created}
-                onChange={(e: any) =>
-                  setFieldValue('date_created', new Date(e))
-                }
+                value={values.timestamp}
+                onChange={(e: any) => setFieldValue('timestamp', new Date(e))}
                 KeyboardButtonProps={{
                   'aria-label': 'change date',
                 }}

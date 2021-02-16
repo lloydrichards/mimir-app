@@ -17,6 +17,7 @@ import {
   SpaceAggProps,
   SpaceConfigProps,
   SpaceProps,
+  SpaceType,
 } from '../types/SpaceType';
 
 type Props = {} & Partial<RouteComponentProps<{ space_id: string }>>;
@@ -46,109 +47,116 @@ const SpaceDetails: React.FC<Props> = ({ match }) => {
     [space_id]
   );
   useObservable(spaceData$, setSpace);
-
-  const roomType = RoomTypeMap.find((i) => i.id === space?.room_type || '');
   if (!space) {
     return <Typography>Loading</Typography>;
-  } else
-    return (
-      <div>
-        <Typography variant='h4'>Space Details</Typography>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+  }
+
+  const spaceType: SpaceType = {
+    id: space.id,
+    name: space.name,
+    room_type: space.room_type,
+    light_direction: space.light_direction,
+    thumb: space.picture?.thumb || '',
+  };
+
+  const roomType = RoomTypeMap.find((i) => i.id === space?.room_type || '');
+
+  return (
+    <div>
+      <Typography variant='h4'>Space Details</Typography>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div>
+          <ValueField label='ID' value={space_id || ''} />
+          <ValueField
+            label='Room Type'
+            value={roomType?.field}
+            icon={roomType?.icon()}
+          />
+          <ValueField label='Description' value={space.description} />
+          <ValueField
+            label='Location'
+            value={`${space.location.city}, ${space.location.country}`}
+          />
+          <ValueField
+            label='Light'
+            value={space.light_direction?.reduce(
+              (acc, cur) => cur + ', ' + acc,
+              ''
+            )}
+          />
+        </div>
+        {space.daily.length > 0 && (
           <div>
-            <ValueField label='ID' value={space_id || ''} />
             <ValueField
-              label='Room Type'
-              value={roomType?.field}
-              icon={roomType?.icon()}
+              label='Temp'
+              value={`${
+                Math.round(space.daily[0].temperature.avg * 100) / 100
+              }°C`}
             />
-            <ValueField label='Description' value={space.description} />
             <ValueField
-              label='Location'
-              value={`${space.location.city}, ${space.location.country}`}
+              label='Hum'
+              value={`${Math.round(space.daily[0].humidity.avg * 100) / 100}%`}
             />
             <ValueField
               label='Light'
-              value={space.light_direction?.reduce(
-                (acc, cur) => cur + ', ' + acc,
-                ''
-              )}
+              value={`${Math.round(space.daily[0].light.avg)} lux`}
             />
-          </div>
-          {space.daily.length > 0 && (
-            <div>
-              <ValueField
-                label='Temp'
-                value={`${
-                  Math.round(space.daily[0].temperature.avg * 100) / 100
-                }°C`}
-              />
-              <ValueField
-                label='Hum'
-                value={`${
-                  Math.round(space.daily[0].humidity.avg * 100) / 100
-                }%`}
-              />
-              <ValueField
-                label='Light'
-                value={`${Math.round(space.daily[0].light.avg)} lux`}
-              />
-              <ValueField
-                label='Air'
-                value={`${Math.round(space.daily[0].air.avg)}`}
-              />
-            </div>
-          )}
-        </div>
-        <hr />
-        <Button
-          variant='outlined'
-          fullWidth
-          onClick={() => setToggleWatering(!toggleWatering)}>
-          Water Plants
-        </Button>
-
-        {toggleWatering && (
-          <div
-            style={{
-              background: COLOUR_ACCENT,
-              padding: '1rem',
-              borderRadius: '0.5rem',
-            }}>
-            <WateringForm
-              space={{
-                id: space.id,
-                name: space.name,
-                room_type: space.room_type,
-                light_direction: space.light_direction,
-                thumb: space.picture?.thumb || '',
-              }}
-              plants={space.plants}
-              onComplete={() => setToggleWatering(false)}
+            <ValueField
+              label='Air'
+              value={`${Math.round(space.daily[0].air.avg)}`}
             />
           </div>
         )}
-
-        {space.plants.map((plant) => (
-          <PlantCard key={plant.id} plant={plant} />
-        ))}
-        {toggleAddPlant ? (
-          <PlantForm
-            addToSpace={space_id}
-            debug
-            altButton={{
-              label: 'Cancel',
-              onClick: () => setToggleAddPlant(false),
-            }}
-          />
-        ) : (
-          <Button onClick={() => setToggleAddPlant(true)}>Add Plant</Button>
-        )}
-
-        <hr />
-        <pre>{JSON.stringify(space, null, 3)}</pre>
       </div>
-    );
+      <hr />
+      <Button
+        variant='outlined'
+        fullWidth
+        onClick={() => setToggleWatering(!toggleWatering)}>
+        Water Plants
+      </Button>
+
+      {toggleWatering && (
+        <div
+          style={{
+            background: COLOUR_ACCENT,
+            padding: '1rem',
+            borderRadius: '0.5rem',
+          }}>
+          <WateringForm
+            space={{
+              id: space.id,
+              name: space.name,
+              room_type: space.room_type,
+              light_direction: space.light_direction,
+              thumb: space.picture?.thumb || '',
+            }}
+            plants={space.plants}
+            onComplete={() => setToggleWatering(false)}
+          />
+        </div>
+      )}
+
+      {space.plants.map((plant) => (
+        <PlantCard key={plant.id} space={spaceType} plant={plant} />
+      ))}
+      {toggleAddPlant ? (
+        <PlantForm
+          addToSpace={spaceType}
+          debug
+          altButton={{
+            label: 'Cancel',
+            onClick: () => setToggleAddPlant(false),
+          }}
+        />
+      ) : (
+        <Button onClick={() => setToggleAddPlant(true)}>Add Plant</Button>
+      )}
+
+      <hr />
+      <pre>{JSON.stringify(space, null, 3)}</pre>
+    </div>
+  );
 };
 
 export default SpaceDetails;

@@ -4,7 +4,7 @@ import { SpaceType } from './SpaceType';
 import { UserType } from './UserType';
 
 export type WateringProps = {
-  date_created: FirebaseTimestamp;
+  timestamp: FirebaseTimestamp;
   created_by: UserType;
   space: SpaceType;
   plant_ids: Array<string>;
@@ -13,6 +13,8 @@ export type WateringProps = {
   pictures: Array<Picture>;
   note: Note;
 };
+
+export type WateringInputProps = Omit<WateringProps, 'created_by' | 'space'>;
 
 export type WaterType = {
   id: string;

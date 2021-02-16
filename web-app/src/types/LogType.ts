@@ -42,6 +42,7 @@ export type LogTypes =
   | 'SPACE_UPDATED' //when a Space config is updated
   | 'SPACE_DELETED' //when a Space is deleted
   | 'PLANT_CREATED' //when a Plant is created
+  | 'PLANT_UPDATED'
   | 'PLANT_CUTTING' //when a Plant is duplicated
   | 'PLANT_DIED' //when a Plant dies
   | 'PLANT_MOVED' //when a Plant is moved to new Space

@@ -20,7 +20,10 @@ export type InspectionProps = {
   pictures: Array<Picture>;
   note: Note;
 };
-
+export type InspectionInputProps = Omit<
+  InspectionProps,
+  'created_by' | 'space' | 'plant'
+>;
 export type ProblemTypes =
   | 'LEAF_WILTED'
   | 'LEAF_DISCOLOUR'

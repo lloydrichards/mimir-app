@@ -4,11 +4,9 @@ import { useHistory } from 'react-router-dom';
 import {
   COLOUR_LIGHT,
   COLOUR_SECONDARY,
-  COLOUR_SUBTLE
+  COLOUR_SUBTLE,
 } from '../../Styles/Colours';
-import {
-  SpaceListItemProps
-} from '../../types/SpaceType';
+import { SpaceListItemProps } from '../../types/SpaceType';
 import ValueField from '../Atom-Inputs/ValueField';
 import { useAuth } from '../auth/Auth';
 import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
@@ -30,21 +28,13 @@ const SpaceCard: React.FC<Props> = ({ space }) => {
     if (space.config.devices.find((i) => i === data))
       return console.log('Do Nothing');
     console.log(`Move ${data} to ${space.name}`);
-    moveDevice(
-      {
-        id: currentUser?.uid || '',
-        username: userDoc?.username || '',
-        gardener: userDoc?.gardener || 'BEGINNER',
-      },
-      data,
-      {
-        id: space.id,
-        name: space.name,
-        light_direction: space.light_direction,
-        thumb: space.picture?.thumb || '',
-        room_type: space.room_type,
-      }
-    );
+    moveDevice(data, {
+      id: space.id,
+      name: space.name,
+      light_direction: space.light_direction,
+      thumb: space.picture?.thumb || '',
+      room_type: space.room_type,
+    });
   };
   return (
     <DropWrapper onOpen={setOpen} onDrop={handleDrop} status='okay'>

@@ -9,10 +9,12 @@ import { Log } from '../../types/LogType';
 import {
   FormType,
   PlantProps,
+  PlantType,
   PlantTypes,
-  PotType
+  PotType,
+  SpeciesType,
 } from '../../types/PlantType';
-import { SpaceConfigProps, SpaceProps } from '../../types/SpaceType';
+import { SpaceConfigProps, SpaceProps, SpaceType } from '../../types/SpaceType';
 import { NumberField } from '../Atom-Inputs/NumberField';
 import { Selector } from '../Atom-Inputs/Selector';
 import { Switch } from '../Atom-Inputs/Switch';
@@ -25,9 +27,11 @@ import { SearchSpecies } from '../Molecule-FormInputs/SpeciesSearch';
 import UploadPictureForm from '../Molecule-FormInputs/UploadPictureForm';
 
 interface Props {
-  addToSpace?: string;
+  edit?: PlantProps & { id: string };
+  addToSpace?: SpaceType;
   spaces?: Array<SpaceProps & { id: string }>;
   altButton?: { label: string; onClick: () => void };
+  onComplete?: () => void;
   debug?: boolean;
 }
 const db = app.firestore();
@@ -37,8 +41,10 @@ const PlantForm: React.FC<Props> = ({
   altButton,
   debug,
   addToSpace,
+  edit,
+  onComplete,
 }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, addPlant, editPlant } = useAuth();
   const [userSpaces, setUserSpaces] = useState<
     Array<SpaceProps & { id: string }>
   >(spaces || []);
@@ -55,119 +61,66 @@ const PlantForm: React.FC<Props> = ({
     <div>
       <Formik
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const userRef = db
-            .collection('mimirUsers')
-            .doc(currentUser?.uid || '');
-          const plantRef = db.collection('mimirPlants').doc();
-          const spaceRef = db.collection('mimirSpaces').doc(data.space_id);
-
-          const userLog = userRef.collection('Logs').doc();
-          const spaceLog = spaceRef.collection('Logs').doc();
-          const plantLog = plantRef.collection('Logs').doc();
-
-          const newLog: Log = {
-            timestamp,
-            type: ['PLANT_CREATED', 'SPACE_UPDATED', 'USER_UPDATED'],
-            content: {},
-          };
           setSubmitting(true);
+          const selectedSpace = spaces?.find((i) => i.id === data.space_id);
+          const spaceType = addToSpace || {
+            id: data.space_id,
+            name: selectedSpace?.name || '',
+            room_type: selectedSpace?.room_type || 'OTHER',
+            light_direction: selectedSpace?.light_direction || [],
+            thumb: selectedSpace?.picture?.thumb || '',
+          };
           try {
-            return db
-              .runTransaction(async (t) => {
-                const currentConfig = spaceRef
-                  .collection('Configs')
-                  .where('current', '==', true)
-                  .orderBy('timestamp', 'desc');
-                const newConfigRef = spaceRef.collection('Configs').doc();
-
-                const currentConfigDoc = await currentConfig.get();
-                if (currentConfigDoc.empty) throw new Error("No Config");
-
-                const currentDoc = currentConfigDoc.docs[0].data() as SpaceConfigProps;
-                const newConfig: SpaceConfigProps = {
-                  ...currentDoc,
-                  timestamp,
-                  plant_ids: currentDoc.plant_ids.concat(plantRef.id),
-                  plants: [
-                    ...currentDoc.plants,
-                    {
-                      id: plantRef.id,
-                      nickname: data.nickname,
-                      type: data.species.type,
-                      botanical_name: data.species.id,
-                      size: data.pot.size,
-                    },
-                  ],
-                };
-
-                const newPlantDoc: PlantProps = {
-                  date_created: timestamp,
-                  nickname: data.nickname,
-                  date_modified: null,
-                  alive: true,
-                  description: data.description,
-                  form: data.form,
-                  owner: data.owner,
-                  parent: data.parent ? data.parent : null,
-                  pot: data.pot,
-                  picture: data.picture,
-                  roles: {
-                    [currentUser?.uid || '']: 'ADMIN',
+            edit
+              ? editPlant(
+                  spaceType,
+                  {
+                    id: edit.id,
+                    type: edit.species.type,
+                    botanical_name: edit.species.id,
+                    nickname: edit.nickname,
+                    size: edit.pot.size,
                   },
-                  species: data.species,
-                };
-
-                t.set(plantRef, newPlantDoc);
-                t.set(newConfigRef, newConfig);
-                t.set(userLog, newLog);
-                t.set(spaceLog, newLog);
-                t.set(plantLog, newLog);
-
-                currentConfigDoc.docs.forEach((doc) =>
-                  t.update(doc.ref, { current: false })
-                );
-              })
-              .then(() => {
-                console.log('Success!');
-                setSubmitting(false);
-                resetForm();
-              });
+                  data
+                ).then(() => {
+                  console.log('Plant Edited!');
+                  setSubmitting(false);
+                  resetForm();
+                  onComplete && onComplete();
+                })
+              : addPlant(spaceType, data).then(() => {
+                  console.log('Plant Added!');
+                  setSubmitting(false);
+                  resetForm();
+                  onComplete && onComplete();
+                });
           } catch (error) {
             console.log('error:', error);
             alert(error);
             setStatus(error);
           }
-
           setSubmitting(false);
         }}
         initialValues={{
-          space_id: addToSpace || '',
-          nickname: '',
-          description: '',
-          species: {
-            family: '',
-            genus: '',
-            species: '',
-            subspecies: '',
-            cultivar: '',
-            id: '',
-            type: '' as PlantTypes,
-          },
-          form: '' as FormType,
-          parent: {
+          space_id: addToSpace?.id || '',
+          nickname: edit?.nickname || '',
+          description: edit?.description || '',
+          species: edit?.species || ({} as SpeciesType),
+          form: edit?.form || ('' as FormType),
+          parent: edit?.parent || {
             name: '',
             id: '',
             owner_name: '',
             owner_id: '',
           },
-          picture: null,
-          pot: {
+          picture: edit?.picture || null,
+          pot: edit?.pot || {
             hanging: false,
             size: 0,
             tray: true,
             type: '' as PotType,
           },
-          owner: {
+          owner: edit?.owner || {
             id: currentUser?.uid || '',
             name: currentUser?.displayName || '',
             email: currentUser?.email || '',
@@ -175,7 +128,7 @@ const PlantForm: React.FC<Props> = ({
         }}>
         {({ isSubmitting, values, status, setFieldValue, errors }) => (
           <Form>
-            {!addToSpace && (
+            {!addToSpace && !edit && (
               <Selector
                 label='Space'
                 name='space_id'
