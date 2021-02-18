@@ -14,6 +14,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { lazy } from 'react';
 import Loading from './components/Organism-UI/Loading';
+import SpaceInvite from './Pages/SpaceInvite';
 
 const Dashboard = lazy(() => import('./Pages/Dashboard'));
 const SpaceDetails = lazy(() => import('./Pages/SpaceDetails'));
@@ -36,9 +37,11 @@ const App = () => {
                 <PrivateRoute path='/addSpace' component={SpaceForm} />
                 <PrivateRoute path='/addPlant' component={PlantForm} />
                 <PrivateRoute
+                  exact
                   path='/space/:space_id'
                   component={SpaceDetails}
                 />
+                <Route path='/space/:space_id/invite' component={SpaceInvite} />
               </Switch>
             </Suspense>
           </Layout>
