@@ -32,6 +32,11 @@ type ContextProps = {
     device_id: string,
     toSpace: SpaceType
   ) => Promise<firebase.functions.HttpsCallableResult>;
+  inviteToSpace: (
+    from: string,
+    space_id: string,
+    token: string
+  ) => Promise<firebase.functions.HttpsCallableResult>;
   addInspection: (
     space: SpaceType,
     plant: PlantType,
@@ -81,6 +86,9 @@ export const AuthProvider = ({ children }: any) => {
   };
   const moveDevice = (device_id: string, toSpace: SpaceType) => {
     return functions.httpsCallable('moveDevice')({ user, device_id, toSpace });
+  };
+  const inviteToSpace = (from: string, space_id: string, token: string) => {
+    return functions.httpsCallable('InviteSpace')({ from, space_id, token });
   };
 
   const addInspection = (
@@ -138,6 +146,7 @@ export const AuthProvider = ({ children }: any) => {
         login,
         resetPassword,
         movePlant,
+        inviteToSpace,
         moveDevice,
         addInspection,
         addWatering,
