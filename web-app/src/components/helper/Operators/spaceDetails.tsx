@@ -1,8 +1,8 @@
-import firebase from 'firebase';
-import { collectionData, docData } from 'rxfire/firestore';
-import { combineLatest, defer, Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { SpaceConfigProps, SpaceProps } from '../../../types/SpaceType';
+import firebase from "firebase";
+import { collectionData, docData } from "rxfire/firestore";
+import { combineLatest, defer, Observable, of } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
+import { SpaceConfigProps, SpaceProps } from "../../../types/SpaceType";
 
 export const spaceDetails = (db: firebase.firestore.Firestore) => {
   return (source: any) =>
@@ -16,28 +16,28 @@ export const spaceDetails = (db: firebase.firestore.Firestore) => {
           const config$ = collectionData(
             db
               .doc(`mimirSpaces/${parent.id}`)
-              .collection('Configs')
-              .where('current', '==', true)
-              .orderBy('timestamp', 'desc')
+              .collection("Configs")
+              .where("current", "==", true)
+              .orderBy("timestamp", "desc")
               .limit(1),
-            'id'
+            "id"
           );
 
           const aggs$ = collectionData(
             db
               .doc(`mimirSpaces/${parent.id}`)
-              .collection('Aggs')
-              .orderBy('timestamp', 'desc')
+              .collection("Aggs")
+              .orderBy("timestamp", "desc")
               .limit(1),
-            'id'
+            "id"
           );
           const daily$ = collectionData(
             db
               .doc(`mimirSpaces/${parent.id}`)
-              .collection('Daily')
-              .orderBy('timestamp', 'desc')
+              .collection("Daily")
+              .orderBy("timestamp", "desc")
               .limit(3),
-            'id'
+            "id"
           );
 
           const plants$ = config$.pipe(
@@ -47,13 +47,13 @@ export const spaceDetails = (db: firebase.firestore.Firestore) => {
               const plants$: Array<Observable<unknown>> = [];
               current.plant_ids.forEach((id) =>
                 plants$.push(
-                  docData(db.collection('mimirPlants').doc(id || ''), 'id')
+                  docData(db.collection("mimirPlants").doc(id || ""), "id")
                 )
               );
-              if (plants$.length === 0) return of(['REMOVE']);
+              if (plants$.length === 0) return of(["REMOVE"]);
               return combineLatest([...plants$]);
             }),
-            map((arr: Array<any>) => arr.filter((i) => i !== 'REMOVE'))
+            map((arr: Array<any>) => arr.filter((i) => i !== "REMOVE"))
           );
 
           return combineLatest([config$, aggs$, daily$, plants$]);
