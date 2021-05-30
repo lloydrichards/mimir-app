@@ -35,6 +35,11 @@ export type PlantProps = {
   roles: Roles;
 };
 
+export type PlantInput = Omit<
+  PlantProps,
+  'date_created' | 'date_modified' | 'roles' | 'alive'
+>;
+
 export type PlantType = {
   nickname: string;
   id: string;

@@ -1,11 +1,11 @@
 import * as admin from 'firebase-admin';
 import firebase from 'firebase/app';
-import { PlantType } from './PlantType';
-import { SpaceType } from './SpaceType';
+import { PlantType } from '../../types/PlantType';
+import { SpaceType } from '../../types/SpaceType';
 import('firebase/functions');
 
-import { ModelProps, SpeciesProps } from './SpeciesType';
-import { UserType } from './UserType';
+import { ModelProps, SpeciesProps } from '../../types/SpeciesType';
+import { UserType } from '../../types/UserType';
 var serviceAccount = require('../serviceAccountKey.json');
 
 var combinedData: Array<

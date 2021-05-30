@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { DataPackageProps } from './types/DeviceType';
-import { ReadingProps } from './types/ReadingType';
-import { FirebaseTimestamp } from './types/GenericType';
-import { PlantProps, PlantType } from './types/PlantType';
+import { DataPackageProps } from '../../types/DeviceType';
+import { ReadingProps } from '../../types/ReadingType';
+import { FirebaseTimestamp } from '../../types/GenericType';
+import { PlantProps, PlantType } from '../../types/PlantType';
 import { rangeFunc } from './helpers';
-import { ModelProps } from './types/SpeciesType';
+import { ModelProps } from '../../types/SpeciesType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const db = admin.firestore();

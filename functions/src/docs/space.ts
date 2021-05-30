@@ -1,4 +1,4 @@
-import { SpaceAggProps, SpaceConfigProps } from '../types/SpaceType';
+import { SpaceAggProps, SpaceConfigProps } from '../../../types/SpaceType';
 
 export const initSpaceAgg = (timestamp: FirebaseFirestore.Timestamp): SpaceAggProps => {
   return {

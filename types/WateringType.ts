@@ -1,7 +1,7 @@
-import { FirebaseTimestamp, Note, Picture } from './GenericType';
-import { PlantType } from './PlantType';
-import { SpaceType } from './SpaceType';
-import { UserType } from './UserType';
+import { FirebaseTimestamp, Note, Picture } from "./GenericType";
+import { PlantType } from "./PlantType";
+import { SpaceType } from "./SpaceType";
+import { UserType } from "./UserType";
 
 export type WateringProps = {
   date_created: FirebaseTimestamp;
@@ -13,6 +13,8 @@ export type WateringProps = {
   pictures: Array<Picture>;
   note: Note;
 };
+
+export type WateringInput = Omit<WateringProps, "created_by" | "space">;
 
 export type WaterType = {
   id: string;

@@ -21,6 +21,11 @@ export type InspectionProps = {
   note: Note;
 };
 
+export type InspectionInput = Omit<
+  InspectionProps,
+  'created_by' | 'space' | 'plant'
+>;
+
 export type ProblemTypes =
   | 'LEAF_WILTED'
   | 'LEAF_DISCOLOUR'

@@ -8,8 +8,8 @@
       "outDir": "server/dist",
       "strict": true,
       "rootDir": "./",
-      "rootDirs": ["server/src","functions/src/types"]
+      "rootDirs": ["server/src","types"]
     },
     "lib": ["es2015"],
-    "include": ["server/src/**/*", "functions/src/types/**/*"]
+    "include": ["server/src/**/*", "types/**/*"]
   }

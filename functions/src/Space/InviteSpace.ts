@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import { db, timestamp } from '..';
-import { Log } from '../types/LogType';
-import { SpaceProps } from '../types/SpaceType';
-import { UserProps } from '../types/UserType';
+import { Log } from '../../../types/LogType';
+import { SpaceProps } from '../../../types/SpaceType';
+import { UserProps } from '../../../types/UserType';
 
 export const InviteSpace = functions.https.onCall(
   async (data: { from: string; space_id: string; token: string }, context) => {

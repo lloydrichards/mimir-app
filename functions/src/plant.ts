@@ -1,11 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initPlantAggs } from './docs/plants';
-import { FirebaseTimestamp } from './types/GenericType';
-import { PlantAggProps, PlantProps, PlantType } from './types/PlantType';
+import { FirebaseTimestamp } from '../../types/GenericType';
+import { PlantAggProps, PlantProps, PlantType } from '../../types/PlantType';
 import { reCalc } from './helpers';
-import { SpaceConfigProps } from './types/SpaceType';
-import { Log } from './types/LogType';
+import { SpaceConfigProps } from '../../types/SpaceType';
+import { Log } from '../../types/LogType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;

@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { FirebaseTimestamp } from './types/GenericType';
+import { FirebaseTimestamp } from '../../types/GenericType';
 
 admin.initializeApp();
 export const db = admin.firestore();

@@ -1,4 +1,4 @@
-import { UserAggProps, UserProps, UserSettingsProps } from '../types/UserType';
+import { UserAggProps, UserProps, UserSettingsProps } from '../../../types/UserType';
 
 export const initUserDoc = (
   email: string,

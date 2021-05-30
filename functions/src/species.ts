@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import algoliasearch from 'algoliasearch';
-import { SpeciesProps } from './types/SpeciesType';
-import { SpeciesType } from './types/PlantType';
+import { SpeciesProps } from '../../types/SpeciesType';
+import { SpeciesType } from '../../types/PlantType';
 
 const APP_ID = functions.config().algolia.app;
 const ADMIN_KEY = functions.config().algolia.key;

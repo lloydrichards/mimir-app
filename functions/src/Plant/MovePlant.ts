@@ -1,10 +1,10 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { FirebaseTimestamp } from '../types/GenericType';
-import { PlantType } from '../types/PlantType';
-import { SpaceConfigProps, SpaceProps, SpaceType } from '../types/SpaceType';
-import { UserType } from '../types/UserType';
-import { Log } from '../types/LogType';
+import { FirebaseTimestamp } from '../../../types/GenericType';
+import { PlantType } from '../../../types/PlantType';
+import { SpaceConfigProps, SpaceProps, SpaceType } from '../../../types/SpaceType';
+import { UserType } from '../../../types/UserType';
+import { Log } from '../../../types/LogType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const db = admin.firestore();

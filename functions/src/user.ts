@@ -1,44 +1,45 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import { initUserAgg, initUserDoc, initUserSetting } from './docs/users';
-import { FirebaseTimestamp, Owner } from './types/GenericType';
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import { initUserAgg, initUserDoc, initUserSetting } from "./docs/users";
+import { FirebaseTimestamp, Owner } from "../../types/GenericType";
 import {
   UserAggProps,
   UserProps,
   UserSettingsProps,
   UserType,
-} from './types/UserType';
-import { once, setEventSuccess } from './util/once';
-import { Log } from './types/LogType';
+} from "../../types/UserType";
+import { once, setEventSuccess } from "./util/once";
+import { Log } from "../../types/LogType";
 
-const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
+const timestamp =
+  admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;
 const db = admin.firestore();
-const stats = db.collection('Admin').doc('--users-stats--');
+const stats = db.collection("Admin").doc("--users-stats--");
 
 export const calcUserAgg = (doc: UserAggProps, log: Log) => {
   const { type, content } = log;
   const newAgg: UserAggProps = {
     ...doc,
     timestamp,
-    space_total: type.includes('SPACE_CREATED')
+    space_total: type.includes("SPACE_CREATED")
       ? doc.space_total + 1
-      : type.includes('SPACE_DELETED')
+      : type.includes("SPACE_DELETED")
       ? doc.space_total - 1
       : doc.space_total,
     plant_total:
-      type.includes('PLANT_CREATED') || type.includes('PLANT_CUTTING')
+      type.includes("PLANT_CREATED") || type.includes("PLANT_CUTTING")
         ? doc.plant_total + 1
-        : type.includes('PLANT_DIED') || type.includes('PLANT_DELETED')
+        : type.includes("PLANT_DIED") || type.includes("PLANT_DELETED")
         ? doc.plant_total - 1
         : doc.plant_total,
-    dead_total: type.includes('PLANT_DIED')
+    dead_total: type.includes("PLANT_DIED")
       ? doc.dead_total + 1
       : doc.dead_total,
-    points: type.includes('POINTS')
+    points: type.includes("POINTS")
       ? doc.points + (content.points || 0)
       : doc.points,
-    level: type.includes('POINTS')
+    level: type.includes("POINTS")
       ? levelUp(doc.points + (content.points || 0))
       : doc.level,
   };
@@ -49,25 +50,25 @@ export const calcUserAgg = (doc: UserAggProps, log: Log) => {
 export const userCreated = functions.auth.user().onCreate(
   once(async (user, context) => {
     //New Auth User created
-    const newUser = db.collection('mimirUsers').doc(user.uid);
-    const newAgg = newUser.collection('Aggs').doc('--init--');
-    const newLog = newUser.collection('Logs').doc();
-    const newSetting = newUser.collection('_settings').doc('--settings--');
+    const newUser = db.collection("mimirUsers").doc(user.uid);
+    const newAgg = newUser.collection("Aggs").doc("--init--");
+    const newLog = newUser.collection("Logs").doc();
+    const newSetting = newUser.collection("_settings").doc("--settings--");
     return db
       .runTransaction(async (t) => {
         const initUserLog: Log = {
           timestamp,
-          type: ['USER_CREATED'],
+          type: ["USER_CREATED"],
           content: {
             user: {
               id: user.uid,
-              username: user.displayName || '',
-              gardener: 'BEGINNER',
+              username: user.displayName || "",
+              gardener: "BEGINNER",
             },
           },
         };
 
-        t.set(newUser, initUserDoc(user.email || '', timestamp), {
+        t.set(newUser, initUserDoc(user.email || "", timestamp), {
           merge: true,
         });
         t.set(newAgg, initUserAgg(timestamp));
@@ -90,7 +91,7 @@ export const userCreated = functions.auth.user().onCreate(
 );
 
 export const userUpdated = functions.firestore
-  .document('mimirUsers/{user_id}')
+  .document("mimirUsers/{user_id}")
   .onUpdate(
     once(async (user) => {
       const userBefore = user.before.data() as UserProps;
@@ -103,8 +104,10 @@ export const userUpdated = functions.firestore
       let opCounter = 0;
       let batchIndex = 0;
 
-      const ownerSnapArr: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>[] = [];
-      const creatorSnapArr: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>[] = [];
+      const ownerSnapArr: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>[] =
+        [];
+      const creatorSnapArr: FirebaseFirestore.QueryDocumentSnapshot<FirebaseFirestore.DocumentData>[] =
+        [];
 
       const oldOwner: Owner = {
         id: user_id,
@@ -124,44 +127,44 @@ export const userUpdated = functions.firestore
       };
       const oldUser: Partial<UserType> = {
         id: user_id,
-        username: userBefore.username || '',
-        gardener: userBefore.gardener || 'BEGINNER',
+        username: userBefore.username || "",
+        gardener: userBefore.gardener || "BEGINNER",
       };
       const updateUser: Partial<UserType> = {
         id: user_id,
-        username: userAfter.username || '',
-        gardener: userAfter.gardener || 'BEGINNER',
+        username: userAfter.username || "",
+        gardener: userAfter.gardener || "BEGINNER",
       };
 
       if (oldOwner !== updateOwner) {
         await db
-          .collection('mimirPlants')
-          .where('owner.id', '==', user_id)
+          .collection("mimirPlants")
+          .where("owner.id", "==", user_id)
           .get()
           .then((snap) => snap.docs.forEach((doc) => ownerSnapArr.push(doc)));
 
         await db
-          .collection('mimirSpaces')
-          .where('owner.id', '==', user_id)
+          .collection("mimirSpaces")
+          .where("owner.id", "==", user_id)
           .get()
           .then((snap) => snap.docs.forEach((doc) => ownerSnapArr.push(doc)));
 
         await db
-          .collection('mimirDevices')
-          .where('owner.id', '==', user_id)
+          .collection("mimirDevices")
+          .where("owner.id", "==", user_id)
           .get()
           .then((snap) => snap.docs.forEach((doc) => ownerSnapArr.push(doc)));
       }
 
       if (oldUser !== updateUser) {
         await db
-          .collection('mimirWaterings')
-          .where('created_by.id', '==', user_id)
+          .collection("mimirWaterings")
+          .where("created_by.id", "==", user_id)
           .get()
           .then((snap) => snap.docs.forEach((doc) => ownerSnapArr.push(doc)));
         await db
-          .collection('mimirInspections')
-          .where('created_by.id', '==', user_id)
+          .collection("mimirInspections")
+          .where("created_by.id", "==", user_id)
           .get()
           .then((snap) => snap.docs.forEach((doc) => ownerSnapArr.push(doc)));
       }
@@ -191,36 +194,36 @@ export const userUpdated = functions.firestore
         stats,
         {
           gardener: {
-            [userBefore.gardener || 'UNDEFINED']: increment(
+            [userBefore.gardener || "UNDEFINED"]: increment(
               userBefore.gardener === userAfter.gardener ? 0 : -1
             ),
-            [userAfter.gardener || 'UNDEFINED']: increment(
+            [userAfter.gardener || "UNDEFINED"]: increment(
               userBefore.gardener === userAfter.gardener ? 0 : 1
             ),
           },
           region: {
-            [userBefore.location.region || 'UNDEFINED']: increment(
+            [userBefore.location.region || "UNDEFINED"]: increment(
               userBefore.location.region === userAfter.location.region ? 0 : -1
             ),
-            [userAfter.location.region || 'UNDEFINED']: increment(
+            [userAfter.location.region || "UNDEFINED"]: increment(
               userBefore.location.region === userAfter.location.region ? 0 : 1
             ),
           },
           country: {
-            [userBefore.location.country || 'UNDEFINED']: increment(
+            [userBefore.location.country || "UNDEFINED"]: increment(
               userBefore.location.country === userAfter.location.country
                 ? 0
                 : -1
             ),
-            [userAfter.location.country || 'UNDEFINED']: increment(
+            [userAfter.location.country || "UNDEFINED"]: increment(
               userBefore.location.country === userAfter.location.country ? 0 : 1
             ),
           },
           city: {
-            [userBefore.location.city || 'UNDEFINED']: increment(
+            [userBefore.location.city || "UNDEFINED"]: increment(
               userBefore.location.city === userAfter.location.city ? 0 : -1
             ),
-            [userAfter.location.city || 'UNDEFINED']: increment(
+            [userAfter.location.city || "UNDEFINED"]: increment(
               userBefore.location.city === userAfter.location.city ? 0 : 1
             ),
           },
@@ -232,7 +235,7 @@ export const userUpdated = functions.firestore
   );
 
 export const userSettingsUpdate = functions.firestore
-  .document('mimirUsers/{user_id}/_settings/{setting_id}')
+  .document("mimirUsers/{user_id}/_settings/{setting_id}")
   .onUpdate(async (setting) => {
     const userBefore = setting.before.data() as UserSettingsProps;
     const userAfter = setting.after.data() as UserSettingsProps;
@@ -245,10 +248,10 @@ export const userSettingsUpdate = functions.firestore
           {
             timestamp,
             subscription: {
-              [userBefore.subscription || 'UNDEFINED']: increment(
+              [userBefore.subscription || "UNDEFINED"]: increment(
                 userBefore.subscription === userAfter.subscription ? 0 : -1
               ),
-              [userAfter.subscription || 'UNDEFINED']: increment(
+              [userAfter.subscription || "UNDEFINED"]: increment(
                 userBefore.subscription === userAfter.subscription ? 0 : 1
               ),
             },
@@ -260,14 +263,14 @@ export const userSettingsUpdate = functions.firestore
   });
 
 export const userAggregation = functions.firestore
-  .document('mimirUsers/{user_id}/Logs/{log_id}')
+  .document("mimirUsers/{user_id}/Logs/{log_id}")
   .onCreate((log, context) => {
     const user_id = context.params.user_id;
-    const user = db.collection('mimirUsers').doc(user_id);
-    const newAgg = user.collection('Aggs').doc();
+    const user = db.collection("mimirUsers").doc(user_id);
+    const newAgg = user.collection("Aggs").doc();
     const oldAgg = user
-      .collection('Aggs')
-      .orderBy('timestamp', 'desc')
+      .collection("Aggs")
+      .orderBy("timestamp", "desc")
       .limit(1);
 
     return db

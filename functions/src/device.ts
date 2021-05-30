@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { initDeviceDoc, initDeviceAgg } from './docs/device';
-import { FirebaseTimestamp } from './types/GenericType';
-import { DeviceAggProps } from './types/DeviceType';
-import { Log } from './types/LogType';
+import { FirebaseTimestamp } from '../../types/GenericType';
+import { DeviceAggProps } from '../../types/DeviceType';
+import { Log } from '../../types/LogType';
 
 const timestamp = admin.firestore.FieldValue.serverTimestamp() as FirebaseTimestamp;
 const increment = admin.firestore.FieldValue.increment;

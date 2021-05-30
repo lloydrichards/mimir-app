@@ -1,4 +1,4 @@
-import { PlantAggProps } from '../types/PlantType';
+import { PlantAggProps } from '../../../types/PlantType';
 
 export const initPlantAggs = (timestamp: FirebaseFirestore.Timestamp): PlantAggProps => {
   return {

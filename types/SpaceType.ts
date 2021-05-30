@@ -8,9 +8,9 @@ import {
   Light,
   Air,
   FirebaseTimestamp,
-} from './GenericType';
-import { PlantProps, PlantType } from './PlantType';
-import { DailyProps } from './ReadingType';
+} from "./GenericType";
+import { PlantProps, PlantType } from "./PlantType";
+import { DailyProps } from "./ReadingType";
 
 export type SpaceProps = {
   name: string;
@@ -24,6 +24,11 @@ export type SpaceProps = {
   owner: Owner;
   roles: Roles;
 };
+
+export type SpaceInput = Omit<
+  SpaceProps,
+  "date_created" | "date_modified" | "roles"
+>;
 
 export type SpaceType = {
   id: string;
@@ -42,26 +47,26 @@ export type SpaceDetailProps = SpaceProps & {
 };
 
 export type RoomType =
-  | 'BEDROOM'
-  | 'GUEST'
-  | 'PLAY'
-  | 'FAMILY'
-  | 'DINING'
-  | 'BATHROOM'
-  | 'OFFICE'
-  | 'LIVING'
-  | 'BALCONY'
-  | 'STORAGE'
-  | 'LIBRARY'
-  | 'KITCHEN'
-  | 'OTHER';
+  | "BEDROOM"
+  | "GUEST"
+  | "PLAY"
+  | "FAMILY"
+  | "DINING"
+  | "BATHROOM"
+  | "OFFICE"
+  | "LIVING"
+  | "BALCONY"
+  | "STORAGE"
+  | "LIBRARY"
+  | "KITCHEN"
+  | "OTHER";
 
 export type SpaceCreateInput = Omit<
   SpaceProps,
-  'date_created' | 'date_modified' | 'roles'
+  "date_created" | "date_modified" | "roles"
 >;
 
-export type LightType = 'S' | 'SE' | 'E' | 'NE' | 'N' | 'NW' | 'W' | 'SW';
+export type LightType = "S" | "SE" | "E" | "NE" | "N" | "NW" | "W" | "SW";
 
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;
