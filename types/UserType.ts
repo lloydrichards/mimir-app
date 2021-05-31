@@ -7,7 +7,6 @@ export type UserProps = {
   first_name: string;
   last_name: string;
   bio: string;
-  gardener: GardenerTypes;
   location: Location;
   profile_picture: Picture;
   social_media: {
@@ -30,11 +29,7 @@ export type DateFormatTypes = 'dd/MM/yyyy' | 'MM/dd/yyyy';
 export type UserType = {
   id: string;
   username: string;
-  gardener: GardenerTypes;
 };
-
-export type GardenerTypes = 'BEGINNER' | 'EXPERT' | 'PRO';
-
 export type UserAggProps = {
   timestamp: FirebaseTimestamp;
   space_total: number;

@@ -10,6 +10,10 @@
     "noEmit": true,
     "strict": true,
     "target": "esnext",
+    "baseUrl": "./",
+    "paths": {"@mimir/*": ["../types/*"], "@styles/*": ["src/Styles/*"]},
+    "resolveJsonModule": true,
+    "types": ["jest"]
   },
   "exclude": [
     "node_modules",

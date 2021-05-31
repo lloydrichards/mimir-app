@@ -1,19 +1,21 @@
+import React from 'react';
 import auth from '@react-native-firebase/auth';
-import {Button} from 'react-native';
 import {useAuth} from './Auth';
+import {COLOUR_SECONDARY} from 'src/Styles/Colours';
+import { Button } from 'react-native-paper';
 
 const SignOut = () => {
   const {currentUser} = useAuth();
   return (
     <Button
-      title="Sign Out"
       disabled={!currentUser}
       onPress={async () =>
         await auth()
           .signOut()
           .then(() => console.log('Successfully Signed Out'))
-      }
-    />
+      }>
+      Sign Out
+    </Button>
   );
 };
 

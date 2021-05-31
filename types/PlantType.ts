@@ -3,12 +3,16 @@ import {
   FirebaseTimestamp,
   Humidity,
   Light,
+  Note,
   Owner,
   Picture,
   Roles,
   Temperature,
-} from './GenericType';
-import { SpaceType } from './SpaceType';
+} from "./GenericType";
+import { ProblemTypes } from "./InspectionType";
+import { SpaceType } from "./SpaceType";
+import { PestTypes } from "./SpeciesType";
+import { UserType } from "./UserType";
 
 export type PlantProps = {
   nickname: string;
@@ -18,26 +22,32 @@ export type PlantProps = {
   picture: null | Picture;
   species: SpeciesType;
   form: FormType;
+  alive: boolean;
+  parent: null | {
+    name: string;
+    id: string;
+    owner: Owner | null;
+  };
+  owner: Owner;
+  roles: Roles;
+};
+
+export type PlantConfig = {
+  timestamp: FirebaseTimestamp;
+  current: boolean;
+  problems: Array<ProblemTypes>;
+  pests: Array<PestTypes>;
   pot: {
     size: number;
     type: PotType;
     tray: boolean;
     hanging: boolean;
   };
-  alive: boolean;
-  parent: null | {
-    name: string;
-    id: string;
-    owner_name: string;
-    owner_id: string;
-  };
-  owner: Owner;
-  roles: Roles;
 };
 
 export type PlantInput = Omit<
   PlantProps,
-  'date_created' | 'date_modified' | 'roles' | 'alive'
+  "date_created" | "date_modified" | "roles" | "alive"
 >;
 
 export type PlantType = {
@@ -45,7 +55,6 @@ export type PlantType = {
   id: string;
   botanical_name: string;
   type: PlantTypes;
-  size: number;
 };
 
 export type SpeciesType = {
@@ -59,67 +68,84 @@ export type SpeciesType = {
 };
 
 export type PotType =
-  | 'TERRACOTTA'
-  | 'WOODEN'
-  | 'METAL'
-  | 'PLASTIC'
-  | 'FIBERGLASS'
-  | 'CONCRETE'
-  | 'FABRIC';
+  | "TERRACOTTA"
+  | "WOODEN"
+  | "METAL"
+  | "PLASTIC"
+  | "FIBERGLASS"
+  | "CONCRETE"
+  | "FABRIC";
 
 export type FormType =
-  | 'CREEPING'
-  | 'IRREGULAR'
-  | 'MOUNDED'
-  | 'OVAL'
-  | 'PYRAMIDAL'
-  | 'ROUND'
-  | 'VASE'
-  | 'WEEPING'
-  | 'CLIMBING'
-  | 'COLUMNAR';
+  | "CREEPING"
+  | "IRREGULAR"
+  | "MOUNDED"
+  | "OVAL"
+  | "PYRAMIDAL"
+  | "ROUND"
+  | "VASE"
+  | "WEEPING"
+  | "CLIMBING"
+  | "COLUMNAR";
 
 export type PlantTypes =
-  | 'GRASS'
-  | 'CLIMBER'
-  | 'CACTI'
-  | 'BAMBOO'
-  | 'GROUND_COVER'
-  | 'ANNUAL'
-  | 'HERBACEOUS'
-  | 'BROADLEAF_EVERGREEN'
-  | 'DECIDUOUS_SHRUB'
-  | 'PERENNIAL_FLOWER'
-  | 'BONSAI'
-  | 'SEMI_EVERGREEN'
-  | 'FERN'
-  | 'PALM'
-  | 'DECIDUOUS_TREE'
-  | 'CONIFER'
-  | 'AQUATIC'
-  | 'UNKNOWN';
+  | "GRASS"
+  | "CLIMBER"
+  | "CACTI"
+  | "BAMBOO"
+  | "GROUND_COVER"
+  | "ANNUAL"
+  | "HERBACEOUS"
+  | "BROADLEAF_EVERGREEN"
+  | "DECIDUOUS_SHRUB"
+  | "PERENNIAL_FLOWER"
+  | "BONSAI"
+  | "SEMI_EVERGREEN"
+  | "FERN"
+  | "PALM"
+  | "DECIDUOUS_TREE"
+  | "CONIFER"
+  | "AQUATIC"
+  | "UNKNOWN";
 
 export type PlantCreateInput = Omit<
   PlantProps,
-  'roles' | 'alive' | 'date_created' | 'date_modified'
+  "roles" | "alive" | "date_created" | "date_modified"
 >;
 
 export type PlantAggProps = {
   timestamp: FirebaseTimestamp;
-  space: null | SpaceType;
   children_total: number;
   happiness_total: number;
   happiness_current: number;
   health_total: number;
   health_current: number;
-  reading_total: number;
   inspection_total: number;
-  inspection_last: null | FirebaseTimestamp;
   watering_total: number;
-  watering_last: null | FirebaseTimestamp;
-  fertilizer_last: null | FirebaseTimestamp;
-  temperature: Temperature;
-  humidity: Humidity;
-  light: Light;
-  air: Air;
+  fertilizer_total: number;
+  env: {
+    reading_total: number;
+    temperature: Temperature;
+    humidity: Humidity;
+    light: Light;
+  };
+};
+
+export type WateringProps = {
+  date_created: FirebaseTimestamp;
+  created_by: UserType;
+  space: SpaceType;
+  plant_ids: Array<string>;
+  plants: Array<PlantType>;
+  fertilizer: boolean;
+  pictures: Array<Picture>;
+  note: Note;
+};
+
+export type WateringInput = Omit<WateringProps, "created_by" | "space">;
+
+export type WaterType = {
+  id: string;
+  created_by: UserType;
+  fertilizer: boolean;
 };

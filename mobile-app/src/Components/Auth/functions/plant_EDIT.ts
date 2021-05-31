@@ -1,10 +1,10 @@
 import firestore from '@react-native-firebase/firestore';
 
-import { timestamp } from '../../../firebase';
-import { Log } from '../../../../types/LogType';
-import { PlantInput, PlantType } from '../../../../types/PlantType';
-import { SpaceType } from '../../../../types/SpaceType';
-import { UserType } from '../../../../types/UserType';
+import { timestamp } from '../../../Services/firebase';
+import { Log } from '@mimir/LogType';
+import { PlantInput, PlantType } from '@mimir/PlantType';
+import { SpaceType } from '@mimir/SpaceType';
+import { UserType } from '@mimir/UserType';
 
 export const plant_EDIT = (
   user: UserType,

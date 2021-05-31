@@ -4,12 +4,11 @@ import functions, {
 } from '@react-native-firebase/functions';
 
 import React, {useContext, useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
-import {InspectionInput} from '../../../types/InspectionType';
-import {PlantInput, PlantType} from '../../../types/PlantType';
-import {SpaceInput, SpaceType} from '../../../types/SpaceType';
-import {UserProps, UserType} from '../../../types/UserType';
-import {WateringInput} from '../../../types/WateringType';
+import {InspectionInput} from '@mimir/InspectionType';
+import {PlantInput, PlantType} from '@mimir/PlantType';
+import {SpaceInput, SpaceType} from '@mimir/SpaceType';
+import {UserProps, UserType} from '@mimir/UserType';
+import {WateringInput} from '@mimir/WateringType';
 import {inspection_ADD} from './functions/inspection_ADD';
 import {plant_ADD} from './functions/plant_ADD';
 import {plant_EDIT} from './functions/plant_EDIT';
@@ -77,7 +76,6 @@ export const AuthProvider = ({children}: any) => {
   const user: UserType = {
     id: currentUser?.uid || '',
     username: userDoc?.username || '',
-    gardener: userDoc?.gardener || 'BEGINNER',
   };
 
   const signUp = (email: string, password: string) => {

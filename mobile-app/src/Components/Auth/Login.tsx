@@ -1,11 +1,13 @@
-import { Formik } from 'formik';
+import {Field, Formik} from 'formik';
 import React from 'react';
-import { Text, View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
-import { useHistory } from 'react-router-native';
+import {Text, View} from 'react-native';
+import {useHistory} from 'react-router-native';
 import * as yup from 'yup';
-import { COLOUR_SECONDARY } from '../../Styles/Colours';
-import { useAuth } from './Auth';
+import {COLOUR_SECONDARY} from '../../Styles/Colours';
+import {useAuth} from './Auth';
+import {Button} from 'react-native-paper';
+import {InputStyles, TextStyles} from '@styles/GlobalStyle';
+import {TextInput} from '../Atom-Inputs/TextInput';
 
 const validationSchema = yup.object({
   email: yup.string().required().email(),
@@ -16,8 +18,8 @@ const Login = () => {
   const history = useHistory();
   const {login} = useAuth();
   return (
-    <View>
-      <Text>Login Form</Text>
+    <View style={InputStyles.form}>
+      <Text style={InputStyles.title}>Login Form</Text>
       <Formik
         onSubmit={async (data, {setStatus, setSubmitting, resetForm}) => {
           setSubmitting(true);
@@ -40,27 +42,17 @@ const Login = () => {
           password: '',
         }}>
         {({
-          handleChange,
-          handleBlur,
           handleSubmit,
           isSubmitting,
-          values,
           status,
         }) => (
           <View>
-            <TextInput
-              placeholder="Email"
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-            />
-            <TextInput
-              placeholder="password"
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-              textContentType="password"
-              passwordRules="required: upper; required: lower; required: digit; max-consecutive: 2; minlength: 8;"
+            <Field name="email" label="Email" component={TextInput} />
+            <Field
+              name="password"
+              label="Password"
+              secureTextEntry={true}
+              component={TextInput}
             />
             <Button
               mode="contained"

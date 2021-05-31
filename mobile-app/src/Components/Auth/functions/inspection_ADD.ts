@@ -1,13 +1,10 @@
 import firestore from '@react-native-firebase/firestore';
-import {timestamp} from '../../../firebase';
-import {
-  InspectionInput,
-  InspectionProps,
-} from '../../../../types/InspectionType';
-import {Log} from '../../../../types/LogType';
-import {PlantType} from '../../../../types/PlantType';
-import {SpaceType} from '../../../../types/SpaceType';
-import {UserType} from '../../../../types/UserType';
+import {timestamp} from '../../../Services/firebase';
+import {InspectionInput, InspectionProps} from '@mimir/InspectionType';
+import {Log} from '@mimir/LogType';
+import {PlantType} from '@mimir/PlantType';
+import {SpaceType} from '@mimir/SpaceType';
+import {UserType} from '@mimir/UserType';
 
 export const inspection_ADD = (
   user: UserType,

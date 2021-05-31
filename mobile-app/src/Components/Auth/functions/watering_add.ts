@@ -1,9 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
 
-import {Log} from '../../../../types/LogType';
-import {SpaceType} from '../../../../types/SpaceType';
-import {UserType} from '../../../../types/UserType';
-import {WateringInput, WateringProps} from '../../../../types/WateringType';
+import {Log} from '@mimir/LogType';
+import {SpaceType} from '@mimir/SpaceType';
+import {UserType} from '@mimir/UserType';
+import {WateringInput, WateringProps} from '@mimir/WateringType';
 
 export const watering_ADD = (
   user: UserType,

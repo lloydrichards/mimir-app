@@ -1,9 +1,9 @@
 import firestore from '@react-native-firebase/firestore';
 
-import { timestamp } from "../../../firebase";
-import { Log } from "../../../../types/LogType";
-import { SpaceInput, SpaceType } from "../../../../types/SpaceType";
-import { UserType } from "../../../../types/UserType";
+import { timestamp } from "../../../Services/firebase";
+import { Log } from "@mimir/LogType";
+import { SpaceInput, SpaceType } from "@mimir/SpaceType";
+import { UserType } from "@mimir/UserType";
 
 export const space_EDIT = (
   user: UserType,

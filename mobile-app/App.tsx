@@ -1,50 +1,36 @@
+import 'react-native-gesture-handler';
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {AuthProvider} from './Components/Auth/Auth';
+import {StyleSheet, Text, View} from 'react-native';
+import Header from 'src/Components/Molecule-UI/Header';
+import Dashboard from 'src/Screens/Dashboard';
+import {AuthProvider, useAuth} from './src/Components/Auth/Auth';
+import SignOut from './src/Components/Auth/SignOut';
+import {COLOUR_LIGHT} from './src/Styles/Colours';
+import PlantDetails from 'src/Screens/PlantDetails';
+import {DashboardStack} from 'src/Routes/dashboardStack';
 
 const App: React.FC = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
+  const {currentUser} = useAuth();
   return (
-    <AuthProvider>
-      <SafeAreaView style={backgroundStyle}>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <View>
-          <Text>Getting Started!</Text>
-        </View>
-      </SafeAreaView>
-    </AuthProvider>
+    <NavigationContainer>
+      <AuthProvider>
+        <DashboardStack.Navigator initialRouteName="Dashboard">
+          <DashboardStack.Screen name="Dashboard" component={Dashboard} />
+          <DashboardStack.Screen name="PlantDetails" component={PlantDetails} />
+          <DashboardStack.Screen name="SpaceDetails" component={PlantDetails} />
+        </DashboardStack.Navigator>
+      </AuthProvider>
+    </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
+  container: {
     marginTop: 32,
+    backgroundColor: COLOUR_LIGHT,
     paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+    height: '100%',
   },
 });
 

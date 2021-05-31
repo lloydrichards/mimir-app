@@ -1,15 +1,15 @@
 import firestore from '@react-native-firebase/firestore';
 
-import { timestamp } from '../../../firebase';
-import { Log } from '../../../../types/LogType';
-import { PlantInput, PlantProps } from '../../../../types/PlantType';
-import { SpaceConfigProps, SpaceType } from '../../../../types/SpaceType';
-import { UserType } from '../../../../types/UserType';
+import {timestamp} from '../../../Services/firebase';
+import {Log} from '@mimir/LogType';
+import {PlantInput, PlantProps} from '@mimir/PlantType';
+import {SpaceConfigProps, SpaceType} from '@mimir/SpaceType';
+import {UserType} from '@mimir/UserType';
 
 export const plant_ADD = (
   user: UserType,
   space: SpaceType,
-  input: PlantInput
+  input: PlantInput,
 ) => {
   //Dco Refs
   const userRef = firestore().collection('mimirUsers').doc(user.id);
@@ -37,7 +37,7 @@ export const plant_ADD = (
     },
   };
 
-  return firestore().runTransaction(async (t) => {
+  return firestore().runTransaction(async t => {
     const currentConfig = spaceRef
       .collection('Configs')
       .where('current', '==', true)
@@ -88,8 +88,6 @@ export const plant_ADD = (
     t.set(spaceLog, newLog);
     t.set(plantLog, newLog);
 
-    currentConfigDoc.docs.forEach((doc) =>
-      t.update(doc.ref, { current: false })
-    );
+    currentConfigDoc.docs.forEach(doc => t.update(doc.ref, {current: false}));
   });
 };

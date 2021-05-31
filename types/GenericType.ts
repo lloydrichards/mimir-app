@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'src/Services/firebase';
 
 export type Picture = {
   url: string;

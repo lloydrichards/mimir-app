@@ -79,16 +79,15 @@ export type SpaceConfigProps = {
 
 export type SpaceAggProps = {
   timestamp: FirebaseTimestamp;
-  reading_total: number;
   plant_total: number;
   dead_total: number;
   inspection_total: number;
-  inspection_last: null | FirebaseTimestamp;
   watering_total: number;
-  watering_last: null | FirebaseTimestamp;
-  fertilizer_last: null | FirebaseTimestamp;
-  temperature: Temperature;
-  humidity: Humidity;
-  light: Light;
-  air: Air;
+  fertilizer_total: number;
+  env: {
+    reading_total: number;
+    temperature: Temperature;
+    humidity: Humidity;
+    light: Light;
+  };
 };
