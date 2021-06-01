@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import {useAuth} from './Auth';
 import {Button, Text} from 'react-native-paper';
 import {InputStyles} from '@styles/GlobalStyle';
-import { TextInput } from '../Atom-Inputs/TextInput';
+import {TextInput} from '../Atom-Inputs/TextInput';
 
 const validationSchema = yup.object({
   email: yup.string().required().email(),
@@ -18,7 +18,7 @@ const SignUp = () => {
   if (!login) return <div />;
   return (
     <View style={InputStyles.form}>
-      <Text>Sign Up</Text>
+      <Text style={InputStyles.title}>Register Form</Text>
       <Formik
         onSubmit={async (data, {setStatus, setSubmitting, resetForm}) => {
           setSubmitting(true);
@@ -48,7 +48,7 @@ const SignUp = () => {
           values,
           status,
         }) => (
-          <Form>
+          <View>
             <Field name="name" label="Name" component={TextInput} />
             <Field name="email" label="Email" component={TextInput} />
             <Field
@@ -57,11 +57,15 @@ const SignUp = () => {
               secureTextEntry={true}
               component={TextInput}
             />
-            <Button onPress={handleSubmit} disabled={isSubmitting}>
+            <Button
+              mode="contained"
+              color={COLOUR_SECONDARY}
+              onPress={handleSubmit}
+              disabled={isSubmitting}>
               Register
             </Button>
             {status && <Text>{status.message}</Text>}
-          </Form>
+          </View>
         )}
       </Formik>
     </View>

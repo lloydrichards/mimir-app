@@ -4,18 +4,19 @@ import {Text} from 'react-native-paper';
 import {createStackNavigator} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {DashboardStackParamList} from 'src/Routes/dashboardStack';
+import {PlantsNavProps, PlantsStackParamList} from 'src/Routes/plantStack';
+import Center from 'src/Components/Molecule-UI/Center';
 
 interface Props {
-  route: RouteProp<DashboardStackParamList, 'PlantDetails'>;
-  navigation: StackNavigationProp<DashboardStackParamList, 'PlantDetails'>;
+  route: RouteProp<PlantsStackParamList, 'PlantDetails'>;
+  navigation: StackNavigationProp<PlantsStackParamList, 'PlantDetails'>;
 }
 
-const PlantDetails = () => {
+const PlantDetails = ({navigation,route}: PlantsNavProps<'PlantDetails'>) => {
   return (
-    <View>
+    <Center>
       <Text>Plant Details</Text>
-    </View>
+    </Center>
   );
 };
 

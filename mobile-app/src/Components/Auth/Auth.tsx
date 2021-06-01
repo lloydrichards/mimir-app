@@ -1,21 +1,23 @@
-import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
+import { InspectionInput } from '@mimir/InspectionType';
+import { PlantInput, PlantType } from '@mimir/PlantType';
+import { SpaceInput, SpaceType } from '@mimir/SpaceType';
+import { UserProps, UserType } from '@mimir/UserType';
+import { WateringInput } from '@mimir/WateringType';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import functions, {
-  FirebaseFunctionsTypes,
+  FirebaseFunctionsTypes
 } from '@react-native-firebase/functions';
+import React, { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native-paper';
+import { AuthRoute } from 'src/Routes/authStack';
+import Center from '../Molecule-UI/Center';
+import { inspection_ADD } from './functions/inspection_ADD';
+import { plant_ADD } from './functions/plant_ADD';
+import { plant_EDIT } from './functions/plant_EDIT';
+import { space_ADD } from './functions/space_ADD';
+import { space_EDIT } from './functions/space_EDIT';
+import { watering_ADD } from './functions/watering_add';
 
-import React, {useContext, useEffect, useState} from 'react';
-import {InspectionInput} from '@mimir/InspectionType';
-import {PlantInput, PlantType} from '@mimir/PlantType';
-import {SpaceInput, SpaceType} from '@mimir/SpaceType';
-import {UserProps, UserType} from '@mimir/UserType';
-import {WateringInput} from '@mimir/WateringType';
-import {inspection_ADD} from './functions/inspection_ADD';
-import {plant_ADD} from './functions/plant_ADD';
-import {plant_EDIT} from './functions/plant_EDIT';
-import {space_ADD} from './functions/space_ADD';
-import {space_EDIT} from './functions/space_EDIT';
-import {watering_ADD} from './functions/watering_add';
-import Login from './Login';
 
 type ContextProps = {
   currentUser: FirebaseAuthTypes.User | null;
@@ -141,7 +143,12 @@ export const AuthProvider = ({children}: any) => {
     return unsubscribe;
   }, []);
 
-  if (initializing) return null;
+  if (initializing)
+    return (
+      <Center>
+        <ActivityIndicator size="large" />
+      </Center>
+    );
 
   return (
     <AuthContext.Provider
@@ -163,7 +170,7 @@ export const AuthProvider = ({children}: any) => {
         addSpace,
         authenticated: currentUser !== null,
       }}>
-      {currentUser ? children : <Login />}
+      {currentUser ? children : <AuthRoute />}
     </AuthContext.Provider>
   );
 };

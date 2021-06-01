@@ -6,20 +6,25 @@ import {FeatherIconProps} from '../../Styles/Icons';
 
 export const SmallIcon =
   (ds: string[]) =>
-  (props?: SvgProps, colour?: string, backgroundColor?: string) => {
+  (props?: SvgProps & {colour?: string; backgroundColor?: string}) => {
     return (
-        <Svg width={24} height={24} viewBox="0 0 24 24" {...props}>
-          <Rect
-            x="4.36731"
-            y="4.62939"
-            width="16"
-            height="16"
-            rx="5"
-            fill={backgroundColor || '#BCD9D4'}
+      <Svg width={24} height={24} viewBox="0 0 24 24" {...props}>
+        <Rect
+          x="4.36731"
+          y="4.62939"
+          width="16"
+          height="16"
+          rx="5"
+          fill={props?.backgroundColor || '#BCD9D4'}
+        />
+        {ds.map((d, i) => (
+          <Path
+            key={i}
+            d={d}
+            {...FeatherIconProps}
+            stroke={props?.colour || COLOUR_DARK}
           />
-          {ds.map((d,i) => (
-            <Path key={i} d={d} {...FeatherIconProps} stroke={COLOUR_DARK} />
-          ))}
-        </Svg>
+        ))}
+      </Svg>
     );
   };

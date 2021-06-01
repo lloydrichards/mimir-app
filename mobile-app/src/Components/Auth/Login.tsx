@@ -41,11 +41,7 @@ const Login = () => {
           email: '',
           password: '',
         }}>
-        {({
-          handleSubmit,
-          isSubmitting,
-          status,
-        }) => (
+        {({handleSubmit, isSubmitting, status}) => (
           <View>
             <Field name="email" label="Email" component={TextInput} />
             <Field
