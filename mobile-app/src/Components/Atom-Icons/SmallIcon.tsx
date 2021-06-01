@@ -1,12 +1,21 @@
-import React, {SVGProps} from 'react';
-import {StyleSheet, View} from 'react-native';
-import Svg, {Rect, Path, SvgProps} from 'react-native-svg';
+import React from 'react';
+import Svg, {Path, Rect, SvgProps} from 'react-native-svg';
 import {COLOUR_DARK} from '../../Styles/Colours';
 import {FeatherIconProps} from '../../Styles/Icons';
 
+export interface MapProps {
+  id: string;
+  field: string;
+  icon: (
+    props?: SvgProps,
+    colour?: string,
+    backgroundColour?: string,
+  ) => JSX.Element;
+}
+
 export const SmallIcon =
   (ds: string[]) =>
-  (props?: SvgProps & {colour?: string; backgroundColor?: string}) => {
+  (props?: SvgProps & {colour?: string; background?: string}) => {
     return (
       <Svg width={24} height={24} viewBox="0 0 24 24" {...props}>
         <Rect
@@ -15,7 +24,7 @@ export const SmallIcon =
           width="16"
           height="16"
           rx="5"
-          fill={props?.backgroundColor || '#BCD9D4'}
+          fill={props?.background || '#BCD9D4'}
         />
         {ds.map((d, i) => (
           <Path

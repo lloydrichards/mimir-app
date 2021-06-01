@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 import Center from 'src/Components/Molecule-UI/Center';
-import { SpaceNavProps } from 'src/Routes/spaceStack';
+import {SpaceNavProps} from 'src/Routes/spaceStack';
 
 const SpacesDashboard = ({navigation, route}: SpaceNavProps<'Spaces'>) => {
   return (
@@ -11,6 +11,9 @@ const SpacesDashboard = ({navigation, route}: SpaceNavProps<'Spaces'>) => {
       <Button
         onPress={() => navigation.navigate('SpaceDetails', {spaceId: '10'})}>
         To Space
+      </Button>
+      <Button mode="contained" onPress={() => navigation.navigate('AddSpace')}>
+        Add Space
       </Button>
     </Center>
   );

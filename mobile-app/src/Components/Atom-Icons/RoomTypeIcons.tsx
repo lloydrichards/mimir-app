@@ -1,3 +1,4 @@
+import React from 'react';
 import {SmallIcon} from './SmallIcon';
 
 export const BedroomIcon = SmallIcon([

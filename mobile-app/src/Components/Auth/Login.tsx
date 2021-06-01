@@ -1,6 +1,6 @@
 import {Field, Formik} from 'formik';
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {useHistory} from 'react-router-native';
 import * as yup from 'yup';
 import {COLOUR_SECONDARY} from '../../Styles/Colours';
@@ -28,10 +28,10 @@ const Login = () => {
               console.log('Logged In!');
             });
             resetForm();
-            history.push('/');
           } catch (error) {
             console.log('error:', error);
             setStatus(error);
+            Alert.alert(error);
           }
 
           setSubmitting(false);

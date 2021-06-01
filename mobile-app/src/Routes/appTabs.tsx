@@ -24,14 +24,14 @@ export const AppTabs = () => {
               return (
                 <ClimberIcon
                   colour={color}
-                  backgroundColor={focused ? '#F9D5C7' : 'none'}
+                  background={focused ? '#F9D5C7' : 'none'}
                 />
               );
             } else if (route.name === 'Spaces') {
               return (
                 <BedroomIcon
                   colour={color}
-                  backgroundColor={focused ? '#F9D5C7' : 'none'}
+                  background={focused ? '#F9D5C7' : 'none'}
                 />
               );
             }

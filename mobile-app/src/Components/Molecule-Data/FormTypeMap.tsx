@@ -1,4 +1,4 @@
-import { FormType } from '../../types/PlantType';
+import { FormType } from '@mimir/PlantType';
 
 export const FormTypeMap: Array<{ id: FormType; name: string }> = [
   { id: 'CREEPING', name: 'Creeping' },

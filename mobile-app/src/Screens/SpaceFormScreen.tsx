@@ -1,24 +1,23 @@
 import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import {createStackNavigator} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {PlantsNavProps, PlantsStackParamList} from 'src/Routes/plantStack';
 import {SpaceNavProps} from 'src/Routes/spaceStack';
 import Center from 'src/Components/Molecule-UI/Center';
+import SpaceForm from 'src/Components/Organism-Forms/SpaceForm';
 
-const SpaceDetails = ({navigation, route}: SpaceNavProps<'SpaceDetails'>) => {
+export const SpaceFormScreen = ({
+  navigation,
+  route,
+}: SpaceNavProps<'SpaceDetails'>) => {
   return (
     <Center>
-      <Text>Space Details</Text>
-      <Button mode="contained" onPress={() => navigation.navigate('AddSpace')}>
-        Edit Space
-      </Button>
+      <SpaceForm />
     </Center>
   );
 };
-
-export default SpaceDetails;
 
 const styles = StyleSheet.create({});

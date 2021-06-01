@@ -1,3 +1,4 @@
+import {SpaceProps} from '@mimir/SpaceType';
 import {RouteProp} from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -6,11 +7,14 @@ import {
 import React from 'react';
 import SignOut from 'src/Components/Auth/SignOut';
 import SpaceDetails from 'src/Screens/SpaceDetails';
+import {SpaceFormScreen} from 'src/Screens/SpaceFormScreen';
 import SpacesDashboard from 'src/Screens/SpacesDashboard';
 
 export type SpaceStackParamList = {
   Spaces: undefined;
   SpaceDetails: {spaceId: string};
+  AddSpace: undefined;
+  EditSpace: {data: SpaceProps};
 };
 
 export type SpaceNavProps<T extends keyof SpaceStackParamList> = {
@@ -29,6 +33,8 @@ export const SpaceRoute = () => {
         component={SpacesDashboard}
       />
       <SpaceStack.Screen name="SpaceDetails" component={SpaceDetails} />
+      <SpaceStack.Screen name="AddSpace" component={SpaceFormScreen} />
+      <SpaceStack.Screen name="EditSpace" component={SpaceFormScreen} />
     </SpaceStack.Navigator>
   );
 };

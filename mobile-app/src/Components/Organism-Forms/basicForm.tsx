@@ -1,80 +1,46 @@
-import { Button, Typography } from '@material-ui/core';
-import { Form, Formik } from 'formik';
+import {InputStyles} from '@styles/GlobalStyle';
+import {Field, Formik} from 'formik';
 import * as React from 'react';
-import { TextField } from '../Atom-Inputs/TextField';
-import app from '../../firebase';
-import { useHistory } from 'react-router-dom';
+import {Alert, View} from 'react-native';
+import {Button, Text} from 'react-native-paper';
 
-interface Props {
-  altButton?: { label: string; onClick: () => void };
-  debug?: boolean;
-}
-const db = app.firestore();
+interface Props {}
 
-const basicForm: React.FC<Props> = ({ altButton, debug }) => {
-  const history = useHistory();
+const basicForm: React.FC<Props> = ({}) => {
   return (
-    <div>
-      <Formik
-        onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
-          const batch = db.batch();
+    <View style={InputStyles.form}>
+      <Text style={InputStyles.title}>Login Form</Text>
 
+      <Formik
+        onSubmit={async (data, {setStatus, setSubmitting, resetForm}) => {
           setSubmitting(true);
           try {
             console.log(data);
+            resetForm();
           } catch (error) {
             console.log('error:', error);
-            alert(error);
+            Alert.alert(error);
             setStatus(error);
           }
 
           setSubmitting(false);
         }}
         initialValues={{}}>
-        {({ isSubmitting, values, status, errors }) => (
-          <Form>
-            <TextField
-              label='Username'
-              name='username'
-              placeholder='Display Name'
-            />
+        {({handleSubmit, isSubmitting, values, status, errors}) => (
+          <View>
+            <Field />
 
-            <div style={{ display: 'flex' }}>
-              {altButton && (
-                <Button fullWidth onClick={altButton.onClick}>
-                  {altButton.label}
-                </Button>
-              )}
-              <Button
-                fullWidth
-                variant='contained'
-                color='primary'
-                type='submit'
-                disabled={isSubmitting}>
-                Update
-              </Button>
-            </div>
-            <div
-              style={{
-                border: '2px dashed lightgrey',
-                background: 'snow',
-                margin: '1rem 0',
-                borderRadius: '1rem',
-                padding: '1rem',
-              }}>
-              <Typography variant='h4'>Debug</Typography>
-              {status ? <div>{status.message}</div> : null}
-              {debug ? (
-                <div>
-                  <pre>{JSON.stringify(values, null, 2)}</pre>
-                  <pre>{JSON.stringify(errors, null, 2)}</pre>
-                </div>
-              ) : null}
-            </div>
-          </Form>
+            <Button
+              disabled={isSubmitting}
+              loading={isSubmitting}
+              onPress={handleSubmit}>
+              Update
+            </Button>
+            {status && <Text>{status.message}</Text>}
+          </View>
         )}
       </Formik>
-    </div>
+    </View>
   );
 };
 
