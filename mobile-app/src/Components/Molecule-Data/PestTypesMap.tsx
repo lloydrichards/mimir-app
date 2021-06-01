@@ -1,4 +1,4 @@
-import { PestTypes } from '../../types/SpeciesType';
+import { PestTypes } from '@mimir/SpeciesType';
 
 export const PestTypesMap: Array<{ id: PestTypes; name: string }> = [
   { id: 'ABIOTIC_DISORDER', name: 'Abiotic Disorder' },

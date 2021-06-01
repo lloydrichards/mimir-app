@@ -1,4 +1,4 @@
-import { ExposureTypes } from '../../types/SpeciesType';
+import { ExposureTypes } from '@mimir/SpeciesType';
 
 export const ExposureTypeMap: Array<{ id: ExposureTypes; name: string }> = [
   { id: 'UNKNOWN', name: 'Unknown' },

@@ -1,8 +1,4 @@
-import { OverrideProps } from '@material-ui/core/OverridableComponent';
-import {
-  SvgIconTypeMap,
-} from '@material-ui/core/SvgIcon';
-import { RoomType } from '../../types/SpaceType';
+import {RoomType} from '@mimir/SpaceType';
 import {
   BedroomIcon,
   PlayroomIcon,
@@ -16,15 +12,13 @@ import {
   DiningRoomIcon,
   FamilyRoomIcon,
 } from '../Atom-Icons/RoomTypeIcons';
+import { MapProps } from '../Atom-Icons/SmallIcon';
 
-export const RoomTypeMap: Array<{
-  id: RoomType;
-  icon: (
-    props?: OverrideProps<SvgIconTypeMap<{}, 'svg'>, 'svg'> | undefined,
-    colour?: string | undefined
-  ) => JSX.Element;
-  field: string;
-}> = [
+export const RoomTypeMap: Array<
+  MapProps & {
+    id: RoomType;
+  }
+> = [
   {
     id: 'BEDROOM',
     icon: BedroomIcon,
@@ -40,7 +34,7 @@ export const RoomTypeMap: Array<{
     icon: PlayroomIcon,
     field: 'Play Room',
   },
-  { id: 'OTHER', icon: OtherIcon, field: 'Other' },
+  {id: 'OTHER', icon: OtherIcon, field: 'Other'},
   {
     id: 'KITCHEN',
     icon: KitchenIcon,
@@ -51,7 +45,7 @@ export const RoomTypeMap: Array<{
     icon: LibraryIcon,
     field: 'Library',
   },
-  { id: 'OFFICE', icon: OfficeIcon, field: 'Office' },
+  {id: 'OFFICE', icon: OfficeIcon, field: 'Office'},
   {
     id: 'BALCONY',
     icon: BalconyIcon,

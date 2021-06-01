@@ -11,6 +11,7 @@ import {
 } from "./GenericType";
 import { PlantProps, PlantType } from "./PlantType";
 import { DailyProps } from "./ReadingType";
+import { ExposureTypes } from "./SpeciesType";
 
 export type SpaceProps = {
   name: string;
@@ -19,6 +20,7 @@ export type SpaceProps = {
   description: string;
   picture: null | Picture;
   room_type: RoomType;
+  exposure: ExposureTypes;
   light_direction: Array<LightType>;
   location: Location;
   owner: Owner;

@@ -11,6 +11,7 @@ import {FormTypeMap} from '../Molecule-Data/FormTypeMap';
 import {SpaceProps} from '@mimir/SpaceType';
 import {RoomTypeMap} from '../Molecule-Data/RoomTypeMap';
 import LightDirectionPicker from '../Molecule-FormInput/LightDirectionPicker';
+import {LocationAutoComplete} from '../Molecule-FormInput/LocationAutoComplete';
 
 interface Props {
   data?: SpaceProps;
@@ -43,8 +44,15 @@ const SpaceForm: React.FC<Props> = ({data}) => {
         }}>
         {({handleSubmit, isSubmitting, values, status, errors}) => (
           <View>
-            <ScrollView nestedScrollEnabled={true}>
+            <ScrollView
+              nestedScrollEnabled={true}
+              keyboardShouldPersistTaps="always">
               <Field name="name" label="Space name" component={TextInput} />
+              <Field
+                name="location"
+                label="Location"
+                component={LocationAutoComplete}
+              />
 
               <Field
                 name="description"

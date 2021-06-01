@@ -1,4 +1,4 @@
-import { HardinessTypes } from '../../types/SpeciesType';
+import { HardinessTypes } from '@mimir/SpeciesType';
 
 export const HardinessTypeMap: Array<{
   id: HardinessTypes;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Svg, {Path, Rect, SvgProps} from 'react-native-svg';
-import {COLOUR_DARK} from '../../Styles/Colours';
+import {COLOUR_DARK, COLOUR_FLUFF} from '../../Styles/Colours';
 import {FeatherIconProps} from '../../Styles/Icons';
 
 export interface MapProps {
@@ -24,7 +24,7 @@ export const SmallIcon =
           width="16"
           height="16"
           rx="5"
-          fill={props?.background || '#BCD9D4'}
+          fill={props?.background || COLOUR_FLUFF}
         />
         {ds.map((d, i) => (
           <Path
