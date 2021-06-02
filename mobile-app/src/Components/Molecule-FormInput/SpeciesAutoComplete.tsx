@@ -102,11 +102,17 @@ export const SpeciesAutoComplete: React.FC<Props> = ({label, ...props}) => {
   const errorMsg = touched[field.name] && errors[field.name];
   return (
     <View style={InputStyles.container}>
-      <Text>{label}</Text>
+      <Text style={{color: COLOUR_SUBTLE}}>{label}</Text>
       <Searchbar
+        style={{
+          borderRadius: 8,
+          elevation: 0,
+          borderBottomWidth: 1,
+          borderBottomColor: COLOUR_SUBTLE,
+        }}
         icon={() => <SearchIcon background="none" />}
         clearIcon={() => <RejectIcon background="none" />}
-        placeholder="Search"
+        placeholder="Search for species..."
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
@@ -151,7 +157,9 @@ export const ResultItem: React.FC<ItemProps> = ({item, selected}) => {
         backgroundColor: selected ? COLOUR_ACCENT : COLOUR_LIGHT,
       }}>
       {PlantTypesMap.find(d => d.id === item.value.type)?.icon()}
-      <Text style={{marginLeft: 8, fontSize: 16}}>{item.common.replace(/(\b[a-z](?!\s))/g,(x)=>x.toUpperCase())}</Text>
+      <Text style={{marginLeft: 8, fontSize: 16}}>
+        {item.common.replace(/(\b[a-z](?!\s))/g, x => x.toUpperCase())}
+      </Text>
       <Text style={{marginLeft: 8}}>({item.label})</Text>
     </View>
   );

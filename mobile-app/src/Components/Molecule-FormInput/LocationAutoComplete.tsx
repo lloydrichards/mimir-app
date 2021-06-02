@@ -1,5 +1,6 @@
 import {Location} from '@mimir/GenericType';
 import {firebase} from '@react-native-firebase/firestore';
+import {COLOUR_SUBTLE} from '@styles/Colours';
 import {InputStyles} from '@styles/GlobalStyle';
 import {FieldProps} from 'formik';
 import React from 'react';
@@ -9,7 +10,8 @@ import {
   GooglePlaceDetail,
   GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete';
-import {Text} from 'react-native-paper';
+import {ActivityIndicator, Searchbar, Text} from 'react-native-paper';
+import {RejectIcon, SearchIcon} from '../Atom-Icons/UI/SmallUIIcons';
 import {countryLookUp} from '../Molecule-Data/CountryLookUp';
 
 type Props = {
@@ -59,19 +61,35 @@ export const LocationAutoComplete: React.FC<Props> = ({label, ...props}) => {
   const errorMsg = touched[field.name] && errors[field.name];
   return (
     <View style={InputStyles.container}>
-      <Text>{label}</Text>
+      <Text style={{color: COLOUR_SUBTLE}}>{label}</Text>
       <GooglePlacesAutocomplete
-        placeholder="Search"
+        placeholder="Search location"
+        enablePoweredByContainer={false}
         fetchDetails
-        currentLocation
         debounce={200}
-        renderDescription={row => row.description}
-        numberOfLines={3}
         onPress={parseLocation}
         query={{
           key: 'AIzaSyATlh33NsyFpAFAN3tWPndY6HLlZD_tdMg',
           language: 'en',
           type: ['locality', 'country'],
+        }}
+        textInputProps={{
+          InputComp: (props: any) => (
+            <Searchbar
+              {...props}
+              style={{
+                width: '100%',
+                borderRadius: 8,
+                elevation: 0,
+                borderBottomWidth: 1,
+                borderBottomColor: COLOUR_SUBTLE,
+              }}
+              icon={() => <SearchIcon background="none" />}
+              clearIcon={() => <RejectIcon background="none" />}
+            />
+          ),
+          style: {height: 44, width: '100%'},
+          errorStyle: {color: 'red'},
         }}
       />
     </View>

@@ -1,3 +1,4 @@
+import { COLOUR_SUBTLE, COLOUR_SUNSHINE } from '@styles/Colours';
 import {FieldArray, FieldProps} from 'formik';
 import React from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
@@ -14,6 +15,7 @@ import {
   WestIcon,
 } from '../Atom-Icons/LightDirection/SmallLightIcons';
 import {SearchIcon} from '../Atom-Icons/UI/SmallUIIcons';
+import { SunnyIcon } from '../Atom-Icons/Weather/SmallWeatherIcons';
 import IconSwitch from '../Atom-Inputs/IconSwitch';
 import {LightDirectionMap} from '../Molecule-Data/LightDirectionMap';
 
@@ -56,7 +58,7 @@ const LightDirectionPicker: React.FC<Props> = ({label, ...props}) => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Text>{label}</Text>
+            <Text style={{textAlign:"left" ,width:"100%",color:COLOUR_SUBTLE}}>{label}</Text>
             <View
               style={{
                 flexDirection: 'row',
@@ -100,7 +102,14 @@ const LightDirectionPicker: React.FC<Props> = ({label, ...props}) => {
                   }
                   selected={field.value.includes('N')}
                 />
-                <View style={{height: 44, width: 44, margin: 2}} />
+                <View
+                  style={{
+                    height: 44,
+                    width: 44,
+                    margin: 2,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}><SunnyIcon background={COLOUR_SUNSHINE}/></View>
                 <IconSwitch
                   icon={<SouthIcon background="none" />}
                   onPress={() =>

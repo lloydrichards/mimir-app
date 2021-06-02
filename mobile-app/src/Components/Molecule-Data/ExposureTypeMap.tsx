@@ -1,10 +1,10 @@
 import { ExposureTypes } from '@mimir/SpeciesType';
 
-export const ExposureTypeMap: Array<{ id: ExposureTypes; name: string }> = [
-  { id: 'UNKNOWN', name: 'Unknown' },
-  { id: 'DEEP_SHADE', name: 'Deep Shade' },
-  { id: 'FILTERED_SHADE', name: 'Filtered Shade' },
-  { id: 'FULL_SUN', name: 'Full Sun' },
-  { id: 'PART_SHADE', name: 'Part Shade' },
-  { id: 'SHELTERED', name: 'Sheltered' },
+export const ExposureTypeMap: Array<{ id: ExposureTypes; field: string }> = [
+  { id: 'UNKNOWN', field: 'Unknown' },
+  { id: 'DEEP_SHADE', field: 'Deep Shade' },
+  { id: 'FILTERED_SHADE', field: 'Filtered Shade' },
+  { id: 'FULL_SUN', field: 'Full Sun' },
+  { id: 'PART_SHADE', field: 'Part Shade' },
+  { id: 'SHELTERED', field: 'Sheltered' },
 ];

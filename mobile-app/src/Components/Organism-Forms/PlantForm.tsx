@@ -10,7 +10,7 @@ import {TextInput} from '../Atom-Inputs/TextInput';
 import {FormTypeMap} from '../Molecule-Data/FormTypeMap';
 
 interface Props {
-  data?:PlantProps
+  data?: PlantProps;
 }
 
 const PlantForm: React.FC<Props> = ({data}) => {
@@ -31,7 +31,7 @@ const PlantForm: React.FC<Props> = ({data}) => {
           setSubmitting(false);
         }}
         initialValues={{
-          nickname: data?.nickname ||'',
+          nickname: data?.nickname || '',
           description: '',
           form: '',
           parent: null,
@@ -41,7 +41,21 @@ const PlantForm: React.FC<Props> = ({data}) => {
         {({handleSubmit, isSubmitting, values, status, errors}) => (
           <View>
             <ScrollView nestedScrollEnabled={true}>
-              <Field name="nickname" label="Plant name" component={TextInput} />
+              <Field name="space" label="Space" component={OptionPicker}>
+                <OptionItem value="TODO" label="TODO" />
+              </Field>
+              <Field
+                name="nickname"
+                label="Name"
+                placeholder="Plant's name..."
+                component={TextInput}
+              />
+              <Field
+                name="parent"
+                label="Plant parent"
+                component={OptionPicker}>
+                <OptionItem value="TODO" label="TODO" />
+              </Field>
               <Field
                 name="species"
                 label="Species"
@@ -49,22 +63,14 @@ const PlantForm: React.FC<Props> = ({data}) => {
               />
               <Field
                 name="description"
-                label="Plant description"
+                label="Description"
+                placeholder="Plant's description..."
                 component={TextInput}
               />
               <Field name="form" label="Plant form" component={OptionPicker}>
                 {FormTypeMap.map(d => (
                   <OptionItem key={d.id} value={d.id} label={d.name} />
                 ))}
-              </Field>
-              <Field
-                name="parent"
-                label="Plant parent"
-                component={OptionPicker}>
-                <OptionItem value="TODO" label="TODO" />
-              </Field>
-              <Field name="space" label="Space" component={OptionPicker}>
-                <OptionItem value="TODO" label="TODO" />
               </Field>
             </ScrollView>
             <Button

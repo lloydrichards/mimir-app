@@ -3,11 +3,11 @@ import {COLOUR_SUBTLE, COLOUR_TERTIARY} from './Colours';
 
 export const InputStyles = StyleSheet.create({
   container: {
-    marginVertical: 4,
+    marginTop: 8,
   },
   form: {
     width: '100%',
-    marginVertical: 32,
+    marginVertical: 16,
     marginHorizontal: 8,
     paddingHorizontal: 8,
   },

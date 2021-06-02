@@ -1,6 +1,6 @@
 import {Picker, PickerItemProps} from '@react-native-picker/picker';
 import {ItemValue} from '@react-native-picker/picker/typings/Picker';
-import {COLOUR_SECONDARY} from '@styles/Colours';
+import {COLOUR_SECONDARY, COLOUR_SUBTLE} from '@styles/Colours';
 import {InputStyles} from '@styles/GlobalStyle';
 import {FieldInputProps, FieldProps, FormikErrors, useField} from 'formik';
 import React from 'react';
@@ -37,15 +37,23 @@ export const OptionPicker: React.FC<PickerProps> = ({
   const errorMsg = touched[field.name] && errors[field.name];
   return (
     <View style={InputStyles.container}>
-      <Text>{label}</Text>
-      <Picker
-        mode="dropdown"
-        onValueChange={onValueChange}
-        selectedValue={field.value}
-        prompt={label}
-        accessibilityLabel={label}>
-        {children}
-      </Picker>
+      <Text style={{color: COLOUR_SUBTLE}}>{label}</Text>
+      <View
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 8,
+          height: 44,
+          justifyContent: 'center',
+        }}>
+        <Picker
+          mode="dropdown"
+          onValueChange={onValueChange}
+          selectedValue={field.value}
+          prompt={label}
+          accessibilityLabel={label}>
+          {children}
+        </Picker>
+      </View>
       {!!errorMsg && <Text style={InputStyles.errorText}>{errorMsg}</Text>}
     </View>
   );

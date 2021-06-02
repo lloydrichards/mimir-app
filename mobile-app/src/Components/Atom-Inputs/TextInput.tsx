@@ -1,4 +1,4 @@
-import {COLOUR_SECONDARY} from '@styles/Colours';
+import {COLOUR_PRIMARY, COLOUR_SECONDARY, COLOUR_SUBTLE} from '@styles/Colours';
 import {InputStyles} from '@styles/GlobalStyle';
 import {FieldInputProps, FieldProps, FormikErrors, useField} from 'formik';
 import React from 'react';
@@ -12,9 +12,10 @@ import {Text, TextInput} from 'react-native-paper';
 
 type Props = {
   label: string;
+  placeholder?: string;
 } & FieldProps<any>;
 
-const MyTextInput: React.FC<Props> = ({label, ...props}) => {
+const MyTextInput: React.FC<Props> = ({label, placeholder, ...props}) => {
   const onChangeText = (text: string) => {
     const {
       form: {setFieldValue},
@@ -31,12 +32,25 @@ const MyTextInput: React.FC<Props> = ({label, ...props}) => {
   const errorMsg = touched[field.name] && errors[field.name];
   return (
     <View style={InputStyles.container}>
+      <Text style={{color: COLOUR_SUBTLE}}>{label}</Text>
       <TextInput
         {...props}
-        label={label}
-        underlineColor={COLOUR_SECONDARY}
+        dense
+        placeholder={placeholder}
+        underlineColor={COLOUR_SUBTLE}
         value={field.value}
         onChangeText={onChangeText}
+        style={{
+          backgroundColor: 'white',
+          borderRadius: 8,
+          fontSize: 18,
+          height: 48,
+        }}
+        theme={{
+          colors: {
+            primary: COLOUR_SECONDARY,
+          },
+        }}
       />
       {!!errorMsg && <Text style={InputStyles.errorText}>{errorMsg}</Text>}
     </View>

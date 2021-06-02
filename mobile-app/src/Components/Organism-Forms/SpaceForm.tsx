@@ -12,6 +12,7 @@ import {SpaceProps} from '@mimir/SpaceType';
 import {RoomTypeMap} from '../Molecule-Data/RoomTypeMap';
 import LightDirectionPicker from '../Molecule-FormInput/LightDirectionPicker';
 import {LocationAutoComplete} from '../Molecule-FormInput/LocationAutoComplete';
+import {ExposureTypeMap} from '../Molecule-Data/ExposureTypeMap';
 
 interface Props {
   data?: SpaceProps;
@@ -36,18 +37,19 @@ const SpaceForm: React.FC<Props> = ({data}) => {
         }}
         initialValues={{
           name: data?.name || '',
+          location: data?.location || null,
           description: data?.description || '',
           room_type: data?.room_type || null,
           picture: data?.picture || null,
           light_direction: data?.light_direction || [],
-          location: data?.location || null,
+          exposure: data?.exposure || '',
         }}>
         {({handleSubmit, isSubmitting, values, status, errors}) => (
           <View>
             <ScrollView
               nestedScrollEnabled={true}
-              keyboardShouldPersistTaps="always">
-              <Field name="name" label="Space name" component={TextInput} />
+              keyboardShouldPersistTaps="handled">
+              <Field name="name" label="Name" placeholder="Space's name..." component={TextInput} />
               <Field
                 name="location"
                 label="Location"
@@ -56,7 +58,8 @@ const SpaceForm: React.FC<Props> = ({data}) => {
 
               <Field
                 name="description"
-                label="Space description"
+                label="Description"
+                placeholder="Space's description..."
                 component={TextInput}
               />
               <Field
@@ -64,6 +67,14 @@ const SpaceForm: React.FC<Props> = ({data}) => {
                 label="Light Direction"
                 component={LightDirectionPicker}
               />
+              <Field
+                name="exposure"
+                label="Sun Exposure"
+                component={OptionPicker}>
+                {ExposureTypeMap.map(d => (
+                  <OptionItem key={d.id} value={d.id} label={d.field} />
+                ))}
+              </Field>
               <Field
                 name="room_type"
                 label="Room type"
