@@ -39,9 +39,7 @@ export type Humidity = {
 };
 
 export type Light = {
-  shade: number;
-  half_shade: number;
-  full_sun: number;
+  hr: { low: number; medium: number; bright: number; full: number };
   avg: number;
   max: number;
 };

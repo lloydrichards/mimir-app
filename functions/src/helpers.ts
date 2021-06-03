@@ -4,7 +4,7 @@ export const reCalc = (
   oldReadings: number,
   newReadings: number
 ): number => {
-  const totalMin = oldMin * oldReadings + newMin;
+  const totalMin = oldMin * oldReadings + newMin * newReadings;
   const totalReadings = oldReadings + newReadings;
   return totalMin / totalReadings;
 };

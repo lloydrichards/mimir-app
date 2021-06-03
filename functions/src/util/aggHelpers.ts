@@ -2,6 +2,7 @@ import { Log, LogTypes } from "@mimir/LogType";
 import { PlantAggProps } from "@mimir/PlantType";
 import { SpaceAggProps } from "@mimir/SpaceType";
 import { UserAggProps } from "@mimir/UserType";
+import { levelUp } from "./levelSystem";
 
 export const calcSpaceTotal = (doc: UserAggProps, type: Array<LogTypes>) => {
   const total = type.includes("SPACE_CREATED")
@@ -61,27 +62,6 @@ export const calcPointTotal = (
     : doc.points;
 
   return +total;
-};
-const levelUp = (points: number): number => {
-  return points <= 10
-    ? 1
-    : points <= 25
-    ? 2
-    : points <= 50
-    ? 3
-    : points <= 100
-    ? 4
-    : points <= 250
-    ? 5
-    : points <= 500
-    ? 6
-    : points <= 1000
-    ? 7
-    : points <= 2500
-    ? 8
-    : points <= 10000
-    ? 9
-    : 10;
 };
 
 export const calcLevel = (

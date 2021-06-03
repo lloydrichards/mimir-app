@@ -46,6 +46,7 @@ export const spaceRefs = (id?: string) => {
   const spaceDocRef = db.collection(SpacesCollection).doc(id);
   const spaceNewConfigRef = spaceDocRef.collection(SpaceConfigCollection).doc();
   const spaceNewLogRef = spaceDocRef.collection(SpaceLogsCollection).doc();
+  const spaceNewAggRef = spaceDocRef.collection(SpaceAggsCollection).doc();
   const spaceCurrentConfigRef = spaceDocRef
     .collection(SpaceConfigCollection)
     .where("current", "==", true)
@@ -60,6 +61,7 @@ export const spaceRefs = (id?: string) => {
     spaceNewLogRef,
     spaceLatestAggRef,
     spaceCurrentConfigRef,
+    spaceNewAggRef,
   };
 };
 export const newSpaceRefs = () => {
