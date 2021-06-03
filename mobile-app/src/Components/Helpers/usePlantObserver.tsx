@@ -6,7 +6,7 @@ import {
 } from '@mimir/PlantType';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useEffect, useState} from 'react';
-import {plantRefs, spaceRefs, userRefs} from './firebaseUtil';
+import {plantRefs, spaceRefs, userRefs} from './firestoreUtil';
 
 export const usePlantObserver = (
   currentUser: FirebaseAuthTypes.User | null,

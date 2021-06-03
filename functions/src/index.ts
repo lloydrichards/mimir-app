@@ -9,6 +9,10 @@ export const timestamp =
 
 // User Functions
 export { userCreated } from "./User/UserCreated";
+export { userAggregation } from "./User/UserAggs";
+export { userDeleted } from "./User/UserDeleted";
+export { userSettingsUpdated, userUpdated } from "./User/UserUpdated";
 
 // Space Functions
 export { spaceCreated } from "./Space/SpaceCreated";
+export { spaceAggregation } from "./Space/SpaceAggs";

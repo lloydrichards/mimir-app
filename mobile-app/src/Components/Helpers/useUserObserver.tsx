@@ -6,7 +6,7 @@ import {
 } from '@mimir/UserType';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useEffect, useState} from 'react';
-import {userRefs} from './firebaseUtil';
+import {userRefs} from './firestoreUtil';
 
 export const useUserObserver = (currentUser: FirebaseAuthTypes.User | null) => {
   const [userDoc, setUserDoc] = useState<UserDetailProps | null>(null);

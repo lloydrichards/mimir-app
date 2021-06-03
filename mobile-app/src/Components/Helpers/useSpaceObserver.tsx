@@ -6,7 +6,7 @@ import {
 } from '@mimir/SpaceType';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useEffect, useState} from 'react';
-import {spaceRefs, userRefs} from './firebaseUtil';
+import {spaceRefs, userRefs} from './firestoreUtil';
 
 export const useSpaceObserver = (
   currentUser: FirebaseAuthTypes.User | null,

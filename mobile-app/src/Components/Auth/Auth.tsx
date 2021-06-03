@@ -25,7 +25,7 @@ import {space_ADD} from './functions/space_ADD';
 import {space_EDIT} from './functions/space_EDIT';
 import {watering_ADD} from './functions/watering_add';
 import {UsersCollection} from 'src/Services/firebase';
-import {userRefs} from '../Helpers/firebaseUtil';
+import {userRefs} from '../Helpers/firestoreUtil';
 import {useUserObserver} from '../Helpers/useUserObserver';
 import {useSpaceObserver} from '../Helpers/useSpaceObserver';
 import {usePlantObserver} from '../Helpers/usePlantObserver';

@@ -8,7 +8,7 @@
     "typeRoots": ["node_modules/@types"],
     "esModuleInterop": true,
     "baseUrl": "./",
-    "paths": { "@mimir/*": ["../types/*"] }
+    "paths": { "@mimir/*": ["../types/*"], "src/*": ["./src/*"] }
   },
   "include": ["src"]
 }

@@ -26,9 +26,16 @@ export type UserDetailProps = UserProps & {
 export type UserSettingsProps = {
   date_modified: FirebaseTimestamp;
   date_format: DateFormatTypes;
-  units: "METRIC" | "IMPERIAL";
-  subscription: "FREE" | "PREMIUM" | "BETA";
+  unit_system: UnitTypes;
+  subscription: {
+    start_date: FirebaseTimestamp | null;
+    end_date: FirebaseTimestamp | null;
+    type: SubscriptionTypes;
+  };
 };
+
+export type UnitTypes = "METRIC" | "IMPERIAL";
+export type SubscriptionTypes = "FREE" | "PREMIUM" | "BETA";
 
 export type DateFormatTypes = "dd/MM/yyyy" | "MM/dd/yyyy";
 
@@ -43,4 +50,21 @@ export type UserAggProps = {
   dead_total: number;
   points: number;
   level: number;
+};
+
+export type UserStatsProps = {
+  timestamp: FirebaseTimestamp;
+  users_total: number | FirebaseFirestore.FieldValue;
+  date_format: {
+    [key in DateFormatTypes]?: number;
+  };
+  subscription: {
+    [key in SubscriptionTypes]?: number;
+  };
+  unit_system: {
+    [key in UnitTypes]?: number;
+  };
+  users_level: {
+    [x: number]: number | FirebaseFirestore.FieldValue;
+  };
 };

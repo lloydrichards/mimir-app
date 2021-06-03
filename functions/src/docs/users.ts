@@ -2,7 +2,7 @@ import {
   UserAggProps,
   UserProps,
   UserSettingsProps,
-} from "../../../types/UserType";
+} from "@mimir/UserType";
 
 export const initUserDoc = (
   displayName: string,
@@ -38,8 +38,8 @@ export const initUserSetting = (
   return {
     date_modified: timestamp,
     date_format: "dd/MM/yyyy",
-    subscription: "FREE",
-    units: "METRIC",
+    subscription: { start_date: null, end_date: null, type: "FREE" },
+    unit_system: "METRIC",
   };
 };
 

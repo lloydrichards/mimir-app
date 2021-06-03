@@ -12,7 +12,7 @@ import {
   newSpaceRefs,
   spaceRefs,
   userRefs,
-} from 'src/Components/Helpers/firebaseUtil';
+} from 'src/Components/Helpers/firestoreUtil';
 
 export const space_ADD = (user: UserType, input: SpaceInput) => {
   //Ref Doc

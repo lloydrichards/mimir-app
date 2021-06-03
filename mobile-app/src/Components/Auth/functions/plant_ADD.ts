@@ -9,7 +9,7 @@ import {
   userRefs,
   spaceRefs,
   newPlantRefs,
-} from 'src/Components/Helpers/firebaseUtil';
+} from 'src/Components/Helpers/firestoreUtil';
 
 export const plant_ADD = (
   user: UserType,

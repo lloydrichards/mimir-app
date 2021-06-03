@@ -8,6 +8,8 @@ export const UsersCollection = "Users";
 export const SpacesCollection = "Spaces";
 export const PlantsCollection = "Plants";
 export const SpeciesCollection = "Species";
+export const DevicesCollection = "Devices";
+export const WateringsCollection = "Waterings";
 
 export const UserSettingsCollection = "_settings";
 export const UserAggsCollection = "aggs";

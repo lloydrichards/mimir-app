@@ -31,7 +31,7 @@ module.exports = {
     "import/no-deprecated": "warn",
     "import/no-extraneous-dependencies": "error",
     "import/no-unassigned-import": "warn",
-    "import/no-unresolved": "warn",
+    "import/no-unresolved": "off",
     "no-cond-assign": "error",
     "no-duplicate-case": "error",
     "no-duplicate-imports": "error",
