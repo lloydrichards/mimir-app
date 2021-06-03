@@ -65,7 +65,6 @@ const promiseOptions = async (inputValue: string) => {
     common: item.common_name[0],
     description: item.description,
   }));
-  console.log(result);
   return result;
 };
 

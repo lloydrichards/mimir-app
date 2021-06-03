@@ -3,7 +3,7 @@ import {ItemValue} from '@react-native-picker/picker/typings/Picker';
 import {COLOUR_SECONDARY, COLOUR_SUBTLE} from '@styles/Colours';
 import {InputStyles} from '@styles/GlobalStyle';
 import {FieldInputProps, FieldProps, FormikErrors, useField} from 'formik';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   NativeSyntheticEvent,
   StyleSheet,
@@ -14,19 +14,21 @@ import {Text, TextInput} from 'react-native-paper';
 
 type PickerProps = {
   label: string;
+  onChange?: (value: string) => void;
 } & FieldProps<any>;
 
 export const OptionPicker: React.FC<PickerProps> = ({
   label,
+  onChange,
   children,
   ...props
 }) => {
-  const onValueChange = (text: string) => {
+  const onValueChange = (value: string) => {
     const {
       form: {setFieldValue},
       field: {name},
     } = props;
-    setFieldValue(name, text);
+    setFieldValue(name, value);
   };
 
   const {
@@ -47,7 +49,7 @@ export const OptionPicker: React.FC<PickerProps> = ({
         }}>
         <Picker
           mode="dropdown"
-          onValueChange={onValueChange}
+          onValueChange={onChange || onValueChange}
           selectedValue={field.value}
           prompt={label}
           accessibilityLabel={label}>

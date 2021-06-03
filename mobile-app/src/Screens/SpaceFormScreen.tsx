@@ -15,7 +15,7 @@ export const SpaceFormScreen = ({
 }: SpaceNavProps<'SpaceDetails'>) => {
   return (
     <Center>
-      <SpaceForm />
+      <SpaceForm onComplete={space => navigation.navigate('SpaceDetails', {space})} />
     </Center>
   );
 };

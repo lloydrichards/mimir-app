@@ -3,7 +3,6 @@ import {
   Temperature,
   Humidity,
   Light,
-  Air,
 } from "./GenericType";
 import { InspectionType } from "./InspectionType";
 import { PlantType } from "./PlantType";
@@ -31,7 +30,6 @@ export type Log = {
     temperature?: Temperature;
     humidity?: Humidity;
     light?: Light;
-    ait?: Air;
     battery_percent?: number;
   };
 };

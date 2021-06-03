@@ -1,4 +1,4 @@
-import { FirebaseTimestamp, Location, Picture } from './GenericType';
+import { FirebaseTimestamp, Location, Picture } from "./GenericType";
 
 export type UserProps = {
   username: string;
@@ -17,14 +17,20 @@ export type UserProps = {
   };
 };
 
+export type UserDetailProps = UserProps & {
+  id: string;
+  aggs?: UserAggProps & { id: string };
+  settings: UserSettingsProps;
+};
+
 export type UserSettingsProps = {
   date_modified: FirebaseTimestamp;
   date_format: DateFormatTypes;
-  units: 'METRIC' | 'IMPERIAL';
-  subscription: 'FREE' | 'PREMIUM' | 'BETA';
+  units: "METRIC" | "IMPERIAL";
+  subscription: "FREE" | "PREMIUM" | "BETA";
 };
 
-export type DateFormatTypes = 'dd/MM/yyyy' | 'MM/dd/yyyy';
+export type DateFormatTypes = "dd/MM/yyyy" | "MM/dd/yyyy";
 
 export type UserType = {
   id: string;

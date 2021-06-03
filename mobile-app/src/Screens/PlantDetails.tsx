@@ -6,6 +6,7 @@ import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {PlantsNavProps, PlantsStackParamList} from 'src/Routes/plantStack';
 import Center from 'src/Components/Molecule-UI/Center';
+import {useAuth} from 'src/Components/Auth/Auth';
 
 interface Props {
   route: RouteProp<PlantsStackParamList, 'PlantDetails'>;

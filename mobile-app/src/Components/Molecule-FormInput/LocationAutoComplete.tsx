@@ -10,8 +10,9 @@ import {
   GooglePlaceDetail,
   GooglePlacesAutocomplete,
 } from 'react-native-google-places-autocomplete';
-import {ActivityIndicator, Searchbar, Text} from 'react-native-paper';
+import {ActivityIndicator, Searchbar, Text, TextInput} from 'react-native-paper';
 import {RejectIcon, SearchIcon} from '../Atom-Icons/UI/SmallUIIcons';
+import SearchInput from '../Atom-Inputs/SearchInput';
 import {countryLookUp} from '../Molecule-Data/CountryLookUp';
 
 type Props = {
@@ -74,20 +75,7 @@ export const LocationAutoComplete: React.FC<Props> = ({label, ...props}) => {
           type: ['locality', 'country'],
         }}
         textInputProps={{
-          InputComp: (props: any) => (
-            <Searchbar
-              {...props}
-              style={{
-                width: '100%',
-                borderRadius: 8,
-                elevation: 0,
-                borderBottomWidth: 1,
-                borderBottomColor: COLOUR_SUBTLE,
-              }}
-              icon={() => <SearchIcon background="none" />}
-              clearIcon={() => <RejectIcon background="none" />}
-            />
-          ),
+          InputComp: SearchInput,
           style: {height: 44, width: '100%'},
           errorStyle: {color: 'red'},
         }}

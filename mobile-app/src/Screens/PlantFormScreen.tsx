@@ -16,7 +16,7 @@ interface Props {
 export const PlantFormScreen = ({navigation,route}: PlantsNavProps<'PlantDetails'>) => {
   return (
     <Center>
-      <PlantForm />
+      <PlantForm onComplete={(plant)=>navigation.navigate("PlantDetails",{plant})}/>
     </Center>
   );
 };

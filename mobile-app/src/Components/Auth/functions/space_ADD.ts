@@ -1,21 +1,23 @@
 import firestore from '@react-native-firebase/firestore';
 
-import {timestamp} from '../../../Services/firebase';
+import {
+  SpaceLogsCollection,
+  SpacesCollection,
+  timestamp,
+} from '../../../Services/firebase';
 import {Log} from '@mimir/LogType';
-import {SpaceInput, SpaceProps} from '@mimir/SpaceType';
+import {SpaceInput, SpaceProps, SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
+import {
+  newSpaceRefs,
+  spaceRefs,
+  userRefs,
+} from 'src/Components/Helpers/firebaseUtil';
 
 export const space_ADD = (user: UserType, input: SpaceInput) => {
-  const batch = firestore().batch();
-
   //Ref Doc
-  //Dco Refs
-  const userRef = firestore().collection('mimirUsers').doc(user.id);
-  const spaceRef = firestore().collection('mimirSpaces').doc();
-
-  //Log Refs
-  const userLog = userRef.collection('Logs').doc();
-  const spaceLog = spaceRef.collection('Logs').doc();
+  const {userNewLogRef} = userRefs(user.id);
+  const {newSpaceDocRef, spaceNewLogRef} = newSpaceRefs();
 
   const log: Log = {
     timestamp,
@@ -23,7 +25,7 @@ export const space_ADD = (user: UserType, input: SpaceInput) => {
     content: {
       user,
       space: {
-        id: spaceRef.id,
+        id: newSpaceDocRef.id,
         name: input.name,
         light_direction: input.light_direction,
         room_type: input.room_type,
@@ -37,11 +39,25 @@ export const space_ADD = (user: UserType, input: SpaceInput) => {
     date_modified: null,
     roles: {[user.id]: 'ADMIN'},
   };
-
-  batch.set(spaceRef, newSpace);
-
-  batch.set(userLog, log);
-  batch.set(spaceLog, log);
-
-  return batch.commit();
+  return newSpaceDocRef
+    .set(newSpace)
+    .then(() => {
+      const batch = firestore().batch();
+      //Add Logs on Success
+      batch.set(userNewLogRef, log);
+      batch.set(spaceNewLogRef, log);
+      return batch.commit();
+    })
+    .then(() => {
+      const space: SpaceType = {
+        id: newSpaceDocRef.id,
+        name: input.name,
+        room_type: input.room_type,
+        light_direction: input.light_direction,
+      };
+      if (input.picture) {
+        space.thumb = input.picture.thumb;
+      }
+      return space;
+    });
 };

@@ -1,4 +1,4 @@
-import {SpaceProps} from '@mimir/SpaceType';
+import {SpaceProps, SpaceType} from '@mimir/SpaceType';
 import {RouteProp} from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -12,7 +12,7 @@ import SpacesDashboard from 'src/Screens/SpacesDashboard';
 
 export type SpaceStackParamList = {
   Spaces: undefined;
-  SpaceDetails: {spaceId: string};
+  SpaceDetails: {space: SpaceType};
   AddSpace: undefined;
   EditSpace: {data: SpaceProps};
 };
@@ -32,7 +32,14 @@ export const SpaceRoute = () => {
         options={{headerTitleAlign: 'center', headerRight: () => <SignOut />}}
         component={SpacesDashboard}
       />
-      <SpaceStack.Screen name="SpaceDetails" component={SpaceDetails} />
+      <SpaceStack.Screen
+        options={({route}) => ({
+          headerTitleAlign: 'center',
+          headerTitle: route.params.space.name,
+        })}
+        name="SpaceDetails"
+        component={SpaceDetails}
+      />
       <SpaceStack.Screen name="AddSpace" component={SpaceFormScreen} />
       <SpaceStack.Screen name="EditSpace" component={SpaceFormScreen} />
     </SpaceStack.Navigator>

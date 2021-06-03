@@ -1,13 +1,12 @@
 import {
+  FirebaseTimestamp,
+  Humidity,
+  Light,
+  Location,
   Owner,
   Picture,
   Roles,
-  Location,
   Temperature,
-  Humidity,
-  Light,
-  Air,
-  FirebaseTimestamp,
 } from "./GenericType";
 import { PlantProps, PlantType } from "./PlantType";
 import { DailyProps } from "./ReadingType";
@@ -37,15 +36,13 @@ export type SpaceType = {
   name: string;
   room_type: RoomType;
   light_direction: Array<LightType>;
-  thumb: string;
+  thumb?: string;
 };
 
 export type SpaceDetailProps = SpaceProps & {
   id: string;
-  config: SpaceConfigProps & { id: string };
-  aggs: SpaceAggProps & { id: string };
-  plants: Array<PlantProps & { id: string }>;
-  daily: Array<DailyProps & { id: string }>;
+  config?: SpaceConfigProps & { id: string };
+  aggs?: SpaceAggProps & { id: string };
 };
 
 export type RoomType =

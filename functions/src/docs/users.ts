@@ -1,28 +1,32 @@
-import { UserAggProps, UserProps, UserSettingsProps } from '../../../types/UserType';
+import {
+  UserAggProps,
+  UserProps,
+  UserSettingsProps,
+} from "../../../types/UserType";
 
 export const initUserDoc = (
+  displayName: string,
   email: string,
   timestamp: FirebaseFirestore.Timestamp
 ): UserProps => {
   return {
-    username: email.split('@')[0],
+    username: displayName,
     date_created: timestamp,
     date_modified: null,
-    profile_picture: { ref: '', thumb: '', url: '' },
-    first_name: '',
-    last_name: '',
-    bio: '',
-    gardener: 'BEGINNER',
+    profile_picture: { ref: "", thumb: "", url: "" },
+    first_name: "",
+    last_name: "",
+    bio: "",
     location: {
-      region: '',
-      country: '',
-      city: '',
+      region: "",
+      country: "",
+      city: "",
       geo: null,
     },
     social_media: {
-      facebook: '',
-      instagram: '',
-      twitter: '',
+      facebook: "",
+      instagram: "",
+      twitter: "",
       email: email,
     },
   };
@@ -33,9 +37,9 @@ export const initUserSetting = (
 ): UserSettingsProps => {
   return {
     date_modified: timestamp,
-    date_format: 'dd/MM/yyyy',
-    subscription: 'FREE',
-    units: 'METRIC',
+    date_format: "dd/MM/yyyy",
+    subscription: "FREE",
+    units: "METRIC",
   };
 };
 

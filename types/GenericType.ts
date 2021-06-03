@@ -1,4 +1,4 @@
-
+import * as firebase from "firebase-admin";
 export type Picture = {
   url: string;
   ref: string;
@@ -12,7 +12,7 @@ export type Owner = {
 };
 
 export type Roles = {
-  [user_id: string]: 'ADMIN' | 'EDITOR' | 'GUEST';
+  [user_id: string]: "ADMIN" | "EDITOR" | "GUEST";
 };
 
 export type Note = {

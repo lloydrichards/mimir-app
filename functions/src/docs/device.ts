@@ -1,4 +1,4 @@
-import { DeviceAggProps, DeviceProps } from '../../../types/DeviceType';
+import { DeviceAggProps, DeviceProps } from '@mimir/DeviceType';
 
 export const initDeviceDoc = (timestamp: FirebaseFirestore.Timestamp): DeviceProps => {
   return {

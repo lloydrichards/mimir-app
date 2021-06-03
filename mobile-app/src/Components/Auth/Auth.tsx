@@ -1,27 +1,40 @@
-import { InspectionInput } from '@mimir/InspectionType';
-import { PlantInput, PlantType } from '@mimir/PlantType';
-import { SpaceInput, SpaceType } from '@mimir/SpaceType';
-import { UserProps, UserType } from '@mimir/UserType';
-import { WateringInput } from '@mimir/WateringType';
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import {InspectionInput} from '@mimir/InspectionType';
+import {PlantDetailProps, PlantInput, PlantType} from '@mimir/PlantType';
+import {SpaceDetailProps, SpaceInput, SpaceType} from '@mimir/SpaceType';
+import {
+  UserAggProps,
+  UserDetailProps,
+  UserProps,
+  UserSettingsProps,
+  UserType,
+} from '@mimir/UserType';
+import {WateringInput} from '@mimir/WateringType';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import functions, {
-  FirebaseFunctionsTypes
+  FirebaseFunctionsTypes,
 } from '@react-native-firebase/functions';
-import React, { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator } from 'react-native-paper';
-import { AuthRoute } from 'src/Routes/authStack';
+import firestore from '@react-native-firebase/firestore';
+import React, {useContext, useEffect, useState} from 'react';
+import {ActivityIndicator} from 'react-native-paper';
+import {AuthRoute} from 'src/Routes/authStack';
 import Center from '../Molecule-UI/Center';
-import { inspection_ADD } from './functions/inspection_ADD';
-import { plant_ADD } from './functions/plant_ADD';
-import { plant_EDIT } from './functions/plant_EDIT';
-import { space_ADD } from './functions/space_ADD';
-import { space_EDIT } from './functions/space_EDIT';
-import { watering_ADD } from './functions/watering_add';
-
+import {inspection_ADD} from './functions/inspection_ADD';
+import {plant_ADD} from './functions/plant_ADD';
+import {plant_EDIT} from './functions/plant_EDIT';
+import {space_ADD} from './functions/space_ADD';
+import {space_EDIT} from './functions/space_EDIT';
+import {watering_ADD} from './functions/watering_add';
+import {UsersCollection} from 'src/Services/firebase';
+import {userRefs} from '../Helpers/firebaseUtil';
+import {useUserObserver} from '../Helpers/useUserObserver';
+import {useSpaceObserver} from '../Helpers/useSpaceObserver';
+import {usePlantObserver} from '../Helpers/usePlantObserver';
 
 type ContextProps = {
   currentUser: FirebaseAuthTypes.User | null;
-  userDoc: UserProps | null;
+  userDoc: UserDetailProps | null;
+  spaceDocs: SpaceDetailProps[];
+  plantDocs: PlantDetailProps[];
   signUp: (
     email: string,
     password: string,
@@ -53,13 +66,12 @@ type ContextProps = {
     plant: PlantType,
     edit: Partial<PlantInput>,
   ) => Promise<void>;
-  addPlant: (space: SpaceType, input: PlantInput) => Promise<void>;
+  addPlant: (space: SpaceType, input: PlantInput) => Promise<PlantType>;
   addWatering: (space: SpaceType, input: WateringInput) => Promise<void>;
   editSpace: (space: SpaceType, edit: Partial<SpaceInput>) => Promise<void>;
-  addSpace: (input: SpaceInput) => Promise<void>;
+  addSpace: (input: SpaceInput) => Promise<SpaceType>;
   resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
-  setUserDoc: React.Dispatch<React.SetStateAction<UserProps | null>>;
 };
 
 export const AuthContext = React.createContext<ContextProps>(
@@ -70,11 +82,11 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({children}: any) => {
   const [initializing, setInitializing] = useState(true);
-  const [currentUser, setCurrentUser] = useState(
-    null as FirebaseAuthTypes.User | null,
-  );
-  const [userDoc, setUserDoc] = useState(null as UserProps | null);
-
+  const [currentUser, setCurrentUser] =
+    useState<FirebaseAuthTypes.User | null>(null);
+  const userDoc = useUserObserver(currentUser);
+  const spaceDocs = useSpaceObserver(currentUser);
+  const plantDocs = usePlantObserver(currentUser);
   const user: UserType = {
     id: currentUser?.uid || '',
     username: userDoc?.username || '',
@@ -155,7 +167,8 @@ export const AuthProvider = ({children}: any) => {
       value={{
         currentUser,
         userDoc,
-        setUserDoc,
+        spaceDocs,
+        plantDocs,
         signUp,
         login,
         resetPassword,

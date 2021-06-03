@@ -1,5 +1,4 @@
 import {
-  Air,
   FirebaseTimestamp,
   Humidity,
   Light,
@@ -11,7 +10,7 @@ import {
 } from "./GenericType";
 import { ProblemTypes } from "./InspectionType";
 import { SpaceType } from "./SpaceType";
-import { PestTypes } from "./SpeciesType";
+import { PestTypes, FormTypes } from "./SpeciesType";
 import { UserType } from "./UserType";
 
 export type PlantProps = {
@@ -21,7 +20,7 @@ export type PlantProps = {
   description: string;
   picture: null | Picture;
   species: SpeciesType;
-  form: FormType;
+  form: FormTypes;
   alive: boolean;
   parent: null | {
     name: string;
@@ -43,6 +42,12 @@ export type PlantConfig = {
     tray: boolean;
     hanging: boolean;
   };
+};
+
+export type PlantDetailProps = PlantProps & {
+  id: string;
+  config?: PlantConfig & { id: string };
+  aggs?: PlantAggProps & { id: string };
 };
 
 export type PlantInput = Omit<
@@ -75,18 +80,6 @@ export type PotType =
   | "FIBERGLASS"
   | "CONCRETE"
   | "FABRIC";
-
-export type FormType =
-  | "CREEPING"
-  | "IRREGULAR"
-  | "MOUNDED"
-  | "OVAL"
-  | "PYRAMIDAL"
-  | "ROUND"
-  | "VASE"
-  | "WEEPING"
-  | "CLIMBING"
-  | "COLUMNAR";
 
 export type PlantTypes =
   | "GRASS"

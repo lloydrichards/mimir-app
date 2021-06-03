@@ -9,6 +9,7 @@ import {InputStyles} from '@styles/GlobalStyle';
 import {TextInput} from '../Atom-Inputs/TextInput';
 
 const validationSchema = yup.object({
+  username: yup.string().required(),
   email: yup.string().required().email(),
   password: yup.string().required(),
 });
@@ -24,7 +25,7 @@ const SignUp = () => {
           setSubmitting(true);
           try {
             await signUp(data.email, data.password).then(res =>
-              res.user?.updateProfile({displayName: data.name}),
+              res.user?.updateProfile({displayName: data.username}),
             );
             resetForm();
           } catch (error) {
@@ -36,7 +37,7 @@ const SignUp = () => {
         }}
         validationSchema={validationSchema}
         initialValues={{
-          name: '',
+          username: '',
           email: '',
           password: '',
         }}>
@@ -49,7 +50,7 @@ const SignUp = () => {
           status,
         }) => (
           <View>
-            <Field name="name" label="Name" component={TextInput} />
+            <Field name="username" label="Username" component={TextInput} />
             <Field name="email" label="Email" component={TextInput} />
             <Field
               name="password"
@@ -57,13 +58,15 @@ const SignUp = () => {
               secureTextEntry={true}
               component={TextInput}
             />
-            <Button
-              mode="contained"
-              color={COLOUR_SECONDARY}
-              onPress={handleSubmit}
-              disabled={isSubmitting}>
-              Register
-            </Button>
+            <View style={{marginVertical: 16}}>
+              <Button
+                mode="contained"
+                color={COLOUR_SECONDARY}
+                onPress={handleSubmit}
+                disabled={isSubmitting}>
+                Register
+              </Button>
+            </View>
             {status && <Text>{status.message}</Text>}
           </View>
         )}
