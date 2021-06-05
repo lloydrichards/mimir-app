@@ -19,7 +19,17 @@ const validationSchema = yup.object({
   nickname: yup.string().required(),
   description: yup.string(),
   form: yup.string().required(),
-  parent: yup.string().nullable(),
+  parent: yup
+    .object({
+      id: yup.string(),
+      name: yup.string(),
+      owner: yup.object({
+        id: yup.string(),
+        name: yup.string(),
+        email: yup.string(),
+      }),
+    })
+    .nullable(),
   space: yup.string().required(),
   species: yup
     .object({
@@ -124,6 +134,7 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
                 label="Plant parent"
                 onChange={(value: string) => {
                   const parent = plantDocs.find(p => p.id === value);
+                  setFieldValue("species",parent?.species)
                   return setFieldValue('parent', {
                     id: parent?.id,
                     name: parent?.nickname,
@@ -140,7 +151,7 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
               </Field>
             )}
             {values.parent ? (
-              <Text style={{fontSize:16,paddingHorizontal:8}}>
+              <Text style={{fontSize: 16, paddingHorizontal: 8}}>
                 {plantDocs.find(p => p.id === values.parent?.id)?.species.id}
               </Text>
             ) : (
@@ -164,6 +175,7 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
 
             <View style={{marginTop: 32}}>
               {status && <Text>{status.message}</Text>}
+              {errors && <Text>{errors.parent}</Text>}
               <Button
                 mode="contained"
                 disabled={isSubmitting}

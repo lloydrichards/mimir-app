@@ -21,3 +21,4 @@ export const SpaceLogsCollection = 'logs';
 export const PlantConfigCollection = 'configs';
 export const PlantAggsCollection = 'aggs';
 export const PlantLogsCollection = 'logs';
+export const PlantWateringsCollection = 'waterings';

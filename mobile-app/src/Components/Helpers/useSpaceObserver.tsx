@@ -17,46 +17,79 @@ export const useSpaceObserver = (
     if (!currentUser) return;
 
     const {userAllSpacesRef} = userRefs(currentUser.uid);
-    const unsubscribe = userAllSpacesRef.onSnapshot(
+    const subscriber = userAllSpacesRef.onSnapshot(
       spacesSnap => {
         if (spacesSnap.empty) return;
-        const data: SpaceDetailProps[] = [];
+        console.log(
+          'SpaceObserver: ',
+          spacesSnap
+            .docChanges()
+            .map(i => ({space_id: i.doc.id, type: i.type})),
+        );
         spacesSnap.docs.forEach(space => {
           const spaceDoc = {...(space.data() as SpaceProps), id: space.id};
-          const {spaceLatestAggRef, spaceCurrentConfigRef} = spaceRefs(space.id);
+          let config: SpaceDetailProps['config'] | undefined = undefined;
+          let aggs: SpaceDetailProps['aggs'] | undefined = undefined;
+
+          const {spaceLatestAggRef, spaceCurrentConfigRef} = spaceRefs(
+            space.id,
+          );
+
+          setSpaceDocs(data => {
+            if (data.find(d => d.id === space.id)) {
+              const spaceIndex = data.findIndex(d => d.id === space.id);
+              const newData = data;
+              newData[spaceIndex] = spaceDoc;
+              return newData;
+            } else {
+              return [...data, spaceDoc];
+            }
+          });
           spaceCurrentConfigRef.onSnapshot(
             configSnap => {
-              const config = !configSnap.empty ?{
-                ...(configSnap.docs[0].data() as SpaceConfigProps),
-                id: configSnap.docs[0].id,
-              } : undefined;
-              spaceLatestAggRef.onSnapshot(
-                aggSnap => {
-                  const aggs = !aggSnap.empty
-                    ? {
-                        ...(aggSnap.docs[0].data() as SpaceAggProps),
-                        id: aggSnap.docs[0].id,
-                      }
-                    : undefined;
+              if (!configSnap.empty) {
+                config = {
+                  ...(configSnap.docs[0].data() as SpaceConfigProps),
+                  id: configSnap.docs[0].id,
+                };
 
-                  const spaceDetail: SpaceDetailProps = {
-                    ...spaceDoc,
-                    config,
-                    aggs,
-                  };
-                  data.push(spaceDetail);
-                },
-                err => console.log(err),
-              );
+                setSpaceDocs(data => {
+                  if (data.find(d => d.id === space.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === space.id);
+                    const newData = data;
+                    newData[spaceIndex].config = config;
+                    return newData;
+                  } else return data;
+                });
+              }
+            },
+            err => console.log(err),
+          );
+          spaceLatestAggRef.onSnapshot(
+            aggSnap => {
+              if (!aggSnap.empty) {
+                aggs = {
+                  ...(aggSnap.docs[0].data() as SpaceAggProps),
+                  id: aggSnap.docs[0].id,
+                };
+
+                setSpaceDocs(data => {
+                  if (data.find(d => d.id === space.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === space.id);
+                    const newData = data;
+                    newData[spaceIndex].aggs = aggs;
+                    return newData;
+                  } else return data;
+                });
+              }
             },
             err => console.log(err),
           );
         });
-        setSpaceDocs(data);
       },
       err => console.log(err),
     );
-    return () => unsubscribe();
+    return () => subscriber();
   }, [currentUser?.uid]);
 
   return SpaceDocs;

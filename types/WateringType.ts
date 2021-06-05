@@ -7,14 +7,14 @@ export type WateringProps = {
   date_created: FirebaseTimestamp;
   created_by: UserType;
   space: SpaceType;
-  plant_ids: Array<string>;
-  plants: Array<PlantType>;
+  plant: PlantType;
   fertilizer: boolean;
-  pictures: Array<Picture>;
-  note: Note;
 };
 
-export type WateringInput = Omit<WateringProps, "created_by" | "space">;
+export type WateringInput = Omit<
+  WateringProps,
+  "created_by" | "space" | "plant"
+>;
 
 export type WaterType = {
   id: string;

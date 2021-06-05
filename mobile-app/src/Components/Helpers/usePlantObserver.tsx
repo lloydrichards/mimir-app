@@ -17,50 +17,81 @@ export const usePlantObserver = (
     if (!currentUser) return;
 
     const {userAllPlantsRef} = userRefs(currentUser.uid);
-    const unsubscribe = userAllPlantsRef.onSnapshot(
+    const subscriber = userAllPlantsRef.onSnapshot(
       plantsSnap => {
         if (plantsSnap.empty) return;
+        console.log(
+          'Plant Observer: ',
+          plantsSnap
+            .docChanges()
+            .map(i => ({plant_id: i.doc.id, type: i.type})),
+        );
         const data: PlantDetailProps[] = [];
         plantsSnap.docs.forEach(plant => {
-          const spaceDoc = {...(plant.data() as PlantProps), id: plant.id};
+          const plantDoc = {...(plant.data() as PlantProps), id: plant.id};
+          let config: PlantDetailProps['config'] | undefined = undefined;
+          let aggs: PlantDetailProps['aggs'] | undefined = undefined;
+
           const {plantCurrentConfigRef, plantLatestAggRef} = plantRefs(
             plant.id,
           );
+
+          setPlantDocs(data => {
+            if (data.find(d => d.id === plant.id)) {
+              const spaceIndex = data.findIndex(d => d.id === plant.id);
+              const newData = data;
+              newData[spaceIndex] = plantDoc;
+              return newData;
+            } else {
+              return [...data, plantDoc];
+            }
+          });
+
           plantCurrentConfigRef.onSnapshot(
             configSnap => {
-              const config = !configSnap.empty
-                ? {
-                    ...(configSnap.docs[0].data() as PlantConfig),
-                    id: configSnap.docs[0].id,
-                  }
-                : undefined;
-              plantLatestAggRef.onSnapshot(
-                aggSnap => {
-                  const aggs = !aggSnap.empty
-                    ? {
-                        ...(aggSnap.docs[0].data() as PlantAggProps),
-                        id: aggSnap.docs[0].id,
-                      }
-                    : undefined;
+              if (!configSnap.empty) {
+                config = {
+                  ...(configSnap.docs[0].data() as PlantConfig),
+                  id: configSnap.docs[0].id,
+                };
 
-                  const plantDetail: PlantDetailProps = {
-                    ...spaceDoc,
-                    config,
-                    aggs,
-                  };
-                  data.push(plantDetail);
-                },
-                err => console.log(err),
-              );
+                setPlantDocs(data => {
+                  if (data.find(d => d.id === plant.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === plant.id);
+                    const newData = data;
+                    newData[spaceIndex].config = config;
+                    return newData;
+                  } else return data;
+                });
+              }
+            },
+            err => console.log(err),
+          );
+          plantLatestAggRef.onSnapshot(
+            aggSnap => {
+              if (!aggSnap.empty) {
+                aggs = {
+                  ...(aggSnap.docs[0].data() as PlantAggProps),
+                  id: aggSnap.docs[0].id,
+                };
+
+                setPlantDocs(data => {
+                  if (data.find(d => d.id === plant.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === plant.id);
+                    const newData = data;
+                    newData[spaceIndex].config = config;
+                    return newData;
+                  } else return data;
+                });
+              }
             },
             err => console.log(err),
           );
         });
-        setPlantDocs(data);
       },
       err => console.log(err),
     );
-    return () => unsubscribe();
+    return () => subscriber();
   }, [currentUser?.uid]);
 
   return PlantDocs;

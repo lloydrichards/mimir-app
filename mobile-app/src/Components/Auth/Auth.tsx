@@ -1,22 +1,18 @@
 import {InspectionInput} from '@mimir/InspectionType';
 import {PlantDetailProps, PlantInput, PlantType} from '@mimir/PlantType';
 import {SpaceDetailProps, SpaceInput, SpaceType} from '@mimir/SpaceType';
-import {
-  UserAggProps,
-  UserDetailProps,
-  UserProps,
-  UserSettingsProps,
-  UserType,
-} from '@mimir/UserType';
+import {UserDetailProps, UserType} from '@mimir/UserType';
 import {WateringInput} from '@mimir/WateringType';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import functions, {
   FirebaseFunctionsTypes,
 } from '@react-native-firebase/functions';
-import firestore from '@react-native-firebase/firestore';
 import React, {useContext, useEffect, useState} from 'react';
 import {ActivityIndicator} from 'react-native-paper';
 import {AuthRoute} from 'src/Routes/authStack';
+import {usePlantObserver} from '../Helpers/usePlantObserver';
+import {useSpaceObserver} from '../Helpers/useSpaceObserver';
+import {useUserObserver} from '../Helpers/useUserObserver';
 import Center from '../Molecule-UI/Center';
 import {inspection_ADD} from './functions/inspection_ADD';
 import {plant_ADD} from './functions/plant_ADD';
@@ -24,11 +20,6 @@ import {plant_EDIT} from './functions/plant_EDIT';
 import {space_ADD} from './functions/space_ADD';
 import {space_EDIT} from './functions/space_EDIT';
 import {watering_ADD} from './functions/watering_add';
-import {UsersCollection} from 'src/Services/firebase';
-import {userRefs} from '../Helpers/firestoreUtil';
-import {useUserObserver} from '../Helpers/useUserObserver';
-import {useSpaceObserver} from '../Helpers/useSpaceObserver';
-import {usePlantObserver} from '../Helpers/usePlantObserver';
 
 type ContextProps = {
   currentUser: FirebaseAuthTypes.User | null;
@@ -67,7 +58,11 @@ type ContextProps = {
     edit: Partial<PlantInput>,
   ) => Promise<void>;
   addPlant: (space: SpaceType, input: PlantInput) => Promise<PlantType>;
-  addWatering: (space: SpaceType, input: WateringInput) => Promise<void>;
+  addWatering: (
+    space: SpaceType,
+    plant: PlantType,
+    input: WateringInput,
+  ) => Promise<void>;
   editSpace: (space: SpaceType, edit: Partial<SpaceInput>) => Promise<void>;
   addSpace: (input: SpaceInput) => Promise<SpaceType>;
   resetPassword: (email: string) => Promise<void>;
@@ -118,8 +113,12 @@ export const AuthProvider = ({children}: any) => {
     return inspection_ADD(user, space, plant, input);
   };
 
-  const addWatering = (space: SpaceType, input: WateringInput) => {
-    return watering_ADD(user, space, input);
+  const addWatering = (
+    space: SpaceType,
+    plant: PlantType,
+    input: WateringInput,
+  ) => {
+    return watering_ADD(user, space, plant, input);
   };
 
   const editPlant = (
