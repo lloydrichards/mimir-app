@@ -26,9 +26,7 @@ export const initPlantAggs = (
         max: 0,
       },
       light: {
-        shade: 0,
-        half_shade: 0,
-        full_sun: 0,
+        hr: { low: 0, medium: 0, bright: 0, full: 0 },
         avg: 0,
         max: 0,
       },

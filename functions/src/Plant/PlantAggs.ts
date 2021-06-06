@@ -5,7 +5,7 @@ import {
   calcFertilizerTotal,
   calcInspectionsTotal,
   calcWateringsTotal,
-} from "src/util/aggHelpers";
+} from "../util/aggHelpers";
 import { db, timestamp } from "..";
 import { calcNewEnvironment } from "../util/dailyRecalc";
 
@@ -42,7 +42,7 @@ export const calcPlantAgg = (doc: PlantAggProps, log: Log) => {
   return newAgg;
 };
 
-export const plantAggregation = functions.firestore
+export const plantAggregation = functions.region("europe-west1").firestore
   .document("mimirPlants/{plant_id}/Logs/{log_id}")
   .onCreate((log, context) => {
     const plant_id = context.params.plant_id;

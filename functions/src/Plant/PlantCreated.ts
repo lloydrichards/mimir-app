@@ -1,15 +1,16 @@
 import { PlantProps } from "@mimir/PlantType";
 import * as functions from "firebase-functions";
-import { AdminCollection } from "src/firestore";
+import { AdminCollection } from "../firestore";
 import { db, increment, timestamp } from "..";
 
 const stats = db.collection(AdminCollection).doc("--plants stats--");
 
-export const plantCreated = functions.firestore
-  .document("mimirPlants/{plant_id}")
+export const plantCreated = functions
+  .region("europe-west1")
+  .firestore.document("mimirPlants/{plant_id}")
   .onCreate((plant) => {
     const plantDoc = plant.data() as PlantProps;
-    stats.set(
+    return stats.set(
       {
         last_added: timestamp,
         plants_total: increment(1),

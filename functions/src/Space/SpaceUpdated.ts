@@ -4,13 +4,14 @@ import {
   AdminCollection,
   SpacesStats,
   WateringsCollection,
-} from "src/firestore";
+} from "../firestore";
 import { db, increment, timestamp } from "..";
 
 const stats = db.collection(AdminCollection).doc(SpacesStats);
 
-export const spaceUpdated = functions.firestore
-  .document("Spaces/{space_id}")
+export const spaceUpdated = functions
+  .region("europe-west1")
+  .firestore.document("Spaces/{space_id}")
   .onUpdate(async (space, context) => {
     const spaceBefore = space.before.data() as SpaceProps;
     const spaceAfter = space.after.data() as SpaceProps;
@@ -76,12 +77,7 @@ export const spaceUpdated = functions.firestore
         !spaceBefore.light_direction.includes(dir) &&
         spaceAfter.light_direction.includes(dir)
       ) {
-        light_direction[dir] = increment(-1);
-      } else if (
-        spaceBefore.light_direction.includes(dir) &&
-        spaceAfter.light_direction.includes(dir)
-      ) {
-        light_direction[dir] = increment(0);
+        light_direction[dir] = increment(1);
       }
     });
 

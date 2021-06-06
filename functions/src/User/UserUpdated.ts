@@ -14,8 +14,9 @@ import { once } from "../util/once";
 
 const stats = db.collection(AdminCollection).doc(UsersStats);
 
-export const userUpdated = functions.firestore
-  .document("mimirUsers/{user_id}")
+export const userUpdated = functions
+  .region("europe-west1")
+  .firestore.document("mimirUsers/{user_id}")
   .onUpdate(
     once(async (user) => {
       const userBefore = user.before.data() as UserProps;

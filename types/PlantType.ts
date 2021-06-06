@@ -48,6 +48,7 @@ export type PlantDetailProps = PlantProps & {
   id: string;
   config?: PlantConfig & { id: string };
   aggs?: PlantAggProps & { id: string };
+  watering?: WateringProps & { id: string };
 };
 
 export type PlantInput = Omit<

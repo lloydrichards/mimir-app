@@ -28,7 +28,7 @@ export const spaceCreated = functions
 
           const light_direction = {};
           spaceDoc.light_direction.forEach((dir) => {
-            return { [dir]: increment(1) };
+            light_direction[dir] = increment(1);
           });
           setEventSuccess(t, context).set(
             stats,

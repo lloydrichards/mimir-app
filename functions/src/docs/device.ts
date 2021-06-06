@@ -1,22 +1,8 @@
-import { DeviceAggProps, DeviceProps } from '@mimir/DeviceType';
+import { DeviceAggProps, DeviceProps } from "@mimir/DeviceType";
 
-export const initDeviceDoc = (timestamp: FirebaseFirestore.Timestamp): DeviceProps => {
-  return {
-    nickname: '',
-    date_created: timestamp,
-    date_modified: null,
-    description: '',
-    profile_picture: null,
-    version: {
-      hardware: '',
-      software: '',
-    },
-    owner: null,
-    roles: null,
-  };
-};
-
-export const initDeviceAgg = (timestamp: FirebaseFirestore.Timestamp): DeviceAggProps => {
+export const initDeviceAgg = (
+  timestamp: FirebaseFirestore.Timestamp
+): DeviceAggProps => {
   return {
     timestamp,
     space: null,

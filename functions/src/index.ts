@@ -16,3 +16,10 @@ export { userSettingsUpdated, userUpdated } from "./User/UserUpdated";
 // Space Functions
 export { spaceCreated } from "./Space/SpaceCreated";
 export { spaceAggregation } from "./Space/SpaceAggs";
+export { spaceUpdated } from "./Space/SpaceUpdated";
+export {} from "./Space/SpaceDeleted";
+
+// Plant Functions
+export { plantCreated } from "./Plant/PlantCreated";
+export { plantAggregation } from "./Plant/PlantAggs";
+export { plantUpdated } from "./Plant/PlantUpdated";

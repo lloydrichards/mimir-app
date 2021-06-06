@@ -3,6 +3,7 @@ import {
   PlantConfig,
   PlantDetailProps,
   PlantProps,
+  WateringProps,
 } from '@mimir/PlantType';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useEffect, useState} from 'react';
@@ -31,10 +32,13 @@ export const usePlantObserver = (
           const plantDoc = {...(plant.data() as PlantProps), id: plant.id};
           let config: PlantDetailProps['config'] | undefined = undefined;
           let aggs: PlantDetailProps['aggs'] | undefined = undefined;
+          let watering: PlantDetailProps['watering'] | undefined = undefined;
 
-          const {plantCurrentConfigRef, plantLatestAggRef} = plantRefs(
-            plant.id,
-          );
+          const {
+            plantCurrentConfigRef,
+            plantLatestAggRef,
+            plantLatestWaterRef,
+          } = plantRefs(plant.id);
 
           setPlantDocs(data => {
             if (data.find(d => d.id === plant.id)) {
@@ -47,6 +51,7 @@ export const usePlantObserver = (
             }
           });
 
+          // Observable for current Plant Config
           plantCurrentConfigRef.onSnapshot(
             configSnap => {
               if (!configSnap.empty) {
@@ -79,7 +84,27 @@ export const usePlantObserver = (
                   if (data.find(d => d.id === plant.id)) {
                     const spaceIndex = data.findIndex(d => d.id === plant.id);
                     const newData = data;
-                    newData[spaceIndex].config = config;
+                    newData[spaceIndex].aggs = aggs;
+                    return newData;
+                  } else return data;
+                });
+              }
+            },
+            err => console.log(err),
+          );
+          plantLatestWaterRef.onSnapshot(
+            waterSnap => {
+              if (!waterSnap.empty) {
+                watering = {
+                  ...(waterSnap.docs[0].data() as WateringProps),
+                  id: waterSnap.docs[0].id,
+                };
+
+                setPlantDocs(data => {
+                  if (data.find(d => d.id === plant.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === plant.id);
+                    const newData = data;
+                    newData[spaceIndex].watering = watering;
                     return newData;
                   } else return data;
                 });

@@ -1,15 +1,15 @@
 import { Log } from "@mimir/LogType";
 import { SpaceAggProps } from "@mimir/SpaceType";
 import * as functions from "firebase-functions";
-import { initSpaceAgg } from "src/docs/space";
-import { spaceRefs } from "src/util/firestoreUtil";
+import { initSpaceAgg } from "../docs/space";
+import { spaceRefs } from "../util/firestoreUtil";
 import { db, timestamp } from "..";
 import {
-    calcDeadTotal,
-    calcFertilizerTotal,
-    calcInspectionsTotal,
-    calcPlantTotal,
-    calcWateringsTotal
+  calcDeadTotal,
+  calcFertilizerTotal,
+  calcInspectionsTotal,
+  calcPlantTotal,
+  calcWateringsTotal,
 } from "../util/aggHelpers";
 import { calcNewEnvironment } from "../util/dailyRecalc";
 
@@ -33,8 +33,9 @@ export const calcSpaceAgg = (
   return newAgg;
 };
 
-export const spaceAggregation = functions.firestore
-  .document("Spaces/{space_id}/logs/{log_id}")
+export const spaceAggregation = functions
+  .region("europe-west1")
+  .firestore.document("Spaces/{space_id}/logs/{log_id}")
   .onCreate((log, context) => {
     const space_id = context.params.space_id;
 

@@ -7,6 +7,7 @@ import {
   PlantConfigCollection,
   PlantLogsCollection,
   PlantsCollection,
+  PlantWateringsCollection,
   SpaceAggsCollection,
   SpaceConfigCollection,
   SpaceLogsCollection,
@@ -88,6 +89,10 @@ export const plantRefs = (id: string) => {
     .collection(PlantAggsCollection)
     .orderBy('timestamp', 'desc')
     .limit(1);
+  const plantLatestWaterRef = plantDocRef
+    .collection(PlantWateringsCollection)
+    .orderBy('timestamp', 'desc')
+    .limit(1);
   const plantCurrentSpaceConfigRef = firestore()
     .collectionGroup(SpaceConfigCollection)
     .where('current', '==', true)
@@ -98,6 +103,7 @@ export const plantRefs = (id: string) => {
     plantNewConfigRef,
     plantNewLogRef,
     plantLatestAggRef,
+    plantLatestWaterRef,
     plantCurrentConfigRef,
     plantCurrentSpaceConfigRef,
   };

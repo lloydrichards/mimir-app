@@ -1,13 +1,14 @@
 import { PlantProps, PlantType } from "@mimir/PlantType";
 import { SpaceConfigProps } from "@mimir/SpaceType";
 import * as functions from "firebase-functions";
-import { AdminCollection, WateringsCollection } from "src/firestore";
+import { AdminCollection, WateringsCollection } from "../firestore";
 import { db, timestamp, increment } from "..";
 
 const stats = db.collection(AdminCollection).doc("--plants stats--");
 
-export const plantUpdated = functions.firestore
-  .document("mimirPlants/{plant_id}")
+export const plantUpdated = functions
+  .region("europe-west1")
+  .firestore.document("mimirPlants/{plant_id}")
   .onUpdate(async (plant, context) => {
     const plantBefore = plant.before.data() as PlantProps;
     const plantAfter = plant.after.data() as PlantProps;
