@@ -1,3 +1,4 @@
+import { DeviceType } from "./DeviceType";
 import {
   FirebaseTimestamp,
   Humidity,
@@ -70,7 +71,8 @@ export type LightType = "S" | "SE" | "E" | "NE" | "N" | "NW" | "W" | "SW";
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;
   current: boolean;
-  devices: Array<string>;
+  device_ids: Array<string>;
+  devices: Array<DeviceType>;
   plant_ids: Array<string>;
   plants: Array<PlantType>;
   diseases: Array<string>;

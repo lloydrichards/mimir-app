@@ -9,6 +9,7 @@ export const UsersCollection = 'Users';
 export const SpacesCollection = 'Spaces';
 export const PlantsCollection = 'Plants';
 export const SpeciesCollection = 'Species';
+export const DevicesCollection = 'Devices';
 
 export const UserSettingsCollection = '_settings';
 export const UserAggsCollection = 'aggs';
@@ -22,3 +23,6 @@ export const PlantConfigCollection = 'configs';
 export const PlantAggsCollection = 'aggs';
 export const PlantLogsCollection = 'logs';
 export const PlantWateringsCollection = 'waterings';
+
+export const DeviceLogsCollection = 'logs';
+export const DeviceSettingsCollection = '_settings';

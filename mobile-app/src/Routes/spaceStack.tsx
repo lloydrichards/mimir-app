@@ -15,6 +15,8 @@ export type SpaceStackParamList = {
   SpaceDetails: {space: SpaceType};
   AddSpace: undefined;
   EditSpace: {data: SpaceProps};
+  AddDevice: undefined;
+  EditDevice: {data: SpaceProps};
 };
 
 export type SpaceNavProps<T extends keyof SpaceStackParamList> = {
@@ -42,6 +44,8 @@ export const SpaceRoute = () => {
       />
       <SpaceStack.Screen name="AddSpace" component={SpaceFormScreen} />
       <SpaceStack.Screen name="EditSpace" component={SpaceFormScreen} />
+      <SpaceStack.Screen name="AddDevice" component={SpaceFormScreen} />
+      <SpaceStack.Screen name="EditDevice" component={SpaceFormScreen} />
     </SpaceStack.Navigator>
   );
 };

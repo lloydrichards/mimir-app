@@ -45,13 +45,13 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  data?: PlantProps;
+  edit?: PlantProps;
   onComplete: (plant: PlantType) => void;
 }
 
-const PlantForm: React.FC<Props> = ({data, onComplete}) => {
+const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
   const {currentUser} = useAuth();
-  const {spaceDocs, plantDocs, addPlant} = useAuth();
+  const {spaceDocs, plantDocs, plant} = useAuth();
   return (
     <View style={InputStyles.form}>
       <Formik
@@ -87,7 +87,7 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
               },
             };
             console.log(data);
-            const newPlant = await addPlant(space, input);
+            const newPlant = await plant.add(space, input);
             resetForm();
             onComplete(newPlant);
           } catch (error) {
@@ -100,13 +100,13 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
         }}
         validationSchema={validationSchema}
         initialValues={{
-          nickname: data?.nickname || '',
-          description: data?.description || '',
-          form: data?.form || ('' as FormTypes),
-          parent: data?.parent || null,
-          picture: data?.picture || null,
+          nickname: edit?.nickname || '',
+          description: edit?.description || '',
+          form: edit?.form || ('' as FormTypes),
+          parent: edit?.parent || null,
+          picture: edit?.picture || null,
           space: null,
-          species: data?.species || null,
+          species: edit?.species || null,
         }}>
         {({
           handleSubmit,
@@ -134,7 +134,7 @@ const PlantForm: React.FC<Props> = ({data, onComplete}) => {
                 label="Plant parent"
                 onChange={(value: string) => {
                   const parent = plantDocs.find(p => p.id === value);
-                  setFieldValue("species",parent?.species)
+                  setFieldValue('species', parent?.species);
                   return setFieldValue('parent', {
                     id: parent?.id,
                     name: parent?.nickname,

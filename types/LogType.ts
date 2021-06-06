@@ -1,3 +1,4 @@
+import { DeviceType } from "./DeviceType";
 import {
   FirebaseTimestamp,
   Temperature,
@@ -19,7 +20,7 @@ export type Log = {
     user?: UserType;
     space?: SpaceType;
     plant?: PlantType;
-    device_id?: string;
+    device?: DeviceType;
     readings?: number;
     toSpace?: SpaceType;
     fromSpace?: SpaceType;

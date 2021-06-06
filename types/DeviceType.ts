@@ -1,24 +1,46 @@
-import { FirebaseTimestamp, Owner, Picture, Roles } from './GenericType';
-import { SpaceType } from './SpaceType';
+import { FirebaseTimestamp, Owner, Picture, Roles } from "./GenericType";
+import { SpaceType } from "./SpaceType";
 
 export type DeviceProps = {
   nickname: string;
   date_created: FirebaseTimestamp;
-  date_modified: string | null;
+  date_registered: FirebaseTimestamp | null;
+  date_modified: FirebaseTimestamp | null;
+  last_updated: FirebaseTimestamp | null;
   description: string;
-  profile_picture: null | Picture;
   version: {
+    type: string;
     hardware: string;
     software: string;
   };
+  update: {
+    version: string;
+    method: UpdateMethod;
+  } | null;
+  error: Array<ErrorType>;
   owner: null | Owner;
   roles: null | Roles;
 };
 
 export type DeviceRegisterInput = Omit<
   DeviceProps,
-  'date_created' | 'date_modified' | 'roles'
->;
+  | "date_created"
+  | "date_modified"
+  | "version"
+  | "update"
+  | "error"
+  | "roles"
+  | "last_updated"
+> & { id: string };
+
+export type DeviceType = {
+  id: string;
+  nickname: string;
+  type: string;
+};
+
+export type ErrorType = "NO_CONNECTION";
+export type UpdateMethod = "USB";
 
 export type DeviceAggProps = {
   timestamp: FirebaseTimestamp;

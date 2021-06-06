@@ -17,51 +17,48 @@ import * as yup from 'yup';
 import {Location} from '@mimir/GenericType';
 import {useAuth} from '../Auth/Auth';
 import {ExposureTypes} from '@mimir/SpeciesType';
+import {DeviceProps, DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
+import {timestamp} from 'src/Services/firebase';
 
 const validationSchema = yup.object({
-  name: yup.string().required(),
-  location: yup
-    .object({
-      city: yup.string(),
-      country: yup.string(),
-      region: yup.string(),
-    })
-    .required(),
+  space: yup.object().required(),
+  device: yup.object().required(),
+  nickname: yup.string().required(),
   description: yup.string(),
-  room_type: yup.string().required(),
-  light_direction: yup.array(),
-  exposure: yup.string().required(),
 });
 
 interface Props {
-  edit?: SpaceProps;
+  space?: SpaceType;
+  edit?: DeviceProps & {id: string};
   onComplete: (space: SpaceType) => void;
 }
 
-const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
-  const {currentUser, space, userDoc} = useAuth();
+const DeviceForm: React.FC<Props> = ({space, edit, onComplete}) => {
+  const {currentUser, device, spaceDocs} = useAuth();
   return (
     <View style={InputStyles.form}>
       <Formik
         onSubmit={async (data, {setStatus, setSubmitting, resetForm}) => {
           setSubmitting(true);
+
           try {
-            if (!data.room_type) throw new Error('Room Type missing');
-            if (!data.location) throw new Error('Location missing');
-            const input: SpaceInput = {
-              ...data,
-              room_type: data.room_type,
-              location: data.location,
+            if (!data.device) throw new Error('No Device');
+            if (!data.space) throw new Error('No Space');
+            const input: DeviceRegisterInput = {
+              date_registered: timestamp,
+              description: data.description,
+              id: data.device.id,
+              nickname: data.nickname,
               owner: {
                 name: currentUser?.displayName || '',
                 email: currentUser?.email || '',
                 id: currentUser?.uid || '',
               },
             };
-            const newSpace = await space.add(input);
+            await device.register(data.space, input);
             console.log(data);
             resetForm();
-            onComplete(newSpace);
+            onComplete(data.space);
           } catch (error) {
             console.log('error:', error);
             Alert.alert(error);
@@ -72,52 +69,29 @@ const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
         }}
         validationSchema={validationSchema}
         initialValues={{
-          name: edit?.name || '',
-          location: edit?.location || userDoc?.location || null,
+          space: space || null,
+          device: edit || null,
+          nickname: edit?.nickname || '',
           description: edit?.description || '',
-          room_type: edit?.room_type || null,
-          picture: edit?.picture || null,
-          light_direction: edit?.light_direction || [],
-          exposure: edit?.exposure || ('' as ExposureTypes),
         }}>
         {({handleSubmit, isSubmitting, values, status, errors}) => (
           <ScrollView keyboardShouldPersistTaps="handled">
-            <Field
-              name="name"
-              label="Name"
-              placeholder="Space's name..."
-              component={TextInput}
-            />
-            <Field
-              name="location"
-              label="Location"
-              component={LocationAutoComplete}
-            />
-            <Field name="room_type" label="Room type" component={OptionPicker}>
-              {RoomTypeMap.map(d => (
-                <OptionItem key={d.id} value={d.id} label={d.field} />
+            <Field name="space" label="Space" component={OptionPicker}>
+              {spaceDocs.map(s => (
+                <OptionItem key={s.id} value={s.id} label={s.name} />
               ))}
             </Field>
+            <Field
+              name="nickname"
+              label="Nickname"
+              placeholder="device's name..."
+              component={TextInput}
+            />
             <Field
               name="description"
               label="Description"
-              placeholder="Space's description..."
               component={TextInput}
             />
-            <Field
-              name="exposure"
-              label="Sun Exposure"
-              component={OptionPicker}>
-              {ExposureTypeMap.map(d => (
-                <OptionItem key={d.id} value={d.id} label={d.field} />
-              ))}
-            </Field>
-            <Field
-              name="light_direction"
-              label="Light Direction"
-              component={LightDirectionPicker}
-            />
-
             <View style={{marginTop: 32}}>
               {status && <Text>{status.message}</Text>}
               <Button
@@ -135,4 +109,4 @@ const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
   );
 };
 
-export default SpaceForm;
+export default DeviceForm;

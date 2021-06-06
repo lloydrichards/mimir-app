@@ -1,5 +1,8 @@
 import firestore from '@react-native-firebase/firestore';
 import {
+  DeviceLogsCollection,
+  DevicesCollection,
+  DeviceSettingsCollection,
   PlantAggsCollection,
   PlantConfigCollection,
   PlantLogsCollection,
@@ -40,7 +43,7 @@ export const userRefs = (uid: string) => {
     userAllPlantsRef,
   };
 };
-export const spaceRefs = (id?: string) => {
+export const spaceRefs = (id: string) => {
   const spaceDocRef = firestore().collection(SpacesCollection).doc(id);
   const spaceNewConfigRef = spaceDocRef.collection(SpaceConfigCollection).doc();
   const spaceNewLogRef = spaceDocRef.collection(SpaceLogsCollection).doc();
@@ -73,7 +76,7 @@ export const newSpaceRefs = () => {
     spaceNewLogRef,
   };
 };
-export const plantRefs = (id?: string) => {
+export const plantRefs = (id: string) => {
   const plantDocRef = firestore().collection(PlantsCollection).doc(id);
   const plantNewConfigRef = plantDocRef.collection(PlantConfigCollection).doc();
   const plantNewLogRef = plantDocRef.collection(PlantLogsCollection).doc();
@@ -85,14 +88,21 @@ export const plantRefs = (id?: string) => {
     .collection(PlantAggsCollection)
     .orderBy('timestamp', 'desc')
     .limit(1);
+  const plantCurrentSpaceConfigRef = firestore()
+    .collectionGroup(SpaceConfigCollection)
+    .where('current', '==', true)
+    .where('plant_ids', 'array-contains', id)
+    .orderBy('timestamp', 'desc');
   return {
     plantDocRef,
     plantNewConfigRef,
     plantNewLogRef,
     plantLatestAggRef,
     plantCurrentConfigRef,
+    plantCurrentSpaceConfigRef,
   };
 };
+
 export const newPlantRefs = () => {
   const newPlantDocRef = firestore().collection(PlantsCollection).doc();
   const plantNewConfigRef = newPlantDocRef
@@ -104,5 +114,24 @@ export const newPlantRefs = () => {
     newPlantDocRef,
     plantNewConfigRef,
     plantNewLogRef,
+  };
+};
+
+export const deviceRefs = (id: string) => {
+  const deviceDocRef = firestore().collection(DevicesCollection).doc(id);
+  const deviceSettingsRef = deviceDocRef
+    .collection(DeviceSettingsCollection)
+    .doc('--settings--');
+  const deviceNewLogRef = deviceDocRef.collection(DeviceLogsCollection).doc();
+  const deviceCurrentSpaceConfigRef = firestore()
+    .collectionGroup(SpaceConfigCollection)
+    .where('current', '==', true)
+    .where('device_ids', 'array-contains', id)
+    .orderBy('timestamp', 'desc');
+  return {
+    deviceDocRef,
+    deviceSettingsRef,
+    deviceNewLogRef,
+    deviceCurrentSpaceConfigRef,
   };
 };

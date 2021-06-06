@@ -1,3 +1,4 @@
+import {DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
 import {InspectionInput} from '@mimir/InspectionType';
 import {PlantDetailProps, PlantInput, PlantType} from '@mimir/PlantType';
 import {SpaceDetailProps, SpaceInput, SpaceType} from '@mimir/SpaceType';
@@ -14,9 +15,12 @@ import {usePlantObserver} from '../Helpers/usePlantObserver';
 import {useSpaceObserver} from '../Helpers/useSpaceObserver';
 import {useUserObserver} from '../Helpers/useUserObserver';
 import Center from '../Molecule-UI/Center';
+import {device_MOVE} from './functions/device_MOVE';
+import {device_REGISTER} from './functions/device_REGISTER';
 import {inspection_ADD} from './functions/inspection_ADD';
 import {plant_ADD} from './functions/plant_ADD';
 import {plant_EDIT} from './functions/plant_EDIT';
+import {plant_MOVE} from './functions/plant_MOVE';
 import {space_ADD} from './functions/space_ADD';
 import {space_EDIT} from './functions/space_EDIT';
 import {watering_ADD} from './functions/watering_add';
@@ -34,14 +38,31 @@ type ContextProps = {
     email: string,
     password: string,
   ) => Promise<FirebaseAuthTypes.UserCredential>;
-  movePlant: (
-    plant: PlantType,
-    toSpace: SpaceType,
-  ) => Promise<FirebaseFunctionsTypes.HttpsCallableResult>;
-  moveDevice: (
-    device_id: string,
-    toSpace: SpaceType,
-  ) => Promise<FirebaseFunctionsTypes.HttpsCallableResult>;
+  plant: {
+    add: (space: SpaceType, input: PlantInput) => Promise<PlantType>;
+    edit: (
+      space: SpaceType,
+      plant: PlantType,
+      edit: Partial<PlantInput>,
+    ) => Promise<void>;
+    water: (
+      space: SpaceType,
+      plant: PlantType,
+      input: WateringInput,
+    ) => Promise<void>;
+    move: (plant: PlantType, toSpace: SpaceType) => Promise<PlantType>;
+  };
+  space: {
+    add: (input: SpaceInput) => Promise<SpaceType>;
+    edit: (space: SpaceType, edit: Partial<SpaceInput>) => Promise<void>;
+  };
+  device: {
+    register: (
+      space: SpaceType,
+      input: DeviceRegisterInput,
+    ) => Promise<DeviceType>;
+    move: (device: DeviceType, toSpace: SpaceType) => Promise<any>;
+  };
   inviteToSpace: (
     from: string,
     space_id: string,
@@ -52,19 +73,6 @@ type ContextProps = {
     plant: PlantType,
     input: InspectionInput,
   ) => Promise<void>;
-  editPlant: (
-    space: SpaceType,
-    plant: PlantType,
-    edit: Partial<PlantInput>,
-  ) => Promise<void>;
-  addPlant: (space: SpaceType, input: PlantInput) => Promise<PlantType>;
-  addWatering: (
-    space: SpaceType,
-    plant: PlantType,
-    input: WateringInput,
-  ) => Promise<void>;
-  editSpace: (space: SpaceType, edit: Partial<SpaceInput>) => Promise<void>;
-  addSpace: (input: SpaceInput) => Promise<SpaceType>;
   resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
 };
@@ -96,10 +104,10 @@ export const AuthProvider = ({children}: any) => {
   };
 
   const movePlant = (plant: PlantType, toSpace: SpaceType) => {
-    return functions().httpsCallable('movePlant')({user, plant, toSpace});
+    return plant_MOVE(user, plant, toSpace);
   };
-  const moveDevice = (device_id: string, toSpace: SpaceType) => {
-    return functions().httpsCallable('moveDevice')({user, device_id, toSpace});
+  const moveDevice = (device: DeviceType, toSpace: SpaceType) => {
+    return device_MOVE(user, device, toSpace);
   };
   const inviteToSpace = (from: string, space_id: string, token: string) => {
     return functions().httpsCallable('InviteSpace')({from, space_id, token});
@@ -137,6 +145,10 @@ export const AuthProvider = ({children}: any) => {
     return plant_ADD(user, space, input);
   };
 
+  const registerDevice = (space: SpaceType, input: DeviceRegisterInput) => {
+    return device_REGISTER(user, space, input);
+  };
+
   const editSpace = (space: SpaceType, edit: Partial<SpaceInput>) => {
     return space_EDIT(user, space, edit);
   };
@@ -171,15 +183,22 @@ export const AuthProvider = ({children}: any) => {
         signUp,
         login,
         resetPassword,
-        movePlant,
+        plant: {
+          add: addPlant,
+          edit: editPlant,
+          move: movePlant,
+          water: addWatering,
+        },
+        space: {
+          add: addSpace,
+          edit: editSpace,
+        },
+        device: {
+          move: moveDevice,
+          register: registerDevice,
+        },
         inviteToSpace,
-        moveDevice,
         addInspection,
-        addWatering,
-        editPlant,
-        addPlant,
-        editSpace,
-        addSpace,
         authenticated: currentUser !== null,
       }}>
       {currentUser ? children : <AuthRoute />}
