@@ -6,11 +6,10 @@ import {
   Light,
 } from "./GenericType";
 import { InspectionType } from "./InspectionType";
-import { PlantType } from "./PlantType";
+import { PlantType, WaterType } from "./PlantType";
 import { DailyType } from "./ReadingType";
 import { SpaceType } from "./SpaceType";
 import { UserType } from "./UserType";
-import { WaterType } from "./WateringType";
 
 export type Log = {
   timestamp: FirebaseTimestamp;

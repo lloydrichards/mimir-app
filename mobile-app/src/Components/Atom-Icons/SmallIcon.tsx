@@ -7,9 +7,7 @@ export interface MapProps {
   id: string;
   field: string;
   icon: (
-    props?: SvgProps,
-    colour?: string,
-    backgroundColour?: string,
+    props?: SvgProps & {colour?: string; background?: string},
   ) => JSX.Element;
 }
 

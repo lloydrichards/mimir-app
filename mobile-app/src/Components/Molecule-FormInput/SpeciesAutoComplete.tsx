@@ -43,29 +43,33 @@ type SpeciesResult = {
     type: PlantTypes;
     id: string;
   };
-  image: any;
+  image?: any;
   common: string;
   description: string;
 };
 const promiseOptions = async (inputValue: string) => {
-  const resp = await index.search(inputValue, {}).then(({hits}) => hits);
-  const result: SpeciesResult[] = resp.slice(0, 6).map((item: any) => ({
-    id: item.objectID,
-    label: item.objectID,
-    value: {
-      family: item.family,
-      genus: item.genus,
-      species: item.species,
-      subspecies: item.subspecies,
-      cultivar: item.cultivar,
-      type: item.type,
+  try {
+    const resp = await index.search(inputValue, {}).then(({hits}) => hits);
+    const result: SpeciesResult[] = resp.slice(0, 6).map((item: any) => ({
       id: item.objectID,
-    },
-    image: item.images[0],
-    common: item.common_name[0],
-    description: item.description,
-  }));
-  return result;
+      label: item.objectID,
+      value: {
+        family: item.family,
+        genus: item.genus,
+        species: item.species,
+        subspecies: item.subspecies,
+        cultivar: item.cultivar,
+        type: item.type,
+        id: item.objectID,
+      },
+      common: item.common_name[0],
+      description: item.description,
+    }));
+    return result;
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
 };
 
 export const SpeciesAutoComplete: React.FC<Props> = ({label, ...props}) => {

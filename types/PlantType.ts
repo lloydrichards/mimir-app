@@ -49,6 +49,7 @@ export type PlantDetailProps = PlantProps & {
   config?: PlantConfig & { id: string };
   aggs?: PlantAggProps & { id: string };
   watering?: WateringProps & { id: string };
+  space?: SpaceType;
 };
 
 export type PlantInput = Omit<
@@ -126,17 +127,17 @@ export type PlantAggProps = {
 };
 
 export type WateringProps = {
-  date_created: FirebaseTimestamp;
+  timestamp: FirebaseTimestamp;
   created_by: UserType;
   space: SpaceType;
-  plant_ids: Array<string>;
-  plants: Array<PlantType>;
+  plant: PlantType;
   fertilizer: boolean;
-  pictures: Array<Picture>;
-  note: Note;
 };
 
-export type WateringInput = Omit<WateringProps, "created_by" | "space">;
+export type WateringInput = Omit<
+  WateringProps,
+  "created_by" | "plant" | "space"
+>;
 
 export type WaterType = {
   id: string;

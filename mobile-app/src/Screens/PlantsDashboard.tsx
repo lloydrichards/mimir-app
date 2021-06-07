@@ -13,17 +13,18 @@ const PlantsDashboard = ({navigation, route}: PlantsNavProps<'Plants'>) => {
   const {userDoc, plantDocs} = useAuth();
 
   return (
-    <Center>
-      <Text style={{fontSize: 20, marginVertical: 16}}>
-        Welcome, {userDoc?.username}!
-      </Text>
-      <Text>Plant Dashboard</Text>
+    <View style={styles.container}>
       <FlatList
         numColumns={2}
-        data={plantDocs}
+        data={plantDocs.sort((a, b) =>
+          a.nickname.localeCompare(b.nickname, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          }),
+        )}
         renderItem={({item}) => (
           <PlantCard
-            plant={item}
+            data={item}
             navigateTo={plant => navigation.navigate('PlantDetails', {plant})}
           />
         )}
@@ -31,10 +32,16 @@ const PlantsDashboard = ({navigation, route}: PlantsNavProps<'Plants'>) => {
       <Button mode="contained" onPress={() => navigation.navigate('AddPlant')}>
         Add Plant
       </Button>
-    </Center>
+    </View>
   );
 };
 
 export default PlantsDashboard;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 8,
+    justifyContent: 'center',
+  },
+});

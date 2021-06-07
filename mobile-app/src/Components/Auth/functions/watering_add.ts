@@ -4,7 +4,7 @@ import {timeFormat, timeParse} from 'd3';
 import {Log} from '@mimir/LogType';
 import {SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
-import {WateringInput, WateringProps} from '@mimir/WateringType';
+import {WateringInput, WateringProps} from '@mimir/PlantType';
 import {UsersCollection, PlantWateringsCollection} from 'src/Services/firebase';
 import {
   spaceRefs,
@@ -12,6 +12,7 @@ import {
   plantRefs,
 } from 'src/Components/Helpers/firestoreUtil';
 import {PlantType} from '@mimir/PlantType';
+import {formatDate} from 'src/Components/Helpers/formatUtil';
 
 export const watering_ADD = (
   user: UserType,
@@ -28,7 +29,7 @@ export const watering_ADD = (
 
   const wateringRef = plantDocRef
     .collection(PlantWateringsCollection)
-    .doc(formatDate(input.date_created.toDate()));
+    .doc(formatDate(input.timestamp.toDate()));
 
   //Log Ref
 
@@ -40,7 +41,7 @@ export const watering_ADD = (
     plant,
   };
   const newLog: Log = {
-    timestamp: input.date_created,
+    timestamp: input.timestamp,
     type: ['WATERING', 'SPACE_UPDATED', 'PLANT_UPDATED'],
     content: {
       water: {
@@ -63,5 +64,3 @@ export const watering_ADD = (
 
   return batch.commit();
 };
-
-export const formatDate = timeFormat('%m-%d-%Y');

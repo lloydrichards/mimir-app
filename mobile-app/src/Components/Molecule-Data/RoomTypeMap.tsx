@@ -12,7 +12,7 @@ import {
   DiningRoomIcon,
   FamilyRoomIcon,
 } from '../Atom-Icons/RoomTypeIcons';
-import { MapProps } from '../Atom-Icons/SmallIcon';
+import {MapProps} from '../Atom-Icons/SmallIcon';
 
 export const RoomTypeMap: Array<
   MapProps & {

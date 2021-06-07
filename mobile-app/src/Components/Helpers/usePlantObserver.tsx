@@ -5,6 +5,7 @@ import {
   PlantProps,
   WateringProps,
 } from '@mimir/PlantType';
+import {SpaceConfigProps} from '@mimir/SpaceType';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import {useEffect, useState} from 'react';
 import {plantRefs, spaceRefs, userRefs} from './firestoreUtil';
@@ -33,11 +34,13 @@ export const usePlantObserver = (
           let config: PlantDetailProps['config'] | undefined = undefined;
           let aggs: PlantDetailProps['aggs'] | undefined = undefined;
           let watering: PlantDetailProps['watering'] | undefined = undefined;
+          let space: PlantDetailProps['space'] | undefined = undefined;
 
           const {
             plantCurrentConfigRef,
             plantLatestAggRef,
             plantLatestWaterRef,
+            plantCurrentSpaceConfigRef,
           } = plantRefs(plant.id);
 
           setPlantDocs(data => {
@@ -111,6 +114,22 @@ export const usePlantObserver = (
               }
             },
             err => console.log(err),
+          );
+          plantCurrentSpaceConfigRef.onSnapshot(
+            spaceSnap => {
+              if (!spaceSnap.empty) {
+                space = (spaceSnap.docs[0].data() as SpaceConfigProps).space;
+                setPlantDocs(data => {
+                  if (data.find(d => d.id === plant.id)) {
+                    const spaceIndex = data.findIndex(d => d.id === plant.id);
+                    const newData = data;
+                    newData[spaceIndex].space = space;
+                    return newData;
+                  } else return data;
+                });
+              }
+            },
+            err => console.log("Plant Current Space: ",err),
           );
         });
       },

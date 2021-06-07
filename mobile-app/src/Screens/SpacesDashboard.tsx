@@ -4,39 +4,42 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import {Button, Text} from 'react-native-paper';
 import {useAuth} from 'src/Components/Auth/Auth';
 import Center from 'src/Components/Molecule-UI/Center';
+import SpaceCard from 'src/Components/Organism-Cards/SpaceCard';
 import {SpaceNavProps} from 'src/Routes/spaceStack';
 
 const SpacesDashboard = ({navigation, route}: SpaceNavProps<'Spaces'>) => {
   const {spaceDocs} = useAuth();
   return (
-    <Center>
+    <View style={styles.container}>
       <Text>Spaces Dashboard</Text>
       <FlatList
         numColumns={2}
-        data={spaceDocs}
-        renderItem={({item}) => {
-          const space: SpaceType = {
-            id: item.id,
-            name: item.name,
-            light_direction: item.light_direction,
-            room_type: item.room_type,
-            thumb: item.picture?.thumb,
-          };
-          return (
-            <Button
-              onPress={() => navigation.navigate('SpaceDetails', {space})}>
-              {item.name}
-            </Button>
-          );
-        }}
+        data={spaceDocs.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, {
+            numeric: true,
+            sensitivity: 'base',
+          }),
+        )}
+        renderItem={({item}) => (
+          <SpaceCard
+            data={item}
+            navigateTo={space => navigation.navigate('SpaceDetails', {space})}
+          />
+        )}
       />
       <Button mode="contained" onPress={() => navigation.navigate('AddSpace')}>
         Add Space
       </Button>
-    </Center>
+    </View>
   );
 };
 
 export default SpacesDashboard;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 8,
+    justifyContent: 'center',
+  },
+});

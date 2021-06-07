@@ -1,5 +1,6 @@
-import { SpaceProps } from "@mimir/SpaceType";
+import { SpaceProps, SpaceType } from "@mimir/SpaceType";
 import * as functions from "firebase-functions";
+import { spaceRefs } from "src/util/firestoreUtil";
 import { initSpaceConfig } from "../docs/space";
 import {
   AdminCollection,
@@ -24,7 +25,16 @@ export const spaceCreated = functions
       return db
         .runTransaction(async (t) => {
           const spaceDoc = (await space.data()) as SpaceProps;
-          t.set(newConfig, initSpaceConfig(timestamp));
+
+          const spaceType: SpaceType = {
+            id: space.id,
+            name: spaceDoc.name,
+            room_type: spaceDoc.room_type,
+            light_direction: spaceDoc.light_direction,
+            thumb: spaceDoc.picture?.thumb || "",
+          };
+          
+          t.set(newConfig, initSpaceConfig(spaceType, timestamp));
 
           const light_direction = {};
           spaceDoc.light_direction.forEach((dir) => {

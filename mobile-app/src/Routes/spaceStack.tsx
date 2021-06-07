@@ -9,6 +9,7 @@ import SignOut from 'src/Components/Auth/SignOut';
 import SpaceDetails from 'src/Screens/SpaceDetails';
 import {SpaceFormScreen} from 'src/Screens/SpaceFormScreen';
 import SpacesDashboard from 'src/Screens/SpacesDashboard';
+import {addPlantRoutes, PlantParamList} from './addPlantRoutes';
 
 export type SpaceStackParamList = {
   Spaces: undefined;
@@ -17,7 +18,7 @@ export type SpaceStackParamList = {
   EditSpace: {data: SpaceProps};
   AddDevice: undefined;
   EditDevice: {data: SpaceProps};
-};
+} & PlantParamList;
 
 export type SpaceNavProps<T extends keyof SpaceStackParamList> = {
   route: RouteProp<SpaceStackParamList, T>;
@@ -46,6 +47,7 @@ export const SpaceRoute = () => {
       <SpaceStack.Screen name="EditSpace" component={SpaceFormScreen} />
       <SpaceStack.Screen name="AddDevice" component={SpaceFormScreen} />
       <SpaceStack.Screen name="EditDevice" component={SpaceFormScreen} />
+      {addPlantRoutes(SpaceStack as any)}
     </SpaceStack.Navigator>
   );
 };

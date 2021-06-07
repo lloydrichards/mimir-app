@@ -1,4 +1,4 @@
-import { SpaceAggProps, SpaceConfigProps } from "@mimir/SpaceType";
+import { SpaceAggProps, SpaceConfigProps, SpaceType } from "@mimir/SpaceType";
 
 export const initSpaceAgg = (
   timestamp: FirebaseFirestore.Timestamp
@@ -32,11 +32,13 @@ export const initSpaceAgg = (
 };
 
 export const initSpaceConfig = (
+  space: SpaceType,
   timestamp: FirebaseFirestore.Timestamp
 ): SpaceConfigProps => {
   return {
     timestamp,
     current: true,
+    space,
     device_ids: [],
     devices: [],
     plant_ids: [],

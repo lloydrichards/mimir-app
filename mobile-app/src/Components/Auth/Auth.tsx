@@ -1,16 +1,20 @@
 import {DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
 import {InspectionInput} from '@mimir/InspectionType';
-import {PlantDetailProps, PlantInput, PlantType} from '@mimir/PlantType';
+import {
+  PlantDetailProps,
+  PlantInput,
+  PlantType,
+  WateringInput,
+} from '@mimir/PlantType';
 import {SpaceDetailProps, SpaceInput, SpaceType} from '@mimir/SpaceType';
 import {UserDetailProps, UserType} from '@mimir/UserType';
-import {WateringInput} from '@mimir/WateringType';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import functions, {
   FirebaseFunctionsTypes,
 } from '@react-native-firebase/functions';
 import React, {useContext, useEffect, useState} from 'react';
 import {ActivityIndicator} from 'react-native-paper';
-import {AuthRoute} from 'src/Routes/authStack';
+import {AuthRoute} from '../../Routes/authStack';
 import {usePlantObserver} from '../Helpers/usePlantObserver';
 import {useSpaceObserver} from '../Helpers/useSpaceObserver';
 import {useUserObserver} from '../Helpers/useUserObserver';

@@ -9,8 +9,7 @@ import {
   Roles,
   Temperature,
 } from "./GenericType";
-import { PlantProps, PlantType } from "./PlantType";
-import { DailyProps } from "./ReadingType";
+import { PlantType } from "./PlantType";
 import { ExposureTypes } from "./SpeciesType";
 
 export type SpaceProps = {
@@ -71,6 +70,7 @@ export type LightType = "S" | "SE" | "E" | "NE" | "N" | "NW" | "W" | "SW";
 export type SpaceConfigProps = {
   timestamp: FirebaseTimestamp;
   current: boolean;
+  space: SpaceType;
   device_ids: Array<string>;
   devices: Array<DeviceType>;
   plant_ids: Array<string>;

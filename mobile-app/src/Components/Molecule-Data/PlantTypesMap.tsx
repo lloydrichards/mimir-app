@@ -1,5 +1,5 @@
 import {PlantTypes} from '@mimir/PlantType';
-import { SvgProps } from 'react-native-svg';
+import {SvgProps} from 'react-native-svg';
 import {
   AnnualIcon,
   AquaticIcon,
@@ -20,43 +20,37 @@ import {
   SemiEvergreenIcon,
   UnknownPlantIcon,
 } from '../Atom-Icons/PlantTypes/SmallPlantIcons';
+import {MapProps} from '../Atom-Icons/SmallIcon';
 
-export const PlantTypesMap: Array<{
-  id: PlantTypes;
-  icon: (
-    props?:
-      | (SvgProps & {
-          colour?: string | undefined;
-          backgroundColor?: string | undefined;
-        })
-      | undefined,
-  ) => JSX.Element;
-  name: string;
-}> = [
-  {id: 'GRASS', icon: GrassIcon, name: 'Grass'},
-  {id: 'CLIMBER', icon: ClimberIcon, name: 'Climber'},
-  {id: 'CACTI', icon: CactiIcon, name: 'Cacti'},
-  {id: 'BAMBOO', icon: BambooIcon, name: 'Bamboo'},
-  {id: 'GROUND_COVER', icon: GroundCoverIcon, name: 'Ground Cover'},
-  {id: 'ANNUAL', icon: AnnualIcon, name: 'Annual'},
-  {id: 'HERBACEOUS', icon: HerbaceousIcon, name: 'Herbaceous'},
+export const PlantTypesMap: Array<
+  MapProps & {
+    id: PlantTypes;
+  }
+> = [
+  {id: 'GRASS', icon: GrassIcon, field: 'Grass'},
+  {id: 'CLIMBER', icon: ClimberIcon, field: 'Climber'},
+  {id: 'CACTI', icon: CactiIcon, field: 'Cacti'},
+  {id: 'BAMBOO', icon: BambooIcon, field: 'Bamboo'},
+  {id: 'GROUND_COVER', icon: GroundCoverIcon, field: 'Ground Cover'},
+  {id: 'ANNUAL', icon: AnnualIcon, field: 'Annual'},
+  {id: 'HERBACEOUS', icon: HerbaceousIcon, field: 'Herbaceous'},
   {
     id: 'BROADLEAF_EVERGREEN',
     icon: BroadleafEvergreenIcon,
-    name: 'Broadleaf Evergreen',
+    field: 'Broadleaf Evergreen',
   },
-  {id: 'DECIDUOUS_SHRUB', icon: DeciduousShrubIcon, name: 'Deciduous Shrub'},
+  {id: 'DECIDUOUS_SHRUB', icon: DeciduousShrubIcon, field: 'Deciduous Shrub'},
   {
     id: 'PERENNIAL_FLOWER',
     icon: PerennialFlowerIcon,
-    name: 'Perennial Flower',
+    field: 'Perennial Flower',
   },
-  {id: 'BONSAI', icon: BonsaiIcon, name: 'Bonsai'},
-  {id: 'SEMI_EVERGREEN', icon: SemiEvergreenIcon, name: 'Semi Evergreen'},
-  {id: 'FERN', icon: FernIcon, name: 'Fern'},
-  {id: 'PALM', icon: PalmIcon, name: 'Palm'},
-  {id: 'DECIDUOUS_TREE', icon: DeciduousTreeIcon, name: 'Deciduous Tree'},
-  {id: 'CONIFER', icon: ConiferIcon, name: 'Conifer'},
-  {id: 'AQUATIC', icon: AquaticIcon, name: 'Aquatic'},
-  {id: 'UNKNOWN', icon: UnknownPlantIcon, name: 'Unknown'},
+  {id: 'BONSAI', icon: BonsaiIcon, field: 'Bonsai'},
+  {id: 'SEMI_EVERGREEN', icon: SemiEvergreenIcon, field: 'Semi Evergreen'},
+  {id: 'FERN', icon: FernIcon, field: 'Fern'},
+  {id: 'PALM', icon: PalmIcon, field: 'Palm'},
+  {id: 'DECIDUOUS_TREE', icon: DeciduousTreeIcon, field: 'Deciduous Tree'},
+  {id: 'CONIFER', icon: ConiferIcon, field: 'Conifer'},
+  {id: 'AQUATIC', icon: AquaticIcon, field: 'Aquatic'},
+  {id: 'UNKNOWN', icon: UnknownPlantIcon, field: 'Unknown'},
 ];
