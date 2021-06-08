@@ -1,24 +1,29 @@
-import {PlantInput, PlantProps, PlantType, SpeciesType} from '@mimir/PlantType';
+import {
+  OriginTypes,
+  PlantInput,
+  PlantProps,
+  PlantType,
+  PotType,
+  PotTypes,
+} from '@mimir/PlantType';
+import {SpaceType} from '@mimir/SpaceType';
 import {InputStyles} from '@styles/GlobalStyle';
 import {Field, Formik} from 'formik';
 import * as React from 'react';
 import {Alert, ScrollView, View} from 'react-native';
 import {Button, Text} from 'react-native-paper';
-import {OptionItem, OptionPicker} from '../Atom-Inputs/OptionPicker';
-import {SpeciesAutoComplete} from '../Molecule-FormInput/SpeciesAutoComplete';
-import {TextInput} from '../Atom-Inputs/TextInput';
-import {FormTypeMap} from '../Molecule-Data/FormTypeMap';
-import {useAuth} from '../Auth/Auth';
 import * as yup from 'yup';
-import {FormTypes} from '@mimir/SpeciesType';
-import {SpaceType} from '@mimir/SpaceType';
-import SearchInput from '../Atom-Inputs/SearchInput';
-import {ItemValue} from '@react-native-picker/picker/typings/Picker';
+import {OptionItem, OptionPicker} from '../Atom-Inputs/OptionPicker';
+import {TextInput} from '../Atom-Inputs/TextInput';
+import {useAuth} from '../Auth/Auth';
+import {FormTypeMap} from '../Molecule-Data/FormTypeMap';
+import {OriginTypesMap} from '../Molecule-Data/OriginTypesMap';
+import {SpeciesAutoComplete} from '../Molecule-FormInput/SpeciesAutoComplete';
 
 const validationSchema = yup.object({
   nickname: yup.string().required(),
   description: yup.string(),
-  form: yup.string().required(),
+  origin: yup.string().required(),
   parent: yup
     .object({
       id: yup.string(),
@@ -76,7 +81,7 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
             const input: PlantInput = {
               nickname: data.nickname,
               description: data.description,
-              form: data.form,
+              origin: data.origin,
               picture: data.picture,
               parent: data.parent,
               species: data.species,
@@ -86,8 +91,15 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
                 id: currentUser?.uid || '',
               },
             };
-            console.log(data);
-            const newPlant = await plant.add(space, input);
+
+            const defaultPot: PotType = {
+              hanging: false,
+              size: 1,
+              tray: true,
+              type: 'TERRACOTTA',
+            };
+
+            const newPlant = await plant.add(space, input, defaultPot);
             resetForm();
             onComplete(newPlant);
           } catch (error) {
@@ -102,7 +114,7 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
         initialValues={{
           nickname: edit?.nickname || '',
           description: edit?.description || '',
-          form: edit?.form || ('' as FormTypes),
+          origin: edit?.origin || ('UNKNOWN' as OriginTypes),
           parent: edit?.parent || null,
           picture: edit?.picture || null,
           space: null,
@@ -167,9 +179,9 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
               placeholder="Plant's description..."
               component={TextInput}
             />
-            <Field name="form" label="Plant form" component={OptionPicker}>
-              {FormTypeMap.map(d => (
-                <OptionItem key={d.id} value={d.id} label={d.name} />
+            <Field name="origin" label="Plant Origin" component={OptionPicker}>
+              {OriginTypesMap.map(d => (
+                <OptionItem key={d.id} value={d.id} label={d.field} />
               ))}
             </Field>
 

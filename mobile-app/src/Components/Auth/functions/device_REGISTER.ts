@@ -1,17 +1,14 @@
-import firestore from '@react-native-firebase/firestore';
-
-import {timestamp} from '../../../Services/firebase';
+import {DeviceProps, DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
 import {Log} from '@mimir/LogType';
-import {PlantInput, PlantProps, PlantType} from '@mimir/PlantType';
 import {SpaceConfigProps, SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
+import firestore from '@react-native-firebase/firestore';
 import {
-  userRefs,
-  spaceRefs,
-  newPlantRefs,
   deviceRefs,
+  spaceRefs,
+  userRefs,
 } from 'src/Components/Helpers/firestoreUtil';
-import {DeviceProps, DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
+import {timestamp} from '../../../Services/firebase';
 
 export const device_REGISTER = async (
   user: UserType,

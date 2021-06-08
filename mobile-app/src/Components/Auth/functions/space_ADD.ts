@@ -19,18 +19,23 @@ export const space_ADD = (user: UserType, input: SpaceInput) => {
   const {userNewLogRef} = userRefs(user.id);
   const {newSpaceDocRef, spaceNewLogRef} = newSpaceRefs();
 
+  const space: SpaceType = {
+    id: newSpaceDocRef.id,
+    name: input.name,
+    room_type: input.room_type,
+    light_direction: input.light_direction,
+  };
+
+  if (input.picture) {
+    space.thumb = input.picture.thumb;
+  }
+
   const log: Log = {
     timestamp,
     type: ['SPACE_CREATED', 'USER_UPDATED'],
     content: {
       user,
-      space: {
-        id: newSpaceDocRef.id,
-        name: input.name,
-        light_direction: input.light_direction,
-        room_type: input.room_type,
-        thumb: input.picture?.thumb || '',
-      },
+      space,
     },
   };
   const newSpace: SpaceProps = {
@@ -49,15 +54,10 @@ export const space_ADD = (user: UserType, input: SpaceInput) => {
       return batch.commit();
     })
     .then(() => {
-      const space: SpaceType = {
-        id: newSpaceDocRef.id,
-        name: input.name,
-        room_type: input.room_type,
-        light_direction: input.light_direction,
-      };
-      if (input.picture) {
-        space.thumb = input.picture.thumb;
-      }
+      // --------------------------
+      // TODO: Add Google Analytics Event here
+      // --------------------------
+
       return space;
     });
 };

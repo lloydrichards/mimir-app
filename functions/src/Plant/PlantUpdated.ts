@@ -82,18 +82,18 @@ export const plantUpdated = functions
 
         type: {
           [plantBefore.species.type || "UNDEFINED"]: increment(
-            plantBefore.form === plantAfter.form ? 0 : -1
+            plantBefore.species.type === plantAfter.species.type ? 0 : -1
           ),
           [plantAfter.species.type || "UNDEFINED"]: increment(
-            plantBefore.form === plantAfter.form ? 0 : 1
+            plantBefore.species.type === plantAfter.species.type ? 0 : 1
           ),
         },
-        form: {
-          [plantBefore.form || "UNDEFINED"]: increment(
-            plantBefore.form === plantAfter.form ? 0 : -1
+        origin: {
+          [plantBefore.origin || "UNDEFINED"]: increment(
+            plantBefore.origin === plantAfter.origin ? 0 : -1
           ),
-          [plantAfter.form || "UNDEFINED"]: increment(
-            plantBefore.form === plantAfter.form ? 0 : 1
+          [plantAfter.origin || "UNDEFINED"]: increment(
+            plantBefore.origin === plantAfter.origin ? 0 : 1
           ),
         },
         genus: {

@@ -1,6 +1,6 @@
-import { PotType } from '@mimir/PlantType';
+import { PotTypes } from '@mimir/PlantType';
 
-export const PotTypeMap: Array<{ id: PotType; name: string }> = [
+export const PotTypeMap: Array<{ id: PotTypes; name: string }> = [
   { id: 'TERRACOTTA', name: 'Terracotta' },
   { id: 'WOODEN', name: 'Wooden' },
   { id: 'METAL', name: 'Metal' },

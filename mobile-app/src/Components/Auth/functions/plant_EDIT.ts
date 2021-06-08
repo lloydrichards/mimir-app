@@ -24,7 +24,7 @@ export const plant_EDIT = (
   const {plantDocRef, plantNewLogRef} = plantRefs(plant.id);
   const newLog: Log = {
     timestamp,
-    type: ['PLANT_UPDATED'],
+    type: ['PLANT_UPDATED', 'USER_UPDATED', 'SPACE_UPDATED'],
     content: {
       user,
       space,

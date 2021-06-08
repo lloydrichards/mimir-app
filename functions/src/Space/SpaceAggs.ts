@@ -13,11 +13,7 @@ import {
 } from "../util/aggHelpers";
 import { calcNewEnvironment } from "../util/dailyRecalc";
 
-export const calcSpaceAgg = (
-  doc: SpaceAggProps,
-  log: Log,
-  space_id: string
-) => {
+const calcSpaceAgg = (doc: SpaceAggProps, log: Log, space_id: string) => {
   const { content, type } = log;
   const newAgg: SpaceAggProps = {
     ...doc,

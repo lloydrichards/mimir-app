@@ -1,10 +1,12 @@
 import {DeviceRegisterInput, DeviceType} from '@mimir/DeviceType';
-import {InspectionInput} from '@mimir/InspectionType';
 import {
+  InspectionType,
   PlantDetailProps,
   PlantInput,
   PlantType,
+  PotType,
   WateringInput,
+  WaterType,
 } from '@mimir/PlantType';
 import {SpaceDetailProps, SpaceInput, SpaceType} from '@mimir/SpaceType';
 import {UserDetailProps, UserType} from '@mimir/UserType';
@@ -21,13 +23,14 @@ import {useUserObserver} from '../Helpers/useUserObserver';
 import Center from '../Molecule-UI/Center';
 import {device_MOVE} from './functions/device_MOVE';
 import {device_REGISTER} from './functions/device_REGISTER';
-import {inspection_ADD} from './functions/inspection_ADD';
 import {plant_ADD} from './functions/plant_ADD';
 import {plant_EDIT} from './functions/plant_EDIT';
+import {plant_INSPECT} from './functions/plant_INSPECT';
 import {plant_MOVE} from './functions/plant_MOVE';
 import {space_ADD} from './functions/space_ADD';
 import {space_EDIT} from './functions/space_EDIT';
-import {watering_ADD} from './functions/watering_add';
+import {watering_ADD} from './functions/plant_WATER';
+import {plant_HAPPINESS} from './functions/plant_HAPPINESS';
 
 type ContextProps = {
   currentUser: FirebaseAuthTypes.User | null;
@@ -43,7 +46,11 @@ type ContextProps = {
     password: string,
   ) => Promise<FirebaseAuthTypes.UserCredential>;
   plant: {
-    add: (space: SpaceType, input: PlantInput) => Promise<PlantType>;
+    add: (
+      space: SpaceType,
+      input: PlantInput,
+      pot: PotType,
+    ) => Promise<PlantType>;
     edit: (
       space: SpaceType,
       plant: PlantType,
@@ -53,8 +60,18 @@ type ContextProps = {
       space: SpaceType,
       plant: PlantType,
       input: WateringInput,
-    ) => Promise<void>;
+    ) => Promise<WaterType>;
     move: (plant: PlantType, toSpace: SpaceType) => Promise<PlantType>;
+    inspect: (
+      plant: PlantType,
+      space: SpaceType,
+      inspection: InspectionType,
+    ) => Promise<InspectionType>;
+    happiness: (
+      plant: PlantType,
+      space: SpaceType,
+      happiness: number,
+    ) => Promise<InspectionType>;
   };
   space: {
     add: (input: SpaceInput) => Promise<SpaceType>;
@@ -72,11 +89,6 @@ type ContextProps = {
     space_id: string,
     token: string,
   ) => Promise<FirebaseFunctionsTypes.HttpsCallableResult>;
-  addInspection: (
-    space: SpaceType,
-    plant: PlantType,
-    input: InspectionInput,
-  ) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   authenticated: boolean;
 };
@@ -99,71 +111,80 @@ export const AuthProvider = ({children}: any) => {
     username: userDoc?.username || '',
   };
 
-  const signUp = (email: string, password: string) => {
-    return auth().createUserWithEmailAndPassword(email, password);
-  };
+  // -------------
+  // Auth Functions
+  // -------------
+  const signUp = (email: string, password: string) =>
+    auth().createUserWithEmailAndPassword(email, password);
 
-  const login = (email: string, password: string) => {
-    return auth().signInWithEmailAndPassword(email, password);
-  };
+  const login = (email: string, password: string) =>
+    auth().signInWithEmailAndPassword(email, password);
 
-  const movePlant = (plant: PlantType, toSpace: SpaceType) => {
-    return plant_MOVE(user, plant, toSpace);
-  };
-  const moveDevice = (device: DeviceType, toSpace: SpaceType) => {
-    return device_MOVE(user, device, toSpace);
-  };
-  const inviteToSpace = (from: string, space_id: string, token: string) => {
-    return functions().httpsCallable('InviteSpace')({from, space_id, token});
-  };
+  const resetPassword = (email: string) => auth().sendPasswordResetEmail(email);
 
-  const addInspection = (
-    space: SpaceType,
-    plant: PlantType,
-    input: InspectionInput,
-  ) => {
-    return inspection_ADD(user, space, plant, input);
-  };
-
-  const addWatering = (
-    space: SpaceType,
-    plant: PlantType,
-    input: WateringInput,
-  ) => {
-    return watering_ADD(user, space, plant, input);
-  };
+  // -------------
+  // Plant Functions
+  // -------------
+  const addPlant = (space: SpaceType, input: PlantInput, pot: PotType) =>
+    plant_ADD(user, space, input, pot);
 
   const editPlant = (
     space: SpaceType,
     plant: PlantType,
     edit: Partial<PlantInput>,
-  ) => {
-    return plant_EDIT(user, space, plant, edit);
-  };
+  ) => plant_EDIT(user, space, plant, edit);
 
-  const addSpace = (input: SpaceInput) => {
-    return space_ADD(user, input);
-  };
+  const addWatering = (
+    space: SpaceType,
+    plant: PlantType,
+    input: WateringInput,
+  ) => watering_ADD(user, space, plant, input);
 
-  const addPlant = (space: SpaceType, input: PlantInput) => {
-    return plant_ADD(user, space, input);
-  };
+  const addInspection = (
+    plant: PlantType,
+    space: SpaceType,
+    inspection: InspectionType,
+  ) => plant_INSPECT(user, plant, space, inspection);
 
-  const registerDevice = (space: SpaceType, input: DeviceRegisterInput) => {
-    return device_REGISTER(user, space, input);
-  };
+  const addPlantHappiness = (
+    plant: PlantType,
+    space: SpaceType,
+    happiness: number,
+  ) => plant_HAPPINESS(user, plant, space, happiness);
 
-  const editSpace = (space: SpaceType, edit: Partial<SpaceInput>) => {
-    return space_EDIT(user, space, edit);
-  };
+  const movePlant = (plant: PlantType, toSpace: SpaceType) =>
+    plant_MOVE(user, plant, toSpace);
 
-  const resetPassword = (email: string) => {
-    return auth().sendPasswordResetEmail(email);
-  };
+  // -------------
+  // Space Functions
+  // -------------
+  const addSpace = (input: SpaceInput) => space_ADD(user, input);
+
+  const editSpace = (space: SpaceType, edit: Partial<SpaceInput>) =>
+    space_EDIT(user, space, edit);
+
+  const inviteToSpace = (from: string, space_id: string, token: string) =>
+    functions().httpsCallable('InviteSpace')({from, space_id, token});
+
+  // -------------
+  // Device Functions
+  // -------------
+  const registerDevice = (space: SpaceType, input: DeviceRegisterInput) =>
+    device_REGISTER(user, space, input);
+
+  const moveDevice = (device: DeviceType, toSpace: SpaceType) =>
+    device_MOVE(user, device, toSpace);
+
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(
       (user: FirebaseAuthTypes.User | null) => {
         setCurrentUser(user);
+
+        // --------------------------
+        // TODO: Set Google Analytics Audience here
+        // TODO: Add Google Analytics Event here
+        // --------------------------
+
         initializing && setInitializing(false);
       },
     );
@@ -192,6 +213,8 @@ export const AuthProvider = ({children}: any) => {
           edit: editPlant,
           move: movePlant,
           water: addWatering,
+          inspect: addInspection,
+          happiness: addPlantHappiness,
         },
         space: {
           add: addSpace,
@@ -202,7 +225,6 @@ export const AuthProvider = ({children}: any) => {
           register: registerDevice,
         },
         inviteToSpace,
-        addInspection,
         authenticated: currentUser !== null,
       }}>
       {currentUser ? children : <AuthRoute />}

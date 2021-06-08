@@ -7,7 +7,7 @@ const stats = db.collection(AdminCollection).doc("--plants stats--");
 
 export const plantCreated = functions
   .region("europe-west1")
-  .firestore.document("mimirPlants/{plant_id}")
+  .firestore.document("Plants/{plant_id}")
   .onCreate((plant) => {
     const plantDoc = plant.data() as PlantProps;
     return stats.set(
@@ -18,8 +18,8 @@ export const plantCreated = functions
         type: {
           [plantDoc.species.type]: increment(1),
         },
-        form: {
-          [plantDoc.form]: increment(1),
+        origin: {
+          [plantDoc.origin]: increment(1),
         },
         family: {
           [plantDoc.species.family]: increment(1),

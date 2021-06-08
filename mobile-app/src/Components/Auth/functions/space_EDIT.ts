@@ -13,13 +13,12 @@ export const space_EDIT = (
 ) => {
   const batch = firestore().batch();
 
-  //Set Refs
   //Doc Refs
   const {userNewLogRef} = userRefs(user.id);
   const {spaceDocRef, spaceNewLogRef} = spaceRefs(space.id);
   const newLog: Log = {
     timestamp,
-    type: ['PLANT_UPDATED'],
+    type: ['SPACE_UPDATED', 'USER_UPDATED'],
     content: {
       user,
       space,

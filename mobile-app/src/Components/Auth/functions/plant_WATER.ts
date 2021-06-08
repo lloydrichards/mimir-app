@@ -4,7 +4,7 @@ import {timeFormat, timeParse} from 'd3';
 import {Log} from '@mimir/LogType';
 import {SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
-import {WateringInput, WateringProps} from '@mimir/PlantType';
+import {WateringInput, WateringProps, WaterType} from '@mimir/PlantType';
 import {UsersCollection, PlantWateringsCollection} from 'src/Services/firebase';
 import {
   spaceRefs,
@@ -31,8 +31,6 @@ export const watering_ADD = (
     .collection(PlantWateringsCollection)
     .doc(formatDate(input.timestamp.toDate()));
 
-  //Log Ref
-
   //new Documents
   const newWateringDoc: WateringProps = {
     ...input,
@@ -40,18 +38,29 @@ export const watering_ADD = (
     space,
     plant,
   };
+
+  const water: WaterType = {
+    id: wateringRef.id,
+    created_by: user,
+    fertilizer: input.fertilizer,
+  };
   const newLog: Log = {
     timestamp: input.timestamp,
-    type: ['WATERING', 'SPACE_UPDATED', 'PLANT_UPDATED'],
+    type: [
+      'WATERING_CREATED',
+      'SPACE_UPDATED',
+      'PLANT_UPDATED',
+      'USER_UPDATED',
+    ],
     content: {
+      user,
+      space,
+      plant,
       water: {
         id: wateringRef.id,
         created_by: user,
         fertilizer: input.fertilizer,
       },
-      space,
-      user,
-      plant,
     },
   };
 
@@ -62,5 +71,10 @@ export const watering_ADD = (
   batch.set(spaceNewLogRef, newLog);
   batch.set(plantNewLogRef, newLog);
 
-  return batch.commit();
+  return batch.commit().then(() => {
+    // --------------------------
+    // TODO: Add Google Analytics Event here
+    // --------------------------
+    return water;
+  });
 };

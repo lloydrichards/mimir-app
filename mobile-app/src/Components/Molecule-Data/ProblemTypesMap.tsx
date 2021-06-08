@@ -1,4 +1,4 @@
-import { ProblemTypes } from '@mimir/InspectionType';
+import { ProblemTypes } from "@mimir/PlantType";
 
 export const PromblemTypesMap: Array<{ id: ProblemTypes; name: string }> = [
   { id: 'LEAF_WILTED', name: 'Wilted Leaves' },

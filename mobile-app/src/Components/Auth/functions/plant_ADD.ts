@@ -2,7 +2,14 @@ import firestore from '@react-native-firebase/firestore';
 
 import {timestamp} from '../../../Services/firebase';
 import {Log} from '@mimir/LogType';
-import {PlantInput, PlantProps, PlantType} from '@mimir/PlantType';
+import {
+  PlantConfig,
+  PlantInput,
+  PlantProps,
+  PlantType,
+  PotType,
+  PotTypes,
+} from '@mimir/PlantType';
 import {SpaceConfigProps, SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
 import {
@@ -15,13 +22,14 @@ export const plant_ADD = (
   user: UserType,
   space: SpaceType,
   input: PlantInput,
+  pot: PotType,
 ) => {
   //Dco Refs
   const {userNewLogRef} = userRefs(user.id);
   const {spaceNewLogRef, spaceCurrentConfigRef, spaceNewConfigRef} = spaceRefs(
     space.id,
   );
-  const {newPlantDocRef, plantNewLogRef} = newPlantRefs();
+  const {newPlantDocRef, plantNewLogRef, plantNewConfigRef} = newPlantRefs();
 
   const newLog: Log = {
     timestamp,
@@ -36,6 +44,13 @@ export const plant_ADD = (
         botanical_name: input.species.id,
       },
     },
+  };
+
+  const plant: PlantType = {
+    id: newPlantDocRef.id,
+    botanical_name: input.species.id,
+    nickname: input.nickname,
+    type: input.species.type,
   };
 
   return firestore()
@@ -65,7 +80,7 @@ export const plant_ADD = (
         date_modified: null,
         alive: true,
         description: input.description,
-        form: input.form,
+        origin: input.origin,
         owner: input.owner,
         parent: input.parent ? input.parent : null,
         picture: input.picture,
@@ -83,15 +98,30 @@ export const plant_ADD = (
 
       currentConfigDoc.docs.forEach(doc => t.update(doc.ref, {current: false}));
     })
-    .then(() => plantNewLogRef.set(newLog))
     .then(() => {
-      const plant: PlantType = {
-        id: newPlantDocRef.id,
-        botanical_name: input.species.id,
-        nickname: input.nickname,
-        type: input.species.type,
-      };
+      // --------------------------
+      // TODO: Add Google Analytics Event here
+      // --------------------------
 
-      return plant;
-    });
+      return Promise.all([
+        plantNewLogRef.set(newLog),
+        plantNewConfigRef.set(initPlantConfig(plant, pot)),
+      ]);
+    })
+    .then(() => plant);
 };
+
+const initPlantConfig = (plant: PlantType, pot: PotType): PlantConfig => ({
+  current: true,
+  timestamp,
+  flowering: false,
+  fruiting: false,
+  leafing: false,
+  root_bound: false,
+  happiness: 0,
+  health: 0,
+  pests: [],
+  problems: [],
+  pot,
+  plant,
+});

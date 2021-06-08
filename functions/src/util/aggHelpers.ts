@@ -13,6 +13,17 @@ export const calcSpaceTotal = (doc: UserAggProps, type: Array<LogTypes>) => {
 
   return +total;
 };
+export const calcChildrenTotal = (
+  doc: PlantAggProps,
+  type: Array<LogTypes>
+) => {
+  const total = type.includes("PLANT_CUTTING")
+    ? doc.children_total + 1
+    : doc.children_total;
+
+  return +total;
+};
+
 export const calcPlantTotal = (
   doc: UserAggProps | SpaceAggProps,
   type: Array<LogTypes>,
@@ -42,6 +53,7 @@ export const calcPlantTotal = (
 
   return +total;
 };
+
 export const calcDeadTotal = (
   doc: UserAggProps | SpaceAggProps,
   type: Array<LogTypes>
@@ -52,6 +64,7 @@ export const calcDeadTotal = (
 
   return +total;
 };
+
 export const calcPointTotal = (
   doc: UserAggProps,
   type: Array<LogTypes>,
@@ -80,8 +93,10 @@ export const calcInspectionsTotal = (
   doc: SpaceAggProps | PlantAggProps,
   type: Array<LogTypes>
 ) => {
-  const total = type.includes("INSPECTION")
+  const total = type.includes("INSPECTION_CREATED")
     ? doc.inspection_total + 1
+    : type.includes("INSPECTION_DELETED")
+    ? doc.inspection_total - 1
     : doc.inspection_total;
 
   return +total;
@@ -90,8 +105,10 @@ export const calcWateringsTotal = (
   doc: SpaceAggProps | PlantAggProps,
   type: Array<LogTypes>
 ) => {
-  const total = type.includes("WATERING")
+  const total = type.includes("WATERING_CREATED")
     ? doc.watering_total + 1
+    : type.includes("WATERING_DELETED")
+    ? doc.watering_total - 1
     : doc.watering_total;
 
   return +total;
@@ -102,9 +119,62 @@ export const calcFertilizerTotal = (
   content: Partial<Log["content"]>
 ) => {
   const total =
-    type.includes("WATERING") && content.water.fertilizer
+    type.includes("WATERING_CREATED") && content.water.fertilizer
       ? doc.watering_total + 1
-      : doc.watering_total;
+      : type.includes("WATERING_DELETED") && content.water.fertilizer
+      ? doc.watering_total - 1
+      : type.includes("WATERING_UPDATED") &&
+        content.water.fertilizer &&
+        content.oldWater;
+
+  //TODO: WATER_UPDATED
+
+  return +total;
+};
+
+export const calcHappinessTotal = (
+  doc: PlantAggProps,
+  type: Array<LogTypes>,
+  content: Partial<Log["content"]>
+) => {
+  const total =
+    type.includes("INSPECTION_CREATED") &&
+    content.inspection &&
+    content.oldInspection
+      ? doc.happiness_total + content.inspection.happiness
+      : type.includes("INSPECTION_DELETED") &&
+        content.inspection &&
+        content.oldInspection
+      ? doc.happiness_total - content.inspection.happiness
+      : type.includes("INSPECTION_UPDATED")
+      ? doc.happiness_total +
+        (content.inspection.happiness - content.oldInspection.happiness)
+      : doc.happiness_total;
+
+  //TODO:INSPECTION_UPDATED
+
+  return +total;
+};
+export const calcHealthTotal = (
+  doc: PlantAggProps,
+  type: Array<LogTypes>,
+  content: Partial<Log["content"]>
+) => {
+  const total =
+    type.includes("INSPECTION_CREATED") &&
+    content.inspection &&
+    content.oldInspection
+      ? doc.health_total + content.inspection.health
+      : type.includes("INSPECTION_DELETED") &&
+        content.inspection &&
+        content.oldInspection
+      ? doc.health_total - content.inspection.health
+      : type.includes("INSPECTION_UPDATED")
+      ? doc.health_total +
+        (content.inspection.health - content.oldInspection.health)
+      : doc.health_total;
+
+  //TODO:INSPECTION_UPDATED
 
   return +total;
 };

@@ -1,20 +1,14 @@
-import {Log} from '@mimir/LogType';
-import {PlantType} from '@mimir/PlantType';
 import {DeviceType} from '@mimir/DeviceType';
+import {Log} from '@mimir/LogType';
 import {SpaceConfigProps, SpaceProps, SpaceType} from '@mimir/SpaceType';
 import {UserType} from '@mimir/UserType';
 import firestore from '@react-native-firebase/firestore';
 import {
   deviceRefs,
-  plantRefs,
   spaceRefs,
   userRefs,
 } from 'src/Components/Helpers/firestoreUtil';
-import {
-  SpaceLogsCollection,
-  SpacesCollection,
-  timestamp,
-} from '../../../Services/firebase';
+import {timestamp} from '../../../Services/firebase';
 
 export const device_MOVE = (
   user: UserType,
