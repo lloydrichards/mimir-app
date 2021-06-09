@@ -9,11 +9,19 @@ interface Props {
   icon: JSX.Element;
   selected: boolean;
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
-const IconSwitch: React.FC<Props> = ({onPress, icon, selected, style}) => {
+const IconSwitch: React.FC<Props> = ({
+  onPress,
+  icon,
+  selected,
+  disabled,
+  style,
+}) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={{
         ...styles.button,
         backgroundColor: selected ? COLOUR_SUBTLE : COLOUR_LIGHT,

@@ -9,7 +9,7 @@ import {
   SouthwestIcon,
   WestIcon,
 } from '../Atom-Icons/LightDirection/SmallLightIcons';
-import { MapProps } from '../Atom-Icons/SmallIcon';
+import { MapProps } from '../Atom-Icons/BaseIcons';
 
 export const LightDirectionMap: Array<MapProps & {id: LightType}> = [
   {id: 'S', icon: SouthIcon, field: 'South'},

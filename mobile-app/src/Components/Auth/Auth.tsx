@@ -30,7 +30,7 @@ import {plant_MOVE} from './functions/plant_MOVE';
 import {space_ADD} from './functions/space_ADD';
 import {space_EDIT} from './functions/space_EDIT';
 import {watering_ADD} from './functions/plant_WATER';
-import {plant_HAPPINESS} from './functions/plant_HAPPINESS';
+import {plant_MOOD} from './functions/plant_MOOD';
 
 type ContextProps = {
   currentUser: FirebaseAuthTypes.User | null;
@@ -67,10 +67,13 @@ type ContextProps = {
       space: SpaceType,
       inspection: InspectionType,
     ) => Promise<InspectionType>;
-    happiness: (
+    mood: (
       plant: PlantType,
       space: SpaceType,
-      happiness: number,
+      data: {
+        happiness: number;
+        health: number;
+      },
     ) => Promise<InspectionType>;
   };
   space: {
@@ -146,11 +149,18 @@ export const AuthProvider = ({children}: any) => {
     inspection: InspectionType,
   ) => plant_INSPECT(user, plant, space, inspection);
 
-  const addPlantHappiness = (
+  const addPlantMood = (
     plant: PlantType,
     space: SpaceType,
-    happiness: number,
-  ) => plant_HAPPINESS(user, plant, space, happiness);
+    data: {
+      happiness: number;
+      health: number;
+    },
+  ) =>
+    plant_MOOD(user, plant, space, {
+      happiness: data.happiness,
+      health: data.health,
+    });
 
   const movePlant = (plant: PlantType, toSpace: SpaceType) =>
     plant_MOVE(user, plant, toSpace);
@@ -214,7 +224,7 @@ export const AuthProvider = ({children}: any) => {
           move: movePlant,
           water: addWatering,
           inspect: addInspection,
-          happiness: addPlantHappiness,
+          mood: addPlantMood,
         },
         space: {
           add: addSpace,

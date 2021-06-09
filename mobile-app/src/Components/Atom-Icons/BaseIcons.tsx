@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, {Path, Rect, SvgProps} from 'react-native-svg';
 import {COLOUR_DARK, COLOUR_FLUFF} from '../../Styles/Colours';
-import {FeatherIconProps} from '../../Styles/Icons';
+import {MediumFeatherIconProps, SmallFeatherIconProps} from '../../Styles/Icons';
 
 export interface MapProps {
   id: string;
@@ -28,7 +28,24 @@ export const SmallIcon =
           <Path
             key={i}
             d={d}
-            {...FeatherIconProps}
+            {...SmallFeatherIconProps}
+            stroke={props?.colour || COLOUR_DARK}
+          />
+        ))}
+      </Svg>
+    );
+  };
+
+  export const MediumIcon =
+  (ds: string[]) =>
+  (props?: SvgProps & {colour?: string; background?: string}) => {
+    return (
+      <Svg width={44} height={44} viewBox="0 0 44 44" {...props}>
+        {ds.map((d, i) => (
+          <Path
+            key={i}
+            d={d}
+            {...MediumFeatherIconProps}
             stroke={props?.colour || COLOUR_DARK}
           />
         ))}

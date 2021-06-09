@@ -10,11 +10,14 @@ import {
 } from 'src/Components/Helpers/firestoreUtil';
 import {timestamp} from '../../../Services/firebase';
 
-export const plant_HAPPINESS = async (
+export const plant_MOOD = async (
   user: UserType,
   plant: PlantType,
   space: SpaceType,
-  happiness: number,
+  data: {
+    happiness: number;
+    health: number;
+  },
 ) => {
   const {userNewLogRef} = userRefs(user.id);
   const {plantNewLogRef, plantCurrentConfigRef, plantNewConfigRef} = plantRefs(
@@ -30,8 +33,8 @@ export const plant_HAPPINESS = async (
     fruiting: currentPlantConfigDoc.fruiting,
     leafing: currentPlantConfigDoc.leafing,
     root_bound: currentPlantConfigDoc.root_bound,
-    health: currentPlantConfigDoc.health,
-    happiness,
+    health: data.health,
+    happiness: data.happiness,
     problems: currentPlantConfigDoc.problems,
     pests: currentPlantConfigDoc.pests,
   };
@@ -56,7 +59,8 @@ export const plant_HAPPINESS = async (
         ...currentPlantConfigDoc,
         timestamp,
         current: true,
-        happiness,
+        health: data.health,
+        happiness: data.happiness,
       };
 
       t.set(plantNewConfigRef, newPlantConfig);

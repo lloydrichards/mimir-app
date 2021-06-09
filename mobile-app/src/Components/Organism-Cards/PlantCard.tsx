@@ -2,6 +2,7 @@ import {PlantDetailProps, PlantType} from '@mimir/PlantType';
 import {SpaceType} from '@mimir/SpaceType';
 import {firebase} from '@react-native-firebase/firestore';
 import {
+  COLOUR_ACCENT,
   COLOUR_COTTON_CANDY,
   COLOUR_DARK,
   COLOUR_LIGHT,
@@ -11,20 +12,30 @@ import {
   COLOUR_SUBTLE,
 } from '@styles/Colours';
 import {style} from 'd3-selection';
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ActivityIndicator, Button} from 'react-native-paper';
 import {timestamp} from 'src/Services/firebase';
 import {useAuth} from '../Auth/Auth';
 import {formatDate, timeSince} from '../Helpers/formatUtil';
+import {MoodMap} from '../Molecule-Data/SmallMoodMap';
 import {PlantTypesMap} from '../Molecule-Data/PlantTypesMap';
 import {RoomTypeMap} from '../Molecule-Data/RoomTypeMap';
+import MoodPicker from '../Molecule-FormInput/MoodPicker';
+import {BlankFaceIcon} from '../Atom-Icons/Face/SmallFaceIcons';
+import {WateringIcon} from '../Atom-Icons/Status/SmallWateringIcons';
+import {TemperatureIcon} from '../Atom-Icons/Status/SmallTemperatureIcon';
+import {HumidityIcon} from '../Atom-Icons/Status/SmallHumidityIcons';
+import {LightIcon} from '../Atom-Icons/Status/SmallLightIcons';
+import {PestNoneIcon} from '../Atom-Icons/Status/SmallPestIcons';
+import {DiseaseNoneIcon} from '../Atom-Icons/Status/SmallDiseaseIcon';
 
 interface Props {
   data: PlantDetailProps;
   navigateTo: (plant: PlantType) => void;
 }
 const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
+  const [moodChanger, setMoodChanger] = useState(false);
   const {plant, spaceDocs} = useAuth();
   const currentSpace = spaceDocs.find(s =>
     s.config?.plant_ids.includes(data.id),
@@ -56,9 +67,18 @@ const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
     botanical_name: data.species.id,
     type: data.species.type,
   };
+
+  const currentMood = data.config
+    ? MoodMap({happiness: data.config.happiness, health: data.config.health})
+    : undefined;
+  const currentRoom = data.space
+    ? RoomTypeMap.find(i => i.id == data.space?.room_type)
+    : undefined;
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={() => navigateTo(plantType)}>
+      <TouchableOpacity
+        onPress={() => navigateTo(plantType)}
+        onLongPress={() => setMoodChanger(!moodChanger)}>
         <View style={styles.titleCard}>
           {PlantTypesMap.find(i => i.id === data.species.type)?.icon({
             background: COLOUR_MINTED,
@@ -67,25 +87,61 @@ const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
         </View>
         <Text style={styles.subtitle}>({data.species.id})</Text>
       </TouchableOpacity>
-      <View style={styles.room}>
-        {RoomTypeMap.find(i => i.id == data.space?.room_type)?.icon({
-          background: COLOUR_COTTON_CANDY,
-        })}
-        <Text style={styles.room_name}>{data.space?.name}</Text>
-      </View>
-
-      {alreadyWatered && data.watering ? (
-        <Text>Watered: {timeSince(data.watering.timestamp.toDate())}</Text>
+      {data.config && moodChanger ? (
+        <MoodPicker
+          onPress={() => setMoodChanger(false)}
+          plant={plantType}
+          space={spaceType}
+          current={{
+            happiness: data.config.happiness,
+            health: data.config.health,
+          }}
+        />
       ) : (
-        <Button
-          onPress={() =>
-            plant.water(spaceType, plantType, {
-              timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
-              fertilizer: false,
-            })
-          }>
-          Add Watering
-        </Button>
+        <View>
+          <View style={styles.room}>
+            {currentRoom?.icon({
+              background: currentRoom.colour,
+            })}
+            <Text style={styles.room_name}>{data.space?.name}</Text>
+          </View>
+          {data.watering && (
+            <Text style={styles.watering}>
+              Watered: {timeSince(data.watering.timestamp.toDate())}
+            </Text>
+          )}
+          <View style={styles.status}>
+            {currentMood ? (
+              currentMood.icon({background: 'none'})
+            ) : (
+              <BlankFaceIcon background="none" />
+            )}
+            <WateringIcon colour={COLOUR_ACCENT} background="none" />
+            <TemperatureIcon colour={COLOUR_ACCENT} background="none" />
+            <HumidityIcon colour={COLOUR_ACCENT} background="none" />
+            <LightIcon colour={COLOUR_ACCENT} background="none" />
+            <PestNoneIcon colour={COLOUR_DARK} background="none" />
+            <DiseaseNoneIcon colour={COLOUR_DARK} background="none" />
+          </View>
+
+          {alreadyWatered && (
+            <Button
+              mode="contained"
+              icon={() => (
+                <WateringIcon background="none" colour={COLOUR_LIGHT} />
+              )}
+              color={COLOUR_SECONDARY}
+              style={{margin: 8}}
+              onPress={() =>
+                plant.water(spaceType, plantType, {
+                  timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
+                  fertilizer: false,
+                })
+              }>
+              Water Plant
+            </Button>
+          )}
+        </View>
       )}
     </View>
   );
@@ -97,45 +153,63 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     flexDirection: 'column',
-    margin: 4,
-    padding: 4,
-    borderRadius: 16,
+    margin: 2,
+    padding: 8,
+    borderRadius: 8,
     borderColor: COLOUR_SUBTLE,
     borderWidth: 1,
-    height: 160,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     backgroundColor: COLOUR_LIGHT,
   },
   titleCard: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-evenly',
     paddingHorizontal: 8,
     fontSize: 12,
     fontStyle: 'italic',
   },
   title: {
-    textAlign: 'center',
-    fontSize: 22,
+    width: '100%',
+    paddingLeft: 16,
+    textAlign: 'left',
+    fontSize: 18,
     fontWeight: 'bold',
+    color: COLOUR_DARK,
   },
   subtitle: {
     textAlign: 'center',
     fontSize: 12,
     fontStyle: 'italic',
+    color: COLOUR_SUBTLE,
   },
   room: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 8,
-    fontSize: 12,
-    fontStyle: 'italic',
   },
   room_name: {
     marginLeft: 8,
     fontSize: 16,
     color: COLOUR_DARK,
+  },
+  watering: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: COLOUR_DARK,
+  },
+  buttonGroup: {
+    flexDirection: 'row',
+  },
+  status: {
+    marginTop: 16,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    fontSize: 12,
+    fontStyle: 'italic',
   },
 });

@@ -20,7 +20,7 @@ import {
   SemiEvergreenIcon,
   UnknownPlantIcon,
 } from '../Atom-Icons/PlantTypes/SmallPlantIcons';
-import {MapProps} from '../Atom-Icons/SmallIcon';
+import {MapProps} from '../Atom-Icons/BaseIcons';
 
 export const PlantTypesMap: Array<
   MapProps & {
