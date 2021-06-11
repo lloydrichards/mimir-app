@@ -6,9 +6,9 @@ import {
 } from '@react-navigation/stack';
 import React from 'react';
 import SignOut from 'src/Components/Auth/SignOut';
-import SpaceDetails from 'src/Screens/SpaceDetails';
-import {SpaceFormScreen} from 'src/Screens/SpaceFormScreen';
-import SpacesDashboard from 'src/Screens/SpacesDashboard';
+import SpaceDetails from 'src/Screens/Spaces/SpaceDetails';
+import {SpaceFormScreen} from 'src/Screens/Spaces/SpaceFormScreen';
+import SpacesDashboard from 'src/Screens/Spaces/SpacesDashboard';
 import {addPlantRoutes, PlantParamList} from './addPlantRoutes';
 
 export type SpaceStackParamList = {

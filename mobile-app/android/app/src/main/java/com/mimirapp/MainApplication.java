@@ -1,5 +1,7 @@
 package com.mimirapp;
 
+import com.facebook.react.bridge.JSIModulePackage; // <- added
+import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- added
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -32,6 +34,11 @@ public class MainApplication extends Application implements ReactApplication {
         @Override
         protected String getJSMainModuleName() {
           return "index";
+        }
+
+        @Override
+        protected JSIModulePackage getJSIModulePackage() {
+          return new ReanimatedJSIModulePackage(); // <- added
         }
       };
 

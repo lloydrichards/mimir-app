@@ -1,15 +1,12 @@
-import {PlantProps, PlantType} from '@mimir/PlantType';
-import {RouteProp} from '@react-navigation/native';
+import { RouteProp } from '@react-navigation/native';
 import {
   createStackNavigator,
-  StackNavigationProp,
+  StackNavigationProp
 } from '@react-navigation/stack';
 import React from 'react';
 import SignOut from 'src/Components/Auth/SignOut';
-import PlantDetails from 'src/Screens/PlantDetails';
-import {PlantFormScreen} from 'src/Screens/PlantFormScreen';
-import PlantsDashboard from 'src/Screens/PlantsDashboard';
-import {addPlantRoutes, PlantParamList} from './addPlantRoutes';
+import PlantsDashboard from 'src/Screens/Plants/PlantsDashboard';
+import { addPlantRoutes, PlantParamList } from './addPlantRoutes';
 
 export type PlantsStackParamList = {
   Plants: undefined;

@@ -1,10 +1,11 @@
-import {PlantType, PlantProps} from '@mimir/PlantType';
-import {TypedNavigator, StackNavigationState} from '@react-navigation/native';
+import {PlantProps, PlantType} from '@mimir/PlantType';
+import {StackNavigationState, TypedNavigator} from '@react-navigation/native';
 import {StackNavigationOptions} from '@react-navigation/stack';
-import {StackNavigationEventMap} from '@react-navigation/stack/lib/typescript/src/types';
 import React from 'react';
-import PlantDetails from 'src/Screens/PlantDetails';
-import {PlantFormScreen} from 'src/Screens/PlantFormScreen';
+import {View, Text} from 'react-native';
+import {Button} from 'react-native-paper';
+import PlantDetails from 'src/Screens/Plants/PlantDetails';
+import {PlantFormScreen} from 'src/Screens/Plants/PlantFormScreen';
 import {PlantsStackParamList} from './plantStack';
 import {SpaceStackParamList} from './spaceStack';
 
@@ -27,8 +28,18 @@ export const addPlantRoutes = (
     <>
       <stack.Screen
         name="PlantDetails"
-        options={({route}) => ({
+        options={({route, navigation}) => ({
           headerTitleAlign: 'center',
+          headerRight: () => (
+            <View>
+              <Button
+                onPress={() =>
+                  navigation.navigate('EditPlant', {plant: route.params.plant})
+                }>
+                Edit
+              </Button>
+            </View>
+          ),
           headerTitle: route.params.plant.nickname
             ? `${route.params.plant.nickname} (${route.params.plant.botanical_name})`
             : route.params.plant.botanical_name,

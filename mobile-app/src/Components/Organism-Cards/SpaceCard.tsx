@@ -1,21 +1,30 @@
-import {PlantDetailProps, PlantType} from '@mimir/PlantType';
+import {PlantDetailProps, PlantType, PlantTypes} from '@mimir/PlantType';
 import {SpaceDetailProps, SpaceType} from '@mimir/SpaceType';
 import {firebase} from '@react-native-firebase/firestore';
 import {
   COLOUR_DARK,
   COLOUR_LIGHT,
+  COLOUR_MINTED,
   COLOUR_SECONDARY,
   COLOUR_SKY,
   COLOUR_SUBTLE,
 } from '@styles/Colours';
+import {SurfaceStyles} from '@styles/GlobalStyle';
 import {style} from 'd3-selection';
 import React, {useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ActivityIndicator, Button} from 'react-native-paper';
 import {timestamp} from 'src/Services/firebase';
+import {UnknownPlantIcon} from '../Atom-Icons/PlantTypes/SmallPlantIcons';
+import { HumidityIcon } from '../Atom-Icons/Status/SmallHumidityIcons';
+import { LightIcon } from '../Atom-Icons/Status/SmallLightIcons';
+import {TemperatureIcon} from '../Atom-Icons/Status/SmallTemperatureIcon';
 import {useAuth} from '../Auth/Auth';
 import {formatDate, timeSince} from '../Helpers/formatUtil';
+import {PlantTypesMap} from '../Molecule-Data/PlantTypesMap';
 import {RoomTypeMap} from '../Molecule-Data/RoomTypeMap';
+import BadgedIcon from '../Molecule/BadgedIcon';
+import FieldValue from '../Molecule/FieldValue';
 
 interface Props {
   data: SpaceDetailProps;
@@ -29,18 +38,54 @@ const SpaceCard: React.FC<Props> = ({navigateTo, data}) => {
     room_type: data.room_type,
   };
 
+  const RoomType = RoomTypeMap.find(i => i.id === data.room_type);
+  const flatPlants = Object.entries(
+    data.config?.plants.reduce((acc, cur) => {
+      if (cur.type in acc) {
+        acc[cur.type]++;
+      } else {
+        acc[cur.type] = 1;
+      }
+      return acc;
+    }, {} as {[key in PlantTypes]: number}) || {},
+  );
+
   return (
-    <View style={styles.card}>
+    <View style={SurfaceStyles.card}>
       <TouchableOpacity onPress={() => navigateTo(spaceType)}>
-        <View style={styles.room}>
-          {RoomTypeMap.find(i => i.id == data.room_type)?.icon({background:COLOUR_SKY})}
-          <Text style={styles.title}>{data.name}</Text>
+        <View style={SurfaceStyles.titleCard}>
+          {RoomType?.icon({
+            background: RoomType.colour || COLOUR_MINTED,
+          })}
+          <Text style={SurfaceStyles.title}>{data.name}</Text>
         </View>
+        <Text style={SurfaceStyles.subtitle}>
+          ({data.location.city}, {data.location.country})
+        </Text>
       </TouchableOpacity>
-      <Text style={styles.subtitle}>
-        ({data.location.city},{data.location.country})
-      </Text>
-      <Text>Plants: {data.config?.plants.length || 0}</Text>
+      <View style={{width: '100%'}}>
+        <FieldValue icon={TemperatureIcon} title="Temp"></FieldValue>
+        <FieldValue icon={HumidityIcon} title="Hum"></FieldValue>
+        <FieldValue icon={LightIcon} title="Light"></FieldValue>
+        <Text style={styles.plant_total}>
+          Plants: {data.config?.plants.length || 0}
+        </Text>
+        <View style={styles.plants}>
+          {data.config &&
+            flatPlants.map(([type, count]) => (
+              <BadgedIcon
+                key={type}
+                colour={COLOUR_MINTED}
+                disabled={count === 1}
+                icon={
+                  PlantTypesMap.find(i => i.id === type)?.icon ||
+                  UnknownPlantIcon
+                }
+                content={count}
+              />
+            ))}
+        </View>
+      </View>
     </View>
   );
 };
@@ -48,34 +93,16 @@ const SpaceCard: React.FC<Props> = ({navigateTo, data}) => {
 export default SpaceCard;
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    flexDirection: 'column',
-    margin: 4,
-    padding: 4,
-    borderRadius: 16,
-    borderColor: COLOUR_SUBTLE,
-    borderWidth: 1,
-    height: 160,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: COLOUR_LIGHT,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-  room: {
+  plants: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 12,
-    fontStyle: 'italic',
+    width: '100%',
+    flexWrap: 'wrap',
+    flexShrink: 0,
+  },
+
+  plant_total: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: COLOUR_DARK,
   },
 });

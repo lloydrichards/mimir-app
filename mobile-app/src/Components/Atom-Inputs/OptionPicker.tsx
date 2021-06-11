@@ -14,11 +14,13 @@ import {Text, TextInput} from 'react-native-paper';
 
 type PickerProps = {
   label: string;
+  placeholder?: string;
   onChange?: (value: string) => void;
 } & FieldProps<any>;
 
 export const OptionPicker: React.FC<PickerProps> = ({
   label,
+  placeholder,
   onChange,
   children,
   ...props
@@ -53,6 +55,13 @@ export const OptionPicker: React.FC<PickerProps> = ({
           selectedValue={field.value}
           prompt={label}
           accessibilityLabel={label}>
+          {placeholder && (
+            <OptionItem
+              style={{color: COLOUR_SUBTLE}}
+              value=""
+              label={placeholder}
+            />
+          )}
           {children}
         </Picker>
       </View>

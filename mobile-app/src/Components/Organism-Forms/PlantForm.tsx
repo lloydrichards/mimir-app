@@ -114,7 +114,7 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
         initialValues={{
           nickname: edit?.nickname || '',
           description: edit?.description || '',
-          origin: edit?.origin || ('UNKNOWN' as OriginTypes),
+          origin: edit?.origin || ('' as OriginTypes),
           parent: edit?.parent || null,
           picture: edit?.picture || null,
           space: null,
@@ -129,22 +129,22 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
           errors,
         }) => (
           <ScrollView nestedScrollEnabled={true}>
-            <Field name="space" label="Space" component={OptionPicker}>
+            <Field
+              name="space"
+              label="Space"
+              placeholder="Select Space..."
+              component={OptionPicker}>
               {spaceDocs.map(s => (
                 <OptionItem key={s.id} value={s.id} label={s.name} />
               ))}
             </Field>
-            <Field
-              name="nickname"
-              label="Name"
-              placeholder="Plant's name..."
-              component={TextInput}
-            />
             {plantDocs.length > 0 && (
               <Field
                 name="parent"
                 label="Plant parent"
-                onChange={(value: string) => {
+                placeholder="Select Parent Plant..."
+                onChange={(value: string | undefined) => {
+                  if (!value) return setFieldValue('parent', undefined);
                   const parent = plantDocs.find(p => p.id === value);
                   setFieldValue('species', parent?.species);
                   return setFieldValue('parent', {
@@ -154,7 +154,7 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
                   });
                 }}
                 component={OptionPicker}>
-                <OptionItem value="" label="(none)" />
+                <OptionItem value={undefined} label="(none)" style={{fontStyle:"italic"}} />
                 {plantDocs.map(s => {
                   return (
                     <OptionItem key={s.id} value={s.id} label={s.nickname} />
@@ -174,12 +174,22 @@ const PlantForm: React.FC<Props> = ({edit, onComplete}) => {
               />
             )}
             <Field
+              name="nickname"
+              label="Name"
+              placeholder="Plant's name..."
+              component={TextInput}
+            />
+            <Field
               name="description"
               label="Description"
               placeholder="Plant's description..."
               component={TextInput}
             />
-            <Field name="origin" label="Plant Origin" component={OptionPicker}>
+            <Field
+              name="origin"
+              label="Plant Origin"
+              placeholder="Select Origin..."
+              component={OptionPicker}>
               {OriginTypesMap.map(d => (
                 <OptionItem key={d.id} value={d.id} label={d.field} />
               ))}

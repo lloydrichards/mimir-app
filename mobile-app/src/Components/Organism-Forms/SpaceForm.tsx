@@ -93,11 +93,6 @@ const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
               label="Location"
               component={LocationAutoComplete}
             />
-            <Field name="room_type" label="Room type" component={OptionPicker}>
-              {RoomTypeMap.map(d => (
-                <OptionItem key={d.id} value={d.id} label={d.field} />
-              ))}
-            </Field>
             <Field
               name="description"
               label="Description"
@@ -105,8 +100,18 @@ const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
               component={TextInput}
             />
             <Field
+              name="room_type"
+              label="Room type"
+              placeholder="Select room type..."
+              component={OptionPicker}>
+              {RoomTypeMap.map(d => (
+                <OptionItem key={d.id} value={d.id} label={d.field} />
+              ))}
+            </Field>
+            <Field
               name="exposure"
               label="Sun Exposure"
+              placeholder="Select sun exposure..."
               component={OptionPicker}>
               {ExposureTypeMap.map(d => (
                 <OptionItem key={d.id} value={d.id} label={d.field} />
@@ -118,7 +123,7 @@ const SpaceForm: React.FC<Props> = ({edit, onComplete}) => {
               component={LightDirectionPicker}
             />
 
-            <View style={{marginTop: 32}}>
+            <View style={{marginTop: 16}}>
               {status && <Text>{status.message}</Text>}
               <Button
                 mode="contained"

@@ -1,19 +1,23 @@
-import {PlantDetailProps, PlantType} from '@mimir/PlantType';
+import {COLOUR_SECONDARY} from '@styles/Colours';
+import {ScreenStyle} from '@styles/GlobalStyle';
 import * as React from 'react';
-import {useState} from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
-import {Button, Modal, Portal, Provider, Text} from 'react-native-paper';
+import {FlatList, View} from 'react-native';
+import {Button} from 'react-native-paper';
 import {useAuth} from 'src/Components/Auth/Auth';
-import Center from 'src/Components/Molecule-UI/Center';
 import PlantCard from 'src/Components/Organism-Cards/PlantCard';
-import PlantForm from 'src/Components/Organism-Forms/PlantForm';
 import {PlantsNavProps} from 'src/Routes/plantStack';
 
 const PlantsDashboard = ({navigation, route}: PlantsNavProps<'Plants'>) => {
   const {userDoc, plantDocs} = useAuth();
 
   return (
-    <View style={styles.container}>
+    <View style={ScreenStyle.container}>
+      <Button
+        color={COLOUR_SECONDARY}
+        mode="contained"
+        onPress={() => navigation.navigate('AddPlant')}>
+        Add Plant
+      </Button>
       <FlatList
         numColumns={2}
         data={plantDocs.sort((a, b) =>
@@ -29,19 +33,8 @@ const PlantsDashboard = ({navigation, route}: PlantsNavProps<'Plants'>) => {
           />
         )}
       />
-      <Button mode="contained" onPress={() => navigation.navigate('AddPlant')}>
-        Add Plant
-      </Button>
     </View>
   );
 };
 
 export default PlantsDashboard;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 8,
-    justifyContent: 'center',
-  },
-});

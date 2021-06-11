@@ -29,6 +29,7 @@ import {HumidityIcon} from '../Atom-Icons/Status/SmallHumidityIcons';
 import {LightIcon} from '../Atom-Icons/Status/SmallLightIcons';
 import {PestNoneIcon} from '../Atom-Icons/Status/SmallPestIcons';
 import {DiseaseNoneIcon} from '../Atom-Icons/Status/SmallDiseaseIcon';
+import {SurfaceStyles} from '@styles/GlobalStyle';
 
 interface Props {
   data: PlantDetailProps;
@@ -46,7 +47,7 @@ const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
   );
   if (!currentSpace)
     return (
-      <View style={styles.card}>
+      <View style={SurfaceStyles.card}>
         <Text>{data.nickname}</Text>
         <Text>({data.species.id})</Text>
         <ActivityIndicator />
@@ -75,17 +76,17 @@ const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
     ? RoomTypeMap.find(i => i.id == data.space?.room_type)
     : undefined;
   return (
-    <View style={styles.card}>
+    <View style={SurfaceStyles.card}>
       <TouchableOpacity
         onPress={() => navigateTo(plantType)}
         onLongPress={() => setMoodChanger(!moodChanger)}>
-        <View style={styles.titleCard}>
+        <View style={SurfaceStyles.titleCard}>
           {PlantTypesMap.find(i => i.id === data.species.type)?.icon({
             background: COLOUR_MINTED,
           })}
-          <Text style={styles.title}>{data.nickname}</Text>
+          <Text style={SurfaceStyles.title}>{data.nickname}</Text>
         </View>
-        <Text style={styles.subtitle}>({data.species.id})</Text>
+        <Text style={SurfaceStyles.subtitle}>({data.species.id})</Text>
       </TouchableOpacity>
       {data.config && moodChanger ? (
         <MoodPicker
@@ -150,39 +151,6 @@ const PlantCard: React.FC<Props> = ({navigateTo, data}) => {
 export default PlantCard;
 
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    flexDirection: 'column',
-    margin: 2,
-    padding: 8,
-    borderRadius: 8,
-    borderColor: COLOUR_SUBTLE,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: COLOUR_LIGHT,
-  },
-  titleCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 8,
-    fontSize: 12,
-    fontStyle: 'italic',
-  },
-  title: {
-    width: '100%',
-    paddingLeft: 16,
-    textAlign: 'left',
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: COLOUR_DARK,
-  },
-  subtitle: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontStyle: 'italic',
-    color: COLOUR_SUBTLE,
-  },
   room: {
     width: '100%',
     flexDirection: 'row',

@@ -4,9 +4,9 @@ import {
   StackNavigationProp,
 } from '@react-navigation/stack';
 import React from 'react';
-import ForgottenPasswordScreen from 'src/Screens/ForgottenPasswordScreen';
-import LoginScreen from 'src/Screens/LoginScreen';
-import RegisterScreen from 'src/Screens/RegisterScreen';
+import ForgottenPasswordScreen from 'src/Screens/Auth/ForgottenPasswordScreen';
+import LoginScreen from 'src/Screens/Auth/LoginScreen';
+import RegisterScreen from 'src/Screens/Auth/RegisterScreen';
 
 export type AuthStackParamList = {
   Login: undefined;

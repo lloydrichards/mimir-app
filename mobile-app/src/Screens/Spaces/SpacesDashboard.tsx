@@ -1,17 +1,22 @@
-import {SpaceType} from '@mimir/SpaceType';
+import { COLOUR_SECONDARY } from '@styles/Colours';
+import { ScreenStyle } from '@styles/GlobalStyle';
 import * as React from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
-import {Button, Text} from 'react-native-paper';
-import {useAuth} from 'src/Components/Auth/Auth';
-import Center from 'src/Components/Molecule-UI/Center';
+import { FlatList, View } from 'react-native';
+import { Button } from 'react-native-paper';
+import { useAuth } from 'src/Components/Auth/Auth';
 import SpaceCard from 'src/Components/Organism-Cards/SpaceCard';
-import {SpaceNavProps} from 'src/Routes/spaceStack';
+import { SpaceNavProps } from 'src/Routes/spaceStack';
 
 const SpacesDashboard = ({navigation, route}: SpaceNavProps<'Spaces'>) => {
   const {spaceDocs} = useAuth();
   return (
-    <View style={styles.container}>
-      <Text>Spaces Dashboard</Text>
+    <View style={ScreenStyle.container}>
+      <Button
+        color={COLOUR_SECONDARY}
+        mode="contained"
+        onPress={() => navigation.navigate('AddSpace')}>
+        Add Space
+      </Button>
       <FlatList
         numColumns={2}
         data={spaceDocs.sort((a, b) =>
@@ -27,19 +32,8 @@ const SpacesDashboard = ({navigation, route}: SpaceNavProps<'Spaces'>) => {
           />
         )}
       />
-      <Button mode="contained" onPress={() => navigation.navigate('AddSpace')}>
-        Add Space
-      </Button>
     </View>
   );
 };
 
 export default SpacesDashboard;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    margin: 8,
-    justifyContent: 'center',
-  },
-});

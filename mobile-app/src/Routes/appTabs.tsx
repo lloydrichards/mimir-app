@@ -1,6 +1,6 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
-import {COLOUR_SUBTLE, COLOUR_TERTIARY} from '@styles/Colours';
+import {COLOUR_FLUFF, COLOUR_SUBTLE, COLOUR_TERTIARY} from '@styles/Colours';
 import React from 'react';
 import {ClimberIcon} from 'src/Components/Atom-Icons/PlantTypes/SmallPlantIcons';
 import {BedroomIcon} from 'src/Components/Atom-Icons/RoomTypeIcons';
@@ -21,19 +21,9 @@ export const AppTabs = () => {
         screenOptions={({route}) => ({
           tabBarIcon: ({focused, color, size}) => {
             if (route.name === 'Plants') {
-              return (
-                <ClimberIcon
-                  colour={color}
-                  background={focused ? '#F9D5C7' : 'none'}
-                />
-              );
+              return <ClimberIcon colour={color} background={'none'} />;
             } else if (route.name === 'Spaces') {
-              return (
-                <BedroomIcon
-                  colour={color}
-                  background={focused ? '#F9D5C7' : 'none'}
-                />
-              );
+              return <BedroomIcon colour={color} background={'none'} />;
             }
           },
         })}
