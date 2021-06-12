@@ -39,5 +39,5 @@ const FieldValue: React.FC<Props> = ({icon, title, children}) => {
 export default FieldValue;
 
 const styles = StyleSheet.create({
-  container: {flexDirection: 'row'},
+  container: {flexDirection: 'row', alignItems:"center"},
 });

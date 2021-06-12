@@ -1,15 +1,25 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import Center from '../Molecule-UI/Center'
+import { PlantType } from '@mimir/PlantType';
+import { SpaceType } from '@mimir/SpaceType';
+import {COLOUR_FLUFF} from '@styles/Colours';
+import React from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import Center from '../Molecule-UI/Center';
 
-const TemperatureTab = () => {
-    return (
-        <Center>
-            <Text>Temprature</Text>
-        </Center>
-    )
+interface Props {
+  type: 'PLANT' | 'SPACE';
+  data: PlantType | SpaceType;
 }
 
-export default TemperatureTab
+const TemperatureTab: React.FC<Props> = () => {
+  return (
+    <View style={{flex: 1,backgroundColor: COLOUR_FLUFF}}>
+      <Center>
+        <Text>Temprature</Text>
+      </Center>
+    </View>
+  );
+};
 
-const styles = StyleSheet.create({})
+export default TemperatureTab;
+
+const styles = StyleSheet.create({});
