@@ -1,20 +1,26 @@
-import { Button, MenuItem, Typography } from '@material-ui/core';
-import { Form, Formik } from 'formik';
-import * as React from 'react';
-import { TextField } from '../Atom-Inputs/TextField';
-import app, { timestamp } from '../../firebase';
-import { TextArea } from '../Atom-Inputs/TextArea';
-import { Selector } from '../Atom-Inputs/Selector';
-import { useHistory } from 'react-router-dom';
-import { Switch } from '../Atom-Inputs/Switch';
-import { Slider } from '../Atom-Inputs/Slider';
-import { ModelProps, SpeciesProps } from '../../types/SpeciesType';
-import { HardinessTypeMap } from '../Molecule-Data/HardinessTypeMap';
-import { ExposureTypeMap } from '../Molecule-Data/ExposureTypeMap';
-import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
-import { PlantTypes } from '../../types/PlantType';
+import { Button, MenuItem, Typography } from "@material-ui/core";
+import { Form, Formik } from "formik";
+import * as React from "react";
+import { TextField } from "../Atom-Inputs/TextField";
+import app, { timestamp } from "../../firebase";
+import { TextArea } from "../Atom-Inputs/TextArea";
+import { Selector } from "../Atom-Inputs/Selector";
+import { useHistory } from "react-router-dom";
+import { Switch } from "../Atom-Inputs/Switch";
+import { Slider } from "../Atom-Inputs/Slider";
+import {
+  GrowthRateTypes,
+  MaintenanceTypes,
+  ModelProps,
+  SpeciesProps,
+} from "@mimir/SpeciesType";
+import { HardinessTypeMap } from "../Molecule-Data/HardinessTypeMap";
+import { ExposureTypeMap } from "../Molecule-Data/ExposureTypeMap";
+import { PlantTypesMap } from "../Molecule-Data/PlantTypesMap";
+import { PlantTypes } from "../../types/PlantType";
 
 interface Props {
+  edit?: SpeciesProps;
   altButton?: { label: string; onClick: () => void };
   debug?: boolean;
 }
@@ -30,28 +36,31 @@ const speciesIdBuilder = (
   var id = genus;
 
   if (hybrid && species) {
-    id += ' x ' + species;
+    id += " x " + species;
   }
   if (!species) {
-    id += ' spp.';
+    id += " spp.";
   } else {
-    id += ' ' + species;
+    id += " " + species;
   }
   if (subspecies) {
-    id += ' ssp. ' + subspecies.toLowerCase();
+    id += " ssp. " + subspecies.toLowerCase();
   }
   if (cultivar) {
-    id += ' (' + cultivar.toLowerCase() + ')';
+    id += " (" + cultivar.toLowerCase() + ")";
   }
 
   return id;
 };
 
-const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
+const SpeciesForm: React.FC<Props> = ({ edit, altButton, debug }) => {
   const history = useHistory();
+
+  console.log("Edit:", edit);
   return (
     <div>
       <Formik
+        enableReinitialize
         onSubmit={async (data, { setStatus, setSubmitting, resetForm }) => {
           const batch = db.batch();
           setSubmitting(true);
@@ -64,39 +73,48 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               data.hybrid
             );
 
-            const speciesDoc = db.collection('mimirSpecies').doc(species_id);
-            const modelDoc = speciesDoc.collection('Model').doc('--Init--');
+            const speciesDoc = db.collection("Species").doc(species_id);
+            const modelDoc = speciesDoc.collection("model").doc();
 
             const doc: SpeciesProps = {
-              family: data.family,
-              genus: data.genus,
-              species: data.species,
-              subspecies: data.subspecies
-                ? `${data.subspecies}`.toLowerCase()
-                : null,
-              cultivar: data.cultivar ? `${data.cultivar}`.toLowerCase() : null,
+              id: species_id,
+              botanical: {
+                family: data.family,
+                genus: data.genus,
+                species: data.species,
+                subspecies: data.subspecies
+                  ? `${data.subspecies}`.toLowerCase()
+                  : null,
+                cultivar: data.cultivar
+                  ? `${data.cultivar}`.toLowerCase()
+                  : null,
+              },
+              growth: {
+                hardiness: data.hardiness,
+                exposure: data.exposure,
+                soil: data.soil,
+                water: data.water,
+                height_max: data.height_max || 0,
+                height_min: data.height_min || 0,
+                spread_min: data.spread_min || 0,
+                spread_max: data.spread_max || 0,
+                rate: data.growth_rate,
+                maintenance: data.maintenance,
+                form: data.form,
+              },
+              traits: {
+                origin: data.origin.split(", "),
+                edible: data.edible,
+                poisonous: data.poisonous,
+                pet_friendly: data.pet_friendly,
+                air_purifying: data.air_purifying,
+                pests: data.pests,
+              },
               description: data.description,
-              common_name: data.common_name.toLowerCase().split(', '),
+              common_name: data.common_name.toLowerCase().split(", "),
               type: data.type,
-              habitat: data.habitat,
-              form: data.form,
-              origin: data.origin.split(', '),
-              edible: data.edible,
-              poisonous: data.poisonous,
-              pet_friendly: data.pet_friendly,
-              air_purifying: data.air_purifying,
-              hardiness: data.hardiness,
-              exposure: data.exposure,
-              soil: data.soil,
-              water: data.water,
-              height_max: parseInt(data.height_max || '0'),
-              height_min: parseInt(data.height_min || '0'),
-              spread_min: parseInt(data.spread_min || '0'),
-              spread_max: parseInt(data.spread_max || '0'),
-              growth_rate: data.growth_rate,
-              maintenance: data.maintenance,
+              habitat: [],
               images: [],
-              pests: data.pests,
             };
 
             const model: ModelProps = {
@@ -126,15 +144,14 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
                 lux_min: data.model.light.lux_min,
                 lux_max: data.model.light.lux_max,
               },
-              air: { max: 500 },
             };
 
             batch.set(speciesDoc, doc);
             batch.set(modelDoc, model);
 
-            return batch.commit().then(() => history.push('/'));
+            return batch.commit().then(() => history.push("/"));
           } catch (error) {
-            console.log('error:', error);
+            console.log("error:", error);
             alert(error);
             setStatus(error);
           }
@@ -142,33 +159,37 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
           setSubmitting(false);
         }}
         initialValues={{
-          family: '',
-          genus: '',
-          species: '',
-          subspecies: null,
-          cultivar: null,
+          family: edit?.botanical.family || "",
+          genus: edit?.botanical.genus || "",
+          species: edit?.botanical.species || "",
+          subspecies: edit?.botanical.subspecies || null,
+          cultivar: edit?.botanical.cultivar || null,
           hybrid: false,
-          description: '',
-          common_name: '',
-          type: '' as PlantTypes,
-          habitat: [],
-          form: [],
-          origin: '',
-          edible: false,
-          poisonous: false,
-          pet_friendly: false,
-          air_purifying: false,
-          hardiness: [],
-          exposure: [],
-          soil: [],
-          water: [],
-          height_max: null,
-          height_min: null,
-          spread_min: null,
-          spread_max: null,
-          growth_rate: '' as Partial<SpeciesProps['growth_rate']>,
-          maintenance: '' as Partial<SpeciesProps['maintenance']>,
-          pests: [],
+          description: edit?.description || "",
+          common_name:
+            edit?.common_name.reduce((acc, cur) => acc.concat(`${cur}, `)) ||
+            "",
+          type: edit?.type || ("" as PlantTypes),
+          habitat: edit?.habitat || [],
+          form: edit?.growth.form || [],
+          origin:
+            edit?.traits.origin.reduce((acc, cur) => acc.concat(`${cur}, `)) ||
+            "",
+          edible: edit?.traits.edible || false,
+          poisonous: edit?.traits.poisonous || false,
+          pet_friendly: edit?.traits.pet_friendly || false,
+          air_purifying: edit?.traits.air_purifying || false,
+          hardiness: edit?.growth.hardiness || [],
+          exposure: edit?.growth.exposure || [],
+          soil: edit?.growth.soil || [],
+          water: edit?.growth.water || [],
+          height_max: edit?.growth.height_max || null,
+          height_min: edit?.growth.height_min || null,
+          spread_min: edit?.growth.spread_min || null,
+          spread_max: edit?.growth.spread_max || null,
+          growth_rate: edit?.growth.rate || ("" as GrowthRateTypes),
+          maintenance: edit?.growth.maintenance || ("" as MaintenanceTypes),
+          pests: edit?.traits.pests || [],
           model: {
             temperature: {
               min: 7.5,
@@ -194,9 +215,9 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               lux_min: 2562,
               lux_max: 53647,
             },
-            air: { max: 500 },
           },
-        }}>
+        }}
+      >
         {({ isSubmitting, values, status, errors }) => (
           <Form>
             <TextField
@@ -252,21 +273,7 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
                 </MenuItem>
               ))}
             </Selector>
-            <Selector label='Habitat' name='habitat' multiple>
-              <MenuItem value='ARCHING'>Arching</MenuItem>
-              <MenuItem value='DENSE'>Dense</MenuItem>
-              <MenuItem value='EPIPHYTIC'>Epiphytic</MenuItem>
-              <MenuItem value='FASTIGIATE'>Fastigiate</MenuItem>
-              <MenuItem value='HORIZONTAL'>Horizontal</MenuItem>
-              <MenuItem value='IRREGULAR'>Irregular</MenuItem>
-              <MenuItem value='OPEN'>Open</MenuItem>
-              <MenuItem value='PENDULOUS'>Pendulous</MenuItem>
-              <MenuItem value='SPREADING'>Spreading</MenuItem>
-              <MenuItem value='STIFFLY_UPRIGHT'>Stiffly Upright</MenuItem>
-              <MenuItem value='TWIGGY'>Twiggy</MenuItem>
-              <MenuItem value='UPRIGHT'>Upright</MenuItem>
-              <MenuItem value='UNKNOWN'>Unknown</MenuItem>
-            </Selector>
+
             <Selector label='Form' name='form' multiple>
               <MenuItem value='ARCHING'>Arching</MenuItem>
               <MenuItem value='CREEPING_MAT-LIKE'>Creeping</MenuItem>
@@ -281,6 +288,7 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               <MenuItem value='WEEPING'>Weeping</MenuItem>
               <MenuItem value='UNKNOWN'>Unknown</MenuItem>
             </Selector>
+
             <TextArea
               label='Origin'
               name='origin'
@@ -304,6 +312,7 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               name='air_purifying'
               checked={values.air_purifying}
             />
+
             <Selector label='Hardiness' name='hardiness' multiple>
               {HardinessTypeMap.map((h) => (
                 <MenuItem value={h.id}>
@@ -319,6 +328,7 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
                 <MenuItem value={e.id}>{e.name}</MenuItem>
               ))}
             </Selector>
+
             <Selector label='Soil' name='soil' multiple>
               <MenuItem value='UNKNOWN'>Unknown</MenuItem>
               <MenuItem value='ACIDIC'>Acidic</MenuItem>
@@ -364,18 +374,21 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               placeholder='Spread Min'
               type='input'
             />
+
             <Selector label='Growth Rate' name='growth_rate'>
               <MenuItem value='SLOW'>Slow</MenuItem>
               <MenuItem value='MODERATE'>Moderate</MenuItem>
               <MenuItem value='FAST'>Fast</MenuItem>
               <MenuItem value='UNKNOWN'>Unknown</MenuItem>
             </Selector>
+
             <Selector label='Maintenance' name='maintenance'>
               <MenuItem value='LOW'>Low</MenuItem>
               <MenuItem value='MEDIUM'>Medium</MenuItem>
               <MenuItem value='HIGH'>High</MenuItem>
               <MenuItem value='UNKNOWN'>Unknown</MenuItem>
             </Selector>
+
             <Selector label='Pests' name='pests' multiple>
               <MenuItem value='ABIOTIC_DISORDER'>Abiotic Disorder</MenuItem>
               <MenuItem value='ADELGIDS'>Adelgids</MenuItem>
@@ -433,46 +446,49 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
               <MenuItem value='WILT'>Wilt</MenuItem>
               <MenuItem value='WOOD_DEFORMITY'>Wood Deformity</MenuItem>
             </Selector>
-            <div
-              style={{
-                margin: '8px 0px',
-                padding: '16px',
-                border: '2px solid lightgrey',
-                borderRadius: '8px',
-              }}>
-              <Typography variant='h5'>Model</Typography>
-              <Slider
-                label='Min Temperature'
-                name='model.temperature.min'
-                inputProps={{ max: 50, min: 0, step: 0.1 }}
-              />
-              <Slider
-                label='Max Temperature'
-                name='model.temperature.max'
-                inputProps={{ max: 50, min: 0, step: 0.1 }}
-              />
-              <Slider
-                label='Min Humidity'
-                name='model.humidity.min'
-                inputProps={{ max: 100, min: 0, step: 1 }}
-              />
-              <Slider
-                label='Max Humidity'
-                name='model.humidity.max'
-                inputProps={{ max: 100, min: 0, step: 1 }}
-              />
-              <Slider
-                label='Min Light'
-                name='model.light.lux_min'
-                inputProps={{ max: 80000, min: 0, step: 1 }}
-              />
-              <Slider
-                label='Max Light'
-                name='model.light.lux_max'
-                inputProps={{ max: 80000, min: 0, step: 1 }}
-              />
-            </div>
-            <div style={{ display: 'flex' }}>
+            {!edit && (
+              <div
+                style={{
+                  margin: "8px 0px",
+                  padding: "16px",
+                  border: "2px solid lightgrey",
+                  borderRadius: "8px",
+                }}
+              >
+                <Typography variant='h5'>Model</Typography>
+                <Slider
+                  label='Min Temperature'
+                  name='model.temperature.min'
+                  inputProps={{ max: 50, min: 0, step: 0.1 }}
+                />
+                <Slider
+                  label='Max Temperature'
+                  name='model.temperature.max'
+                  inputProps={{ max: 50, min: 0, step: 0.1 }}
+                />
+                <Slider
+                  label='Min Humidity'
+                  name='model.humidity.min'
+                  inputProps={{ max: 100, min: 0, step: 1 }}
+                />
+                <Slider
+                  label='Max Humidity'
+                  name='model.humidity.max'
+                  inputProps={{ max: 100, min: 0, step: 1 }}
+                />
+                <Slider
+                  label='Min Light'
+                  name='model.light.lux_min'
+                  inputProps={{ max: 80000, min: 0, step: 1 }}
+                />
+                <Slider
+                  label='Max Light'
+                  name='model.light.lux_max'
+                  inputProps={{ max: 80000, min: 0, step: 1 }}
+                />
+              </div>
+            )}
+            <div style={{ display: "flex" }}>
               {altButton && (
                 <Button fullWidth onClick={altButton.onClick}>
                   {altButton.label}
@@ -483,20 +499,22 @@ const SpeciesForm: React.FC<Props> = ({ altButton, debug }) => {
                 variant='contained'
                 color='primary'
                 type='submit'
-                disabled={isSubmitting}>
-                Update
+                disabled={isSubmitting}
+              >
+                Save
               </Button>
             </div>
             {status ? <div>{status.message}</div> : null}
             {debug ? (
               <div
                 style={{
-                  border: '2px dashed tomato',
-                  background: 'snow',
-                  margin: '1rem 0',
-                  borderRadius: '1rem',
-                  padding: '0.5rem',
-                }}>
+                  border: "2px dashed tomato",
+                  background: "snow",
+                  margin: "1rem 0",
+                  borderRadius: "1rem",
+                  padding: "0.5rem",
+                }}
+              >
                 <Typography variant='h4'>Debug</Typography>
                 <p>
                   Species Id:

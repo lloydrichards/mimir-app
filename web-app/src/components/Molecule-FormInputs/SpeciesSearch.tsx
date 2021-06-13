@@ -1,9 +1,9 @@
-import React from 'react';
-import { MenuItem } from '@material-ui/core';
-import { components, OptionProps, StylesConfig } from 'react-select';
-import algoliasearch from 'algoliasearch';
-import AsyncSelect from 'react-select/async';
-import { PlantTypesMap } from '../Molecule-Data/PlantTypesMap';
+import React from "react";
+import { MenuItem } from "@material-ui/core";
+import { components, OptionProps, StylesConfig } from "react-select";
+import algoliasearch from "algoliasearch";
+import AsyncSelect from "react-select/async";
+import { PlantTypesMap } from "../Molecule-Data/PlantTypesMap";
 
 interface Props {
   onChange: (option: any) => void;
@@ -11,15 +11,15 @@ interface Props {
 }
 
 const searchClient = algoliasearch(
-  '8RSL939QLN',
-  '6dd4cdac7e6ef3764c918f8379a0145a'
+  "8RSL939QLN",
+  "6dd4cdac7e6ef3764c918f8379a0145a"
 );
-const index = searchClient.initIndex('mimirSpecies');
+const index = searchClient.initIndex("SpeciesDatabase");
 
 export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
   const promiseOptions = async (inputValue: string) => {
     const resp = await index.search(inputValue).then(({ hits }) => hits);
-    console.log('respnonse', resp);
+    console.log("response", resp);
     const result = resp.map((item: any) => ({
       label: item.objectID,
       value: {
@@ -33,7 +33,6 @@ export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
       },
       image: item.images[0],
       common: item.common_name[0],
-      description: item.description,
     }));
     console.log(result);
     return result;
@@ -44,41 +43,41 @@ export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
   const customStyles: StylesConfig<any, any> = {
     container: (base) => ({
       ...base,
-      padding: '10px 0',
+      padding: "10px 0",
     }),
     control: () => ({
-      display: 'flex',
-      alignItems: 'center',
+      display: "flex",
+      alignItems: "center",
       border: 0,
-      borderBottom: '1px solid grey',
-      height: 'auto',
-      background: 'transparent',
-      '&:hover': {
-        boxShadow: 'none',
+      borderBottom: "1px solid grey",
+      height: "auto",
+      background: "transparent",
+      "&:hover": {
+        boxShadow: "none",
       },
     }),
     valueContainer: (base) => ({
       ...base,
       padding: 0,
-      fontFamily: 'Roboto,Helvetica,Arial,sans-serif',
+      fontFamily: "Roboto,Helvetica,Arial,sans-serif",
     }),
     noOptionsMessage: (base) => ({
       ...base,
-      fontFamily: 'Roboto,Helvetica,Arial,sans-serif',
+      fontFamily: "Roboto,Helvetica,Arial,sans-serif",
     }),
     menu: () => ({
-      backgroundColor: 'white',
-      boxShadow: '1px 2px 6px #888888', // should be changed as material-ui
-      position: 'absolute',
+      backgroundColor: "white",
+      boxShadow: "1px 2px 6px #888888", // should be changed as material-ui
+      position: "absolute",
       left: 0,
       top: `calc(100% + 1px)`,
-      width: '100%',
+      width: "100%",
       zIndex: 2,
       maxHeight: ITEM_HEIGHT * 4.5,
     }),
     menuList: () => ({
       maxHeight: ITEM_HEIGHT * 4.5,
-      overflowY: 'auto',
+      overflowY: "auto",
     }),
     option: () => ({
       padding: 0,
@@ -95,12 +94,12 @@ export const SearchSpecies: React.FC<Props> = ({ onChange, initialValue }) => {
           {data.image && (
             <img
               alt={`${data.label}`}
-              style={{ width: 30, borderRadius: '15%', paddingRight: '10px' }}
+              style={{ width: 30, borderRadius: "15%", paddingRight: "10px" }}
               src={data.image[0].thumb}
             />
           )}
           {plantType?.icon()}
-          {data.common}({data.value.id}) -- {data.description}
+          {data.common}({data.value.id})
         </MenuItem>
       </components.Option>
     );

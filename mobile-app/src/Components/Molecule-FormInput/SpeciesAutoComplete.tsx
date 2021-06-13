@@ -30,7 +30,7 @@ const searchClient = algoliasearch(
   '8RSL939QLN',
   '6dd4cdac7e6ef3764c918f8379a0145a',
 );
-const index = searchClient.initIndex('mimirSpecies');
+const index = searchClient.initIndex('SpeciesDatabase');
 
 type SpeciesResult = {
   label: string;
@@ -44,26 +44,23 @@ type SpeciesResult = {
     id: string;
   };
   image?: any;
-  common: string;
-  description: string;
+  common: Array<string>;
 };
 const promiseOptions = async (inputValue: string) => {
   try {
     const resp = await index.search(inputValue, {}).then(({hits}) => hits);
     const result: SpeciesResult[] = resp.slice(0, 6).map((item: any) => ({
-      id: item.objectID,
       label: item.objectID,
       value: {
-        family: item.family,
-        genus: item.genus,
-        species: item.species,
-        subspecies: item.subspecies,
-        cultivar: item.cultivar,
+        family: item.botanical.family,
+        genus: item.botanical.genus,
+        species: item.botanical.species,
+        subspecies: item.botanical.subspecies,
+        cultivar: item.botanical.cultivar,
         type: item.type,
         id: item.objectID,
       },
-      common: item.common_name[0],
-      description: item.description,
+      common: item.common_name,
     }));
     return result;
   } catch (err) {
@@ -77,7 +74,6 @@ export const SpeciesAutoComplete: React.FC<Props> = ({label, ...props}) => {
   const [selected, setSelected] = useState('');
   const [searchResults, setSearchResults] = useState<SpeciesResult[]>([]);
   const onSelect = (item: SpeciesResult) => {
-    console.log({selected});
     setSelected(item.label);
     const {
       form: {setFieldValue},
@@ -161,7 +157,7 @@ export const ResultItem: React.FC<ItemProps> = ({item, selected}) => {
       }}>
       {PlantTypesMap.find(d => d.id === item.value.type)?.icon()}
       <Text style={{marginLeft: 8, fontSize: 16}}>
-        {item.common.replace(/(\b[a-z](?!\s))/g, x => x.toUpperCase())}
+        {item.common[0].replace(/(\b[a-z](?!\s))/g, x => x.toUpperCase())}
       </Text>
       <Text style={{marginLeft: 8}}>({item.label})</Text>
     </View>
