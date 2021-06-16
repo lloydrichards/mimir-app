@@ -8,16 +8,12 @@ import { Selector } from "../Atom-Inputs/Selector";
 import { useHistory } from "react-router-dom";
 import { Switch } from "../Atom-Inputs/Switch";
 import { Slider } from "../Atom-Inputs/Slider";
-import {
-  GrowthRateTypes,
-  MaintenanceTypes,
-  ModelProps,
-  SpeciesProps,
-} from "@mimir/SpeciesType";
+
 import { HardinessTypeMap } from "../Molecule-Data/HardinessTypeMap";
 import { ExposureTypeMap } from "../Molecule-Data/ExposureTypeMap";
 import { PlantTypesMap } from "../Molecule-Data/PlantTypesMap";
 import { PlantTypes } from "../../types/PlantType";
+import { SpeciesProps, ModelProps, GrowthRateTypes, MaintenanceTypes } from "src/types/SpeciesType";
 
 interface Props {
   edit?: SpeciesProps;
@@ -167,13 +163,13 @@ const SpeciesForm: React.FC<Props> = ({ edit, altButton, debug }) => {
           hybrid: false,
           description: edit?.description || "",
           common_name:
-            edit?.common_name.reduce((acc, cur) => acc.concat(`${cur}, `)) ||
+            edit?.common_name.reduce((acc, cur) => acc.concat(`${cur}, `),"") ||
             "",
-          type: edit?.type || ("" as PlantTypes),
+          type: edit?.type || ("UNKNOWN" as PlantTypes),
           habitat: edit?.habitat || [],
           form: edit?.growth.form || [],
           origin:
-            edit?.traits.origin.reduce((acc, cur) => acc.concat(`${cur}, `)) ||
+            edit?.traits.origin.reduce((acc, cur) => acc.concat(`${cur}, `),"") ||
             "",
           edible: edit?.traits.edible || false,
           poisonous: edit?.traits.poisonous || false,
@@ -187,8 +183,8 @@ const SpeciesForm: React.FC<Props> = ({ edit, altButton, debug }) => {
           height_min: edit?.growth.height_min || null,
           spread_min: edit?.growth.spread_min || null,
           spread_max: edit?.growth.spread_max || null,
-          growth_rate: edit?.growth.rate || ("" as GrowthRateTypes),
-          maintenance: edit?.growth.maintenance || ("" as MaintenanceTypes),
+          growth_rate: edit?.growth.rate || ("UNKNOWN" as GrowthRateTypes),
+          maintenance: edit?.growth.maintenance || ("UNKNOWN" as MaintenanceTypes),
           pests: edit?.traits.pests || [],
           model: {
             temperature: {

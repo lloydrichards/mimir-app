@@ -2,7 +2,7 @@ import { Button, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { SearchSpecies } from "src/components/Molecule-FormInputs/SpeciesSearch";
 import { db } from "src/firebase";
-import { SpeciesProps } from "@mimir/SpeciesType";
+import { SpeciesProps } from "src/types/SpeciesType";
 import SpeciesForm from "../components/Organism-Forms/SpeciesForm";
 
 function PlantEncyclopedia() {
