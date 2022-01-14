@@ -149,6 +149,7 @@ export type PestTypes =
   | "DROUGHT_RESISTANT"
   | "EARWIGS"
   | "FUNGAL_LEAF_SPOT"
+  | "FUNGAL_GNAT"
   | "GALLS"
   | "HEART_ROT"
   | "HETEROPTERA_TRUE_BUGS"
